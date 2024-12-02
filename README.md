@@ -1,2 +1,3 @@
-# kivy_projects
-kivy mini-projects with python
+## Kivy Projects
+### Kivy mini-projects with python.
+#### Run `main.py` to start app.

@@ -1,0 +1,56 @@
+<TimeCalculatorScreen>:
+    name: 'TimeCalculatorScreen'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        canvas.before:
+            Color:
+                rgba: 250/255, 235/255, 215/255, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        TopBar:
+            project_name: 'Time Calculator'
+
+        BoxLayout:
+            size_hint: 1, None
+            height: root.ids.minutes_input_field.ids.text_input.height * 2
+            orientation: 'horizontal'
+            spacing: 20
+            Filler:
+            LabeledNumericInput:
+                id: minutes_input_field
+                label_txt: 'Minutes'
+                container_width: 150
+
+            LabeledNumericInput:
+                id: seconds_input_field
+                label_txt: 'Seconds'
+                container_width: 150
+
+            AppBtn:
+                text: 'Add'
+                height: root.ids.minutes_input_field.ids.text_input.height
+                width: root.ids.minutes_input_field.container_width
+                on_press: root.add_minutes_and_seconds()
+                on_release: root.reset_inputs()
+
+            AppBtn:
+                text: 'Subtract'
+                height: root.ids.minutes_input_field.ids.text_input.height
+                width: root.ids.minutes_input_field.container_width
+                on_press: root.subtract_minutes_and_seconds()
+                on_release: root.reset_inputs()
+
+            Filler:
+        AppLabel:
+            markup: True
+            text: f"{root.timer['hours']}:{root.timer['minutes']:02}:{root.timer['seconds']:02}"
+            font_size: 32
+            pos_hint: {'center_x': .5}
+            font_name: 'assets/fonts/digital-numbers/DigitalNumbers-Regular.ttf'
+        Filler:
+
+

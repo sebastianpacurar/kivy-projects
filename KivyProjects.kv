@@ -1,0 +1,31 @@
+#: include utils/components.kv
+
+#: import TimeCalculatorProject projects.time_calculator.screen.TimeCalculatorScreen
+#: include projects/time_calculator/TimeCalculatorScreen.kv
+
+AppContainer:
+
+<AppContainer@BoxLayout>:
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    ScreenManager:
+        id: projectManager
+        HomeScreen:
+
+
+
+<HomeScreen@Screen>:
+    name: 'home_screen'
+    BoxLayout:
+        orientation: 'vertical'
+        Filler:
+        AppBtn:
+            pos_hint: {'center_x': .5}
+            text: 'Time Calculator'
+            on_release: app.nav_to_project('TimeCalculatorScreen')
+        Filler:
