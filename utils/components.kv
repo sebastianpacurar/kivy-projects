@@ -2,7 +2,7 @@
     size_hint: None, None
     width: self.texture_size[0] + dp(20)
     height: self.texture_size[1] + dp(10)
-    font_size: 24
+    font_size: sp(18)
     background_color: 3/255, 218/255, 198/255, 1
     color: 1, 1, 1, 1
     font_name: 'assets/fonts/Roboto/Roboto-Medium.ttf'
@@ -39,12 +39,10 @@
         on_release: app.nav_to_home()
     AppLabel:
         text: root.project_name
-        font_size: 32
+        font_size: sp(24)
         size: self.parent.size[0] - self.parent.children[0].size[0], self.parent.size[1]
         pos_hint: {'center_x': .5, 'center_y': .5}
 #        bg_color: [1, 0, 0, .5]
-
-
 
 
 <LabeledNumericInput>:
@@ -65,14 +63,15 @@
             id: text_input
             size_hint_y: None
             height: self.parent.height / 2.25
-            font_size: 18
+            font_size: sp(18)
             foreground_color: 0, 0, 0, 1
             background_color: 1, 1, 1, 1
             cursor_color: 0, 0, 0, 1
             padding: [10, 5, 2.5, 2.5]
             multiline: False
             write_tab: False
-            on_text: root.validate_digits(*args)
+            readonly: root.is_readonly
+            disabled: root.is_readonly
             on_focus: self.text = "0" if not self.focus and len(self.text) == 0 else self.text
 
 <RV>:
@@ -83,3 +82,11 @@
         color: (0, 0.7, 0.4, 0.8)
         size_hint_y: None
         height: self.minimum_height
+
+
+<AppDropdown>:
+    size_hint: None, None
+    width: self.width
+    height: self.texture_size[1] + dp(10)
+    text: 'Select an option'
+    values: root.options

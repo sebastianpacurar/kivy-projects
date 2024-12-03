@@ -3,6 +3,11 @@
 #: import TimeCalculatorProject projects.time_calculator.screen.TimeCalculatorScreen
 #: include projects/time_calculator/TimeCalculatorScreen.kv
 
+#: import UnitConverterProject projects.unit_converter.screen.UnitConverterScreen
+#: include projects/unit_converter/UnitConverterScreen.kv
+
+
+
 AppContainer:
 
 <AppContainer@BoxLayout>:
@@ -18,7 +23,6 @@ AppContainer:
         HomeScreen:
 
 
-
 <HomeScreen@Screen>:
     name: 'home_screen'
     BoxLayout:
@@ -28,4 +32,9 @@ AppContainer:
             pos_hint: {'center_x': .5}
             text: 'Time Calculator'
             on_release: app.nav_to_project('TimeCalculatorScreen')
+        Filler:
+        AppBtn:
+            pos_hint: {'center_x': .5}
+            text: 'Unit Converter'
+            on_release: app.nav_to_project('UnitConverterScreen')
         Filler:

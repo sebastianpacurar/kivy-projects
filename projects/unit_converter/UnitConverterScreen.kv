@@ -1,0 +1,57 @@
+<UnitConverterScreen>:
+    name: 'UnitConverterScreen'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        canvas.before:
+            Color:
+                rgba: 250/255, 235/255, 215/255, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        TopBar:
+            project_name: 'Unit Converter'
+        BoxLayout:
+            orientation: 'horizontal'
+            BoxLayout:
+                orientation: 'vertical'
+                padding: 10
+                spacing: 10
+
+                Filler:
+                LabeledNumericInput:
+                    id: from_input_field
+                    label_txt: 'From'
+                    container_width: 150
+                    allow_float: True
+                    update_text_field_func: lambda instance, value: root.update_to_input()
+
+                AppDropdown:
+                    id: from_dropdown
+                    text: 'meter [m]'
+                    options: ['meter [m]', 'kilometer [km]', 'decimeter [dm]', 'centimeter [cm]', 'millimeter [mm]']
+                    on_text: root.update_to_input()
+                Filler:
+            BoxLayout:
+                orientation: 'vertical'
+                padding: 10
+                spacing: 10
+
+                Filler:
+                LabeledNumericInput:
+                    id: to_input_field
+                    label_txt: 'To'
+                    container_width: 350
+                    is_readonly: True
+                    allow_float: True
+                    is_validate_digits: False
+
+                AppDropdown:
+                    id: to_dropdown
+                    text: 'meter [m]'
+                    options: ['meter [m]', 'kilometer [km]', 'decimeter [dm]', 'centimeter [cm]', 'millimeter [mm]']
+                    on_text: root.update_to_input()
+                Filler:
+        Filler:
