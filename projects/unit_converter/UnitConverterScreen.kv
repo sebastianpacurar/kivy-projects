@@ -10,7 +10,6 @@
             Rectangle:
                 pos: self.pos
                 size: self.size
-
         TopBar:
             project_name: 'Unit Converter'
         BoxLayout:
@@ -20,38 +19,34 @@
                 padding: 10
                 spacing: 10
 
-                Filler:
                 LabeledNumericInput:
                     id: from_input_field
                     label_txt: 'From'
                     container_width: 150
                     allow_float: True
-                    update_text_field_func: lambda instance, value: root.update_to_input()
+                    update_text_field_func: lambda instance, value: root.update_target_input() # call custom method (update target_input_field.text)
 
-                AppDropdown:
-                    id: from_dropdown
-                    text: 'meter [m]'
-                    options: ['meter [m]', 'kilometer [km]', 'decimeter [dm]', 'centimeter [cm]', 'millimeter [mm]']
-                    on_text: root.update_to_input()
-                Filler:
+                AutoSuggestionInputBox:
+                    id: from_selection
+                    options: root.set_options()
+                    selected_option: 'meter [m]' # initial value
+
             BoxLayout:
                 orientation: 'vertical'
                 padding: 10
                 spacing: 10
 
-                Filler:
                 LabeledNumericInput:
-                    id: to_input_field
+                    id: target_input_field
                     label_txt: 'To'
                     container_width: 350
-                    is_readonly: True
+                    is_readonly: True   # prevent user from interacting with input
                     allow_float: True
-                    is_validate_digits: False
+                    is_validate_digits: False   # prevent digit validation, for exponential notation
 
-                AppDropdown:
-                    id: to_dropdown
-                    text: 'meter [m]'
-                    options: ['meter [m]', 'kilometer [km]', 'decimeter [dm]', 'centimeter [cm]', 'millimeter [mm]']
-                    on_text: root.update_to_input()
-                Filler:
+                AutoSuggestionInputBox:
+                    id: target_selection
+                    options: root.set_options()
+                    selected_option: 'yard [yd]' # initial value
+            Filler:
         Filler:

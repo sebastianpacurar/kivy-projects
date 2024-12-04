@@ -6,6 +6,10 @@ class TimeCalculatorScreen(Screen):
     timer = DictProperty({'hours': 0, 'minutes': 0, 'seconds': 0})
     list_data = DictProperty()
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.bind(on_pre_leave=self.cleanup_screen)
+
     def add_minutes_and_seconds(self, minutes, seconds):
         """
         Adds the minutes and seconds entered by the user to the current timer.
@@ -48,3 +52,10 @@ class TimeCalculatorScreen(Screen):
         self.ids.minutes_input_field.ids.text_input.text = '0'
         self.ids.seconds_input_field.ids.text_input.text = '0'
         self.ids.minutes_input_field.ids.text_input.focus = True
+
+    def cleanup_screen(self, *args):
+        """ Reset inputs and timer DictProperty() \n
+            Cleanup method, used when leaving screen
+        """
+        self.reset_inputs()
+        self.timer = {'hours': 0, 'minutes': 0, 'seconds': 0}
