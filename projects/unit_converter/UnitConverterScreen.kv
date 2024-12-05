@@ -1,3 +1,5 @@
+#: include projects/unit_converter/UnitScreens.kv
+
 <UnitConverterScreen>:
     name: 'UnitConverterScreen'
     BoxLayout:
@@ -12,41 +14,47 @@
                 size: self.size
         TopBar:
             project_name: 'Unit Converter'
+
+        GridLayout:
+            cols: 6
+            size_hint_y: None
+            height: dp(25)  # Fixed height for buttons
+            spacing: 10
+
+            SegmentedButton:
+                text: 'Length'
+                group: 'unit_converters'
+                on_state: root.change_unit_screen(self, self.state, 'LengthScreen')
+                state: 'down'
+            SegmentedButton:
+                text: 'Area'
+                group: 'unit_converters'
+                on_state: root.change_unit_screen(self, self.state, 'AreaScreen')
+            SegmentedButton:
+                text: 'Volume'
+                group: 'unit_converters'
+                on_state: root.change_unit_screen(self, self.state, 'VolumeScreen')
+            SegmentedButton:
+                text: 'Energy'
+                group: 'unit_converters'
+                on_state: root.change_unit_screen(self, self.state, 'EnergyScreen')
+            SegmentedButton:
+                text: 'Force'
+                group: 'unit_converters'
+                on_state: root.change_unit_screen(self, self.state, 'ForceScreen')
+            SegmentedButton:
+                text: 'Speed'
+                group: 'unit_converters'
+                on_state: root.change_unit_screen(self, self.state, 'SpeedScreen')
+
         BoxLayout:
-            orientation: 'horizontal'
-            BoxLayout:
-                orientation: 'vertical'
-                padding: 10
-                spacing: 10
+            orientation: 'vertical'
+            ScreenManager:
+                id: screen_manager
+                LengthScreen:
+                AreaScreen:
+                VolumeScreen:
+                EnergyScreen:
+                ForceScreen:
+                SpeedScreen:
 
-                LabeledNumericInput:
-                    id: from_input_field
-                    label_txt: 'From'
-                    container_width: 150
-                    allow_float: True
-                    update_text_field_func: lambda instance, value: root.update_target_input() # call custom method (update target_input_field.text)
-
-                AutoSuggestionInputBox:
-                    id: from_selection
-                    options: root.set_options()
-                    selected_option: 'meter [m]' # initial value
-
-            BoxLayout:
-                orientation: 'vertical'
-                padding: 10
-                spacing: 10
-
-                LabeledNumericInput:
-                    id: target_input_field
-                    label_txt: 'To'
-                    container_width: 350
-                    is_readonly: True   # prevent user from interacting with input
-                    allow_float: True
-                    is_validate_digits: False   # prevent digit validation, for exponential notation
-
-                AutoSuggestionInputBox:
-                    id: target_selection
-                    options: root.set_options()
-                    selected_option: 'yard [yd]' # initial value
-            Filler:
-        Filler:

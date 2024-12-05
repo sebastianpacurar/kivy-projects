@@ -26,7 +26,6 @@
     orientation: 'horizontal'
     size_hint_y: None
     height: dp(50)
-    pos_hint: {'top': 1}
     padding: dp(10)
     canvas.before:
         Color:
@@ -121,3 +120,10 @@
             cols: 1
             size_hint_y: None
             height: self.minimum_height
+
+
+<SegmentedButton@ToggleButton>:
+    disabled: self.state == 'down'
+    background_disabled_down: self.background_down
+    background_disabled_normal: self.background_normal
+    disabled_color: 1, 1, 1, 1

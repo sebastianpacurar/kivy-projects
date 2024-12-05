@@ -97,7 +97,8 @@ class AutoSuggestionInputBox(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.is_focused = False
-        self.highlighted_index = -1 # used to highlight selected option through Up and Down arrows
+        self.filtered_options = []
+        self.highlighted_index = -1  # used to highlight selected option through Up and Down arrows
         self.is_key_down_bound = False  # prevent multiple bindings at the same time, in case of multiple suggestion boxes
 
     def filter_options(self, text):
@@ -119,14 +120,13 @@ class AutoSuggestionInputBox(BoxLayout):
             Bind the select_option(option_value) to the on_release button where option_value is the button text
         """
         self.ids.options_layout.clear_widgets()
-        option_height = 40
 
         if self.ids.dropdown.opacity == 1:  # only add buttons if dropdown is visible
             for index, option in enumerate(self.filtered_options):
                 btn = Button(
                     text=option,
                     size_hint_y=None,
-                    height=option_height,
+                    height=40,
                     on_release=lambda b=option: self.select_option(b.text),
                     background_normal='',
                     background_color=(.2, .2, .2, 1)
@@ -200,7 +200,6 @@ class AutoSuggestionInputBox(BoxLayout):
                 self.ids.input_field.focus = False
                 return True
         return False
-
 
 class RV(RecycleView):
     pass

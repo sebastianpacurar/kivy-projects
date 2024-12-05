@@ -11,10 +11,9 @@ class TimeCalculatorScreen(Screen):
         self.bind(on_pre_leave=self.cleanup_screen)
 
     def add_minutes_and_seconds(self, minutes, seconds):
-        """
-        Adds the minutes and seconds entered by the user to the current timer.
-        The timer will handle overflow of seconds to minutes and minutes to hours.
-        Update timer dictionary.
+        """ Adds the minutes and seconds entered by the user to the current timer. \n
+            The timer will handle overflow of seconds to minutes and minutes to hours. \n
+            Update timer dictionary.
         """
 
         if minutes > 0 or seconds > 0:
@@ -27,9 +26,8 @@ class TimeCalculatorScreen(Screen):
             self.timer['minutes'] %= 60
 
     def subtract_minutes_and_seconds(self, minutes, seconds):
-        """
-        Subtracts the minutes and seconds entered by the user from the current timer.
-        If the subtracted time is greater than the current time, the timer is reset to 0.
+        """ Subtracts the minutes and seconds entered by the user from the current timer. \n
+            If the subtracted time is greater than the current time, the timer is reset to 0.
         """
         if any([i for i in self.timer.values()]):
             total_seconds = self.timer['hours'] * 3600 + self.timer['minutes'] * 60 + self.timer['seconds']
@@ -46,8 +44,7 @@ class TimeCalculatorScreen(Screen):
                 self.timer['seconds'] = total_seconds % 60
 
     def reset_inputs(self):
-        """
-        Resets the input fields for minutes and seconds to "0", and focuses the minutes input field.
+        """ Resets the input fields for minutes and seconds to "0", and focuses the minutes input field.
         """
         self.ids.minutes_input_field.ids.text_input.text = '0'
         self.ids.seconds_input_field.ids.text_input.text = '0'

@@ -1,4 +1,5 @@
 from kivy.app import App
+from kivy.core.window import Window
 from kivy.factory import Factory
 
 import utils.components
@@ -11,6 +12,7 @@ class KivyProjectsApp(App):
 
     def on_start(self):
         self.pm = self.root.ids.projectManager
+        Window.bind(on_key_down=self.on_key_down)
         super().on_start()
 
     def nav_to_project(self, project_screen_name):
@@ -30,6 +32,12 @@ class KivyProjectsApp(App):
     def nav_to_home(self, *args):
         self.pm.transition.direction = 'right'
         self.pm.current = 'home_screen'
+
+    # prevent app from closing when hitting Escape key
+    def on_key_down(self, instance, keyboard, keycode, text, modifiers):
+        if keycode == 27 or keycode == 41:  # 27 = Escape; 41 = Space, although 41 binds to Escape as well
+            return True
+        return False
 
 
 if __name__ == '__main__':
