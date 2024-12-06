@@ -1,3 +1,5 @@
+import re
+
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.metrics import dp
@@ -7,6 +9,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.spinner import Spinner
+from kivy.uix.togglebutton import ToggleButton
 
 
 class AppBtn(Button):
@@ -96,7 +99,9 @@ class AutoSuggestionInputBox(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.mark_started = False
         self.is_focused = False
+        self.is_auto_selected = False
         self.filtered_options = []
         self.highlighted_index = -1  # used to highlight selected option through Up and Down arrows
         self.is_key_down_bound = False  # prevent multiple bindings at the same time, in case of multiple suggestion boxes
@@ -104,13 +109,19 @@ class AutoSuggestionInputBox(BoxLayout):
     def filter_options(self, text):
         """ Filter the options based on the input text \n
             Method bound to the on_text event of input_field \n
-            Filter options based on input_field text value. if empty display all options \n
+            Filter options based on input_field separated words. if empty display all options \n
             Set filtered_options then call update_options() for option re-rendering
         """
         text = text.lower()
         if text:
-            self.filtered_options = [opt for opt in self.options if opt.lower().startswith(text)]
+            # match based on split words.
+            # ex: 'nautical mile [nmi]' will be displayed for 'nau*', 'mil*' and 'nmi'
+            for opt in self.options:
+                parsed_opt = opt.lower().replace('[', '').replace(']', '')
+                if any(word.startswith(text.lower()) for word in parsed_opt.split()):
+                    self.filtered_options.append(opt)
         else:
+            # display all options if no text is in input box
             self.filtered_options = self.options
         self.update_options()
 
@@ -121,28 +132,46 @@ class AutoSuggestionInputBox(BoxLayout):
         """
         self.ids.options_layout.clear_widgets()
 
-        if self.ids.dropdown.opacity == 1:  # only add buttons if dropdown is visible
+        if self.is_focused:  # only add buttons if text input is focused
             for index, option in enumerate(self.filtered_options):
-                btn = Button(
+                btn = AutoSuggestionInputOption(
                     text=option,
-                    size_hint_y=None,
-                    height=40,
                     on_release=lambda b=option: self.select_option(b.text),
-                    background_normal='',
-                    background_color=(.2, .2, .2, 1)
                 )
+                # auto highlight the only displayed option
+                if len(self.filtered_options) == 1 and not self.is_auto_selected:
+                    self.highlighted_index = index
+                    self.is_auto_selected = True
+                # if more than 2 options displayed, and not auto highlighted, set to -1
+                elif len(self.filtered_options) > 1 and self.is_auto_selected:
+                    self.highlighted_index = -1
+                    self.is_auto_selected = False
+                # set color for highlighted button
                 if index == self.highlighted_index:
                     btn.background_color = (0.3, 0.6, 0.3, 1)
+
                 self.ids.options_layout.add_widget(btn)
 
     def show_options(self, focus):
         """ Show or hide the dropdown options based on focus state \n
             Method bound to the on_focus event of input_field \n
+            Handle dynamic user input - delete when focus changes to True \n
             Bind/Unbind on_key_down() based on focus \n
             Clear all option widgets when losing focus
         """
+
+        # prevent execution when screen loads for the very first time
+        if not self.mark_started:
+            self.mark_started = True
+            return
+
+        # set input to empty when user focuses, to prevent backspacing for every focus
+        if self.is_focused is False and focus is True:
+            self.ids.input_field.text = ''
+
         self.is_focused = focus
-        self.ids.dropdown.opacity = int(focus)  # control visibility based on focus
+
+        self.is_focused = focus
         if focus and not self.ids.input_field.text:
             self.filtered_options = self.options
             self.update_options()
@@ -170,17 +199,16 @@ class AutoSuggestionInputBox(BoxLayout):
         """
         self.ids.input_field.text = option_value
         self.selected_option = option_value
-        self.ids.dropdown.opacity = 0
         self.highlighted_index = -1
 
     def on_key_down(self, window, keycode, scancode, modifiers, is_keyboard):
         """ Handle keyboard events for up, down, enter, escape, and backspace \n
             Up Arrow - select next upward dropdown option \n
             Down Arrow - select next downward dropdown option \n
-            Enter - apply currently selected option value \n
+            Enter - defocus input box, apply currently selected option value \n
             Escape - defocus input box, remove dropdown options
         """
-        if self.is_focused and self.ids.dropdown.opacity == 1:  # applicable only when options are displayed
+        if self.is_focused:
             if keycode == 273:  # 'Up' arrow key
                 self.highlighted_index = (self.highlighted_index - 1) % len(self.filtered_options)
                 self.update_options()
@@ -192,14 +220,23 @@ class AutoSuggestionInputBox(BoxLayout):
             elif keycode == 13:  # 'Enter' key
                 if self.highlighted_index >= 0:
                     self.select_option(self.filtered_options[self.highlighted_index])
+                    self.ids.input_field.focus = False
                 return True
             elif keycode == 27:  # 'Escape' key
                 self.highlighted_index = -1
                 self.update_options()
-                self.ids.dropdown.opacity = 0
                 self.ids.input_field.focus = False
                 return True
         return False
+
+
+class AutoSuggestionInputOption(Button):
+    pass
+
+
+class SegmentedButton(ToggleButton):
+    option_index = NumericProperty(0)
+
 
 class RV(RecycleView):
     pass

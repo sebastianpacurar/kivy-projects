@@ -9,10 +9,12 @@ class UnitConverterScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.sm = self.ids.screen_manager
+        self.curr_screen_index = 0
 
-    def change_unit_screen(self, button, state, unit_screen_name):
-        if state == 'down':
-            self.sm.transition.direction = 'left'
+    def change_unit_screen(self, button, unit_screen_name):
+        if button.state == 'down':
+            self.sm.transition.direction = 'left' if button.option_index > self.curr_screen_index else 'right'
+            self.curr_screen_index = button.option_index
             self.sm.current = unit_screen_name
 
 

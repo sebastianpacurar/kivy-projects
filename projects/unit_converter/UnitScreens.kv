@@ -1,61 +1,110 @@
 <LengthScreen>:
     name: 'LengthScreen'
-    Converter:
-        id: converter
-        drop_options: root.set_options()
-        source_selected_option: 'meter [m]'
-        target_selected_option: 'yard [yd]'
-        update_text_field_func: lambda instance, value: root.update_target_input()
+    GridLayout:
+        cols: 1
+        AppLabel:
+            size_hint_x: 1
+            height: dp(50)
+            text: 'Length Conversion'
+            font_size: sp(24)
+        Converter:
+            id: converter
+            drop_options: root.set_options()
+            source_selected_option: 'meter [m]'
+            target_selected_option: 'yard [yd]'
+            update_text_field_func: lambda instance, value: root.update_target_input()
+        RV:
 
 
 <AreaScreen>:
     name: 'AreaScreen'
-    Converter:
-        id: converter
-        drop_options: root.set_options()
-        source_selected_option: 'square meter [m²]'
-        target_selected_option: 'square centimeter [cm²]'
-        update_text_field_func: lambda instance, value: root.update_target_input()
+    GridLayout:
+        cols: 1
+        AppLabel:
+            size_hint_x: 1
+            height: dp(50)
+            text: 'Area Conversion'
+            font_size: sp(24)
+        Converter:
+            id: converter
+            drop_options: root.set_options()
+            source_selected_option: 'square meter [m²]'
+            target_selected_option: 'square centimeter [cm²]'
+            update_text_field_func: lambda instance, value: root.update_target_input()
+        RV:
+
 
 
 <VolumeScreen>:
     name: 'VolumeScreen'
-    Converter:
-        id: converter
-        drop_options: root.set_options()
-        source_selected_option: 'liter [L]'
-        target_selected_option: 'cubic meter [m³]'
-        update_text_field_func: lambda instance, value: root.update_target_input()
+    GridLayout:
+        cols: 1
+        AppLabel:
+            size_hint_x: 1
+            height: dp(50)
+            text: 'Volume Conversion'
+            font_size: sp(24)
+        Converter:
+            id: converter
+            drop_options: root.set_options()
+            source_selected_option: 'liter [L]'
+            target_selected_option: 'cubic meter [m³]'
+            update_text_field_func: lambda instance, value: root.update_target_input()
+        RV:
 
 
 <EnergyScreen>:
     name: 'EnergyScreen'
-    Converter:
-        id: converter
-        drop_options: root.set_options()
-        source_selected_option: 'joule [J]'
-        target_selected_option: 'calorie [cal]'
-        update_text_field_func: lambda instance, value: root.update_target_input()
+    GridLayout:
+        cols: 1
+        AppLabel:
+            size_hint_x: 1
+            height: dp(50)
+            text: 'Energy Conversion'
+            font_size: sp(24)
+        Converter:
+            id: converter
+            drop_options: root.set_options()
+            source_selected_option: 'joule [J]'
+            target_selected_option: 'calorie [cal]'
+            update_text_field_func: lambda instance, value: root.update_target_input()
+        RV:
 
 
 <ForceScreen>:
     name: 'ForceScreen'
-    Converter:
-        id: converter
-        drop_options: root.set_options()
-        source_selected_option: 'newton [N]'
-        target_selected_option: 'gram-force [gf]'
-        update_text_field_func: lambda instance, value: root.update_target_input()
+    GridLayout:
+        cols: 1
+        AppLabel:
+            size_hint_x: 1
+            height: dp(50)
+            text: 'Force Conversion'
+            font_size: sp(24)
+        Converter:
+            id: converter
+            drop_options: root.set_options()
+            source_selected_option: 'newton [N]'
+            target_selected_option: 'gram-force [gf]'
+            update_text_field_func: lambda instance, value: root.update_target_input()
+        RV:
 
 
 <SpeedScreen>:
     name: 'SpeedScreen'
-    Converter:
-        id: converter
-        drop_options: root.set_options()
-        source_selected_option: 'meter per second [m/s]'
-        target_selected_option: 'inch per second [in/s]'
-        update_text_field_func: lambda instance, value: root.update_target_input()
+    GridLayout:
+        cols: 1
+        AppLabel:
+            size_hint_x: 1
+            height: dp(50)
+            text: 'Speed Conversion'
+            font_size: sp(24)
+        Converter:
+            id: converter
+            drop_options: root.set_options()
+            source_selected_option: 'meter per second [m/s]'
+            target_selected_option: 'inch per second [in/s]'
+            update_text_field_func: lambda instance, value: root.update_target_input()
+        RV:
 
 
 

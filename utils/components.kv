@@ -122,7 +122,24 @@
             height: self.minimum_height
 
 
-<SegmentedButton@ToggleButton>:
+<AutoSuggestionInputOption>:
+    size_hint_y: None
+    height: 40
+    background_normal: ''
+    background_color: 0.05, 0.3, 0.5, 1
+    color: 1, 1, 1, 1
+    font_size: sp(15)
+
+    #apply border
+    canvas.before:
+        Color:
+            rgba: 0.07, 0.4, 0.7, 1
+        Line:
+            width: 2
+            rectangle: self.x, self.y, self.width, self.height
+
+
+<SegmentedButton>:
     disabled: self.state == 'down'
     background_disabled_down: self.background_down
     background_disabled_normal: self.background_normal
