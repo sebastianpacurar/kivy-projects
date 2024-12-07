@@ -2,7 +2,9 @@ from kivy.app import App
 from kivy.core.window import Window
 from kivy.factory import Factory
 
-import utils.components
+import custom_components.base_components
+import custom_components.auto_suggestion_input_box
+import custom_components.labeled_numeric_input
 
 
 class KivyProjectsApp(App):
