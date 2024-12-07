@@ -1,13 +1,18 @@
 from kivy.clock import Clock
 from kivy.core.window import Window
-from kivy.properties import StringProperty, ListProperty
+from kivy.properties import StringProperty, ListProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 
 
 class AutoSuggestionInputBox(BoxLayout):
-    selected_option = StringProperty("")  # Notify changes when option is selected
+    """ selected_option = the currently selected option \n
+        options = list of all dropdown options names as strings \n
+        enhanced = uses RecycleView when True, and ScrollView when False
+    """
+    selected_option = StringProperty("")
     options = ListProperty([])
+    enhanced = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -21,12 +26,24 @@ class AutoSuggestionInputBox(BoxLayout):
 
     def on_kv_post(self, base_widget):
         self.preformat_options_for_filtering()
+        self.set_selected_view()
+
+    def set_selected_view(self):
+        """ Disable the View which wasn't selected
+            If enhanced is True, use RecycleView for performance rendering \n
+            If enhanced is False, use ScrollView for few rendered items
+        """
+        if self.enhanced:
+            self.remove_widget(self.ids.dropdown_scroll)
+        else:
+            self.remove_widget(self.ids.dropdown_recycle)
 
     def preformat_options_for_filtering(self):
         """ Store options in a tuple form for faster filtering \n
             ex: 'meter [m]' = ('meter [m]', ['meter', 'm']) \n
             ex: 'astronomical unit [au]' = ('astronomical unit [au]', ['astronomical', 'unit', 'au'])
         """
+        # TODO: this should be applicable everywhere
         self.preprocessed_options = [
             (opt, opt.lower().replace('[', '').replace(']', '').split())
             for opt in self.options
@@ -52,11 +69,18 @@ class AutoSuggestionInputBox(BoxLayout):
         self.update_options()
 
     def update_options(self):
-        """ Re-render the displayed options \n
+        """ Re-render the displayed options. """
+        if self.enhanced:
+            self.update_recycle_view()
+        else:
+            self.update_scroll_view()
+
+    def update_scroll_view(self):
+        """ Re-render the displayed ScrollView options \n
             Clear dropdown options, then add them based on the filtered text value \n
             Bind the select_option(option_value) to the on_release button where option_value is the button text
         """
-        self.ids.options_layout.clear_widgets()
+        self.ids.options_layout.clear_widgets()  # clear initial content
 
         if self.is_focused:  # only add buttons if text input is focused
             for index, option in enumerate(self.filtered_options):
@@ -64,19 +88,43 @@ class AutoSuggestionInputBox(BoxLayout):
                     text=option,
                     on_release=lambda b=option: self.select_option(b.text),
                 )
-                # auto highlight the only displayed option
-                if len(self.filtered_options) == 1 and not self.is_auto_selected:
-                    self.highlighted_index = index
-                    self.is_auto_selected = True
-                # if more than 2 options displayed, and not auto highlighted, set to -1
-                elif len(self.filtered_options) > 1 and self.is_auto_selected:
-                    self.highlighted_index = -1
-                    self.is_auto_selected = False
+                self._handle_auto_select_highlight(index)
                 # set color for highlighted button
-                if index == self.highlighted_index:
-                    btn.background_color = (0.3, 0.6, 0.3, 1)
-
+                btn.background_color = (0.3, 0.6, 0.3, 1) if index == self.highlighted_index else (0.05, 0.3, 0.5, 1)
                 self.ids.options_layout.add_widget(btn)
+
+    def update_recycle_view(self):
+        """ Re-render the displayed RecycleView options \n
+            Clear dropdown options, then add them based on the filtered text value \n
+            Bind the select_option(option_value) to the on_release button where option_value is the button text
+        """
+        if self.is_focused:
+            data = []
+            for index, option in enumerate(self.filtered_options):
+                self._handle_auto_select_highlight(index)
+
+                data.append({
+                    "text": option,
+                    "background_color": (0.3, 0.6, 0.3, 1) if index == self.highlighted_index else (0.05, 0.3, 0.5, 1),  # set color for highlighted button
+                    "on_release": lambda b=option: self.select_option(b),
+                })
+
+            # update RecycleView data
+            self.ids.dropdown_recycle.data = data
+
+    def _handle_auto_select_highlight(self, index):
+        """ Handle auto select functionality \n
+            Select when only 1 dropdown option is displayed
+            Deselect when more than 1 are displayed after auto selection happened
+        """
+        # auto highlight the only displayed option
+        if len(self.filtered_options) == 1 and not self.is_auto_selected:
+            self.highlighted_index = index
+            self.is_auto_selected = True
+        # if more than 2 options displayed, and not auto highlighted, set to -1
+        elif len(self.filtered_options) > 1 and self.is_auto_selected:
+            self.highlighted_index = -1
+            self.is_auto_selected = False
 
     def show_options(self, focus):
         """ Show or hide the dropdown options based on focus state \n
@@ -96,8 +144,6 @@ class AutoSuggestionInputBox(BoxLayout):
             self.ids.input_field.text = ''
 
         self.is_focused = focus
-
-        self.is_focused = focus
         if focus and not self.ids.input_field.text:
             self.filtered_options = self.options
             self.update_options()
@@ -108,16 +154,19 @@ class AutoSuggestionInputBox(BoxLayout):
             Window.unbind(on_key_down=self.on_key_down)
             self.is_key_down_bound = False
             # destroy option widgets AFTER select_option() gets executed
-            Clock.schedule_once(self.clear_widgets_after_delay, 0.05)
+            Clock.schedule_once(self.clear_options_after_delay, 0.05)
 
-    def clear_widgets_after_delay(self, dt):
+    def clear_options_after_delay(self, dt):
         """ Clear the widgets after a delay \n
             Used to remove dropdown options widgets, after select_option() gets executed, if it's the case \n
             This method is used to trigger clear_widgets() after option is selected through mouse click \n
             It also defaults input_text to selected_option, in case the user changes the text, without applying option, and defocuses from input
         """
         self.ids.input_field.text = self.selected_option
-        self.ids.options_layout.clear_widgets()
+        if self.enhanced:
+            self.ids.dropdown_recycle.data = []
+        else:
+            self.ids.options_layout.clear_widgets()
 
     def select_option(self, option_value):
         """ Select the highlighted option, reset highlight index and hide the dropdown \n

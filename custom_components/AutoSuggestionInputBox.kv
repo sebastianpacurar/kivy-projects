@@ -12,8 +12,9 @@
         on_text: root.filter_options(self.text) # filter based on splitted option
         on_focus: root.show_options(self.focus) # add/clear dropdown option buttons
 
+    # using ScrollView for enhanced == False
     ScrollView:
-        id: dropdown
+        id: dropdown_scroll
         size_hint_y: None
         height: 200
         do_scroll_x: False
@@ -25,7 +26,23 @@
             size_hint_y: None
             height: self.minimum_height
 
+    # using RecycleView for enhanced == True
+    RecycleView:
+        id: dropdown_recycle
+        viewclass: 'AutoSuggestionInputOption'
+        size_hint_y: None
+        height: 200
 
+        RecycleBoxLayout:
+            id: rv_layout
+            default_size: None, 40
+            default_size_hint: 1, None
+            size_hint_y: None
+            height: self.minimum_height
+            orientation: 'vertical'
+
+
+# used as clickable dropdown option
 <AutoSuggestionInputOption>:
     size_hint_y: None
     height: 40
