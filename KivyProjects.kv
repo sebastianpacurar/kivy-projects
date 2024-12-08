@@ -8,6 +8,10 @@
 #: import UnitConverterProject projects.unit_converter.screen.UnitConverterScreen
 #: include projects/unit_converter/UnitConverterScreen.kv
 
+#: import CountriesProject projects.countries.screen.CountriesMainScreen
+#: include projects/countries/CountriesScreen.kv
+
+
 
 
 AppContainer:
@@ -39,4 +43,9 @@ AppContainer:
             pos_hint: {'center_x': .5}
             text: 'Unit Converter'
             on_release: app.nav_to_project('UnitConverterScreen')
+        Filler:
+        AppBtn:
+            pos_hint: {'center_x': .5}
+            text: 'Countries'
+            on_release: app.nav_to_project('CountriesMainScreen')
         Filler:

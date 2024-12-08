@@ -1,0 +1,42 @@
+<CountriesMainScreen>:
+    name: 'CountriesMainScreen'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        canvas.before:
+            Color:
+                rgba: 250/255, 235/255, 215/255, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        TopBar:
+            project_name: 'Countries'
+
+        ScreenManager:
+            id: screen_manager
+            AllCountriesScreen:
+            CountryScreen:
+
+
+<AllCountriesScreen>:
+    name: 'AllCountriesScreen'
+    RecycleView:
+        id: countries_recycle
+        viewclass: 'AppBtn'
+
+        RecycleBoxLayout:
+            orientation: 'vertical'
+            default_size: None, 40
+            default_size_hint: 1, None
+            size_hint_y: None
+            height: self.minimum_height
+            orientation: 'vertical'
+
+
+<CountryScreen>:
+    name: 'CountryScreen'
+    AppLabel:
+        id: title
+        text: 'test'
+        bg_color: 1, 0, 0, 1
