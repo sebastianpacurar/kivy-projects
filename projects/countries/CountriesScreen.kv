@@ -23,7 +23,7 @@
     name: 'AllCountriesScreen'
     RecycleView:
         id: countries_recycle
-        viewclass: 'AppBtn'
+        viewclass: 'AppButton'
 
         RecycleBoxLayout:
             orientation: 'vertical'
@@ -40,3 +40,6 @@
         id: title
         text: 'test'
         bg_color: 1, 0, 0, 1
+    IconButton:
+        pos_hint: {'center_y': .5}
+        icon: app.get_icon('home')

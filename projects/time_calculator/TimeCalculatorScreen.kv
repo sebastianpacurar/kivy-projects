@@ -30,14 +30,14 @@
                 label_txt: 'Seconds'
                 container_width: 150
 
-            AppBtn:
+            AppButton:
                 text: 'Add'
                 height: root.ids.minutes_input_field.ids.text_input.height
                 width: root.ids.minutes_input_field.container_width
                 on_press: root.add_minutes_and_seconds(int(minutes_input_field.ids.text_input.text), int(seconds_input_field.ids.text_input.text))
                 on_release: root.reset_inputs()
 
-            AppBtn:
+            AppButton:
                 text: 'Subtract'
                 height: root.ids.minutes_input_field.ids.text_input.height
                 width: root.ids.minutes_input_field.container_width
@@ -50,7 +50,7 @@
             text: f"{root.timer['hours']}:{root.timer['minutes']:02}:{root.timer['seconds']:02}"
             font_size: sp(24)
             pos_hint: {'center_x': .5}
-            font_name: 'assets/fonts/digital-numbers/DigitalNumbers-Regular.ttf'
+            font_name: 'assets/fonts/digital_numbers/DigitalNumbers-Regular.ttf'
         Filler:
 
 

@@ -5,12 +5,19 @@ from kivy.factory import Factory
 import custom_components.base_components
 import custom_components.auto_suggestion_input_box
 import custom_components.labeled_numeric_input
+import custom_components.icon_button
+from assets.fonts.material_design.webfont_unicodes import icons
 
 
 class KivyProjectsApp(App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.pm = None
+        self.icons = icons
+
+    def get_icon(self, icon_name):
+        """ Returns the icon unicode based on the webfonts material design font """
+        return self.icons.get(icon_name, None)
 
     def on_start(self):
         self.pm = self.root.ids.projectManager
@@ -18,10 +25,10 @@ class KivyProjectsApp(App):
         super().on_start()
 
     def nav_to_project(self, project_screen_name):
-        """Navigate to a screen, loading it dynamically if needed."""
+        """ Navigate to a screen, loading it dynamically if needed """
         if not self.pm.has_screen(project_screen_name):
             try:
-                # Dynamically load the screen class from Factory
+                # dynamically load the screen class from Factory
                 new_screen = Factory.get(project_screen_name)()
                 self.pm.add_widget(new_screen)
             except Exception as e:
