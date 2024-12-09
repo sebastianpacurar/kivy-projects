@@ -35,4 +35,4 @@ class AllCountriesScreen(Screen):
 
 class CountryScreen(Screen):
     def on_pre_enter(self, *args):
-        self.ids.title.text = self.manager.get_screen('CountryScreen').country_name['name']['common']
+        self.ids.title.text = self.country_name['name']['common']

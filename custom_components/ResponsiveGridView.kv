@@ -1,0 +1,10 @@
+<ResponsiveGridView>:
+    RecycleView: # data is handled dynamically from python file
+        id: rv
+        viewclass: root.view_class # passed in kv file
+        RecycleGridLayout:
+            id: grid_layout
+            cols: 1  # initial value, will update based on size
+            size_hint_y: None
+            height: self.minimum_height
+            spacing: root.item_spacing  # spacing between items

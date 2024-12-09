@@ -7,7 +7,7 @@ class CountriesApi:
     def get_country_names(self):
         url = f'{self.BASE_URL}/all?fields=name'
         try:
-            response = requests.get(url, timeout=30)
+            response = requests.get(url, timeout=30, verify=False)
             response.raise_for_status()
             countries = response.json()
 
@@ -19,7 +19,7 @@ class CountriesApi:
     def get_country_data(self, country_name):
         url = f'{self.BASE_URL}/name/{country_name}'
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=30, verify=False)
             response.raise_for_status()
             data = response.json()
 

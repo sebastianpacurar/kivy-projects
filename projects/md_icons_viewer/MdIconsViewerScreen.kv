@@ -1,0 +1,40 @@
+<MdIconsViewerScreen>:
+    name: 'MdIconsViewerScreen'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        TopBar:
+            project_name: 'Material Design Icons'
+        ResponsiveGridView:
+            id: responsive_grid
+            view_class: 'IconItem'
+            item_width: dp(200)
+            item_spacing: dp(10)
+
+
+<IconItem>:
+    canvas.before:
+        Color:
+            rgba: .9, .9, .9, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    size: root.size
+    AppLabel:
+        id: icon_label
+        font_name: 'assets/fonts/material_design/materialdesignicons-webfont.ttf'
+        font_size: sp(52)
+        size_hint: None, None
+        size: self.texture_size
+        pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+        halign: 'center'
+        valign: 'middle'
+    AppLabel:
+        text: root.icon_name
+        font_size: sp(12)
+        size_hint: None, None
+        size: self.texture_size
+        pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+        halign: 'center'
+        valign: 'middle'

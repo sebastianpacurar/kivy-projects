@@ -2,16 +2,19 @@
 #: include custom_components/AutoSuggestionInputBox.kv
 #: include custom_components/LabeledNumericInput.kv
 #: include custom_components/IconButton.kv
+#: include custom_components/ResponsiveGridView.kv
+
+#: import MDIconsViewerProject projects.md_icons_viewer.screen.MdIconsViewerScreen
+#: include projects/md_icons_viewer/MdIconsViewerScreen.kv
+
+#: import CountriesProject projects.countries.screen.CountriesMainScreen
+#: include projects/countries/CountriesScreen.kv
 
 #: import TimeCalculatorProject projects.time_calculator.screen.TimeCalculatorScreen
 #: include projects/time_calculator/TimeCalculatorScreen.kv
 
 #: import UnitConverterProject projects.unit_converter.screen.UnitConverterScreen
 #: include projects/unit_converter/UnitConverterScreen.kv
-
-#: import CountriesProject projects.countries.screen.CountriesMainScreen
-#: include projects/countries/CountriesScreen.kv
-
 
 
 AppContainer:
@@ -33,6 +36,11 @@ AppContainer:
     name: 'home_screen'
     BoxLayout:
         orientation: 'vertical'
+        Filler:
+        AppButton:
+            pos_hint: {'center_x': .5}
+            text: 'MD Icons Viewer'
+            on_release: app.nav_to_project('MdIconsViewerScreen')
         Filler:
         AppButton:
             pos_hint: {'center_x': .5}
