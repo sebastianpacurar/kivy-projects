@@ -2,11 +2,11 @@ from kivy.app import App
 from kivy.core.window import Window
 from kivy.factory import Factory
 
-import custom_components.base_components
-import custom_components.auto_suggestion_input_box
-import custom_components.labeled_numeric_input
-import custom_components.icon_button
-import custom_components.responsive_grid_view
+import custom_components.BaseComponents.base_components
+import custom_components.AutoSuggestionInputBox.auto_suggestion_input_box
+import custom_components.NumericInputBox.numeric_input_box
+import custom_components.IconButton.icon_button
+import custom_components.ResponsiveGridView.responsive_grid_view
 from assets.fonts.material_design.webfont_unicodes import icons
 
 

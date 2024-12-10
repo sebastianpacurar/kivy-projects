@@ -2,7 +2,7 @@ from kivy.properties import BooleanProperty, StringProperty, NumericProperty, Ob
 from kivy.uix.boxlayout import BoxLayout
 
 
-class LabeledNumericInput(BoxLayout):
+class NumericInputBox(BoxLayout):
     is_readonly = BooleanProperty(False)
     allow_float = BooleanProperty(False)
     is_validate_digits = BooleanProperty(True)

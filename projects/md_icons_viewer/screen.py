@@ -9,7 +9,7 @@ class MdIconsViewerScreen(Screen):
     data = []
 
     def set_data(self):
-        for i, (k, v) in enumerate(icons.items()):
+        for k, v in icons.items():
             self.data.append({'icon': v, 'icon_name': k})
 
     def on_kv_post(self, base_widget):

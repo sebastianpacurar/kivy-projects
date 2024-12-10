@@ -1,4 +1,4 @@
-<LabeledNumericInput>:
+<NumericInputBox>:
     size_hint: None, None
     width: root.container_width
     height: 80
@@ -10,6 +10,7 @@
         AppLabel:
             size_hint_y: None
             height: self.parent.height / 3
+            width: self.texture_size[0]
             text: root.label_txt
 
         TextInput:
