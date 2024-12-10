@@ -3,12 +3,9 @@
     size_hint_y: None
     height: self.minimum_height
 
-    TextInput:
+    BaseTextInput:
         id: input_field
-        multiline: False
-        size_hint_y: None
         height: 40
-        write_tab: False
         on_text: root.filter_options(self.text) # filter based on splitted option
         on_focus: root.show_options(self.focus) # add/clear dropdown option buttons
 

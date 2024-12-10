@@ -7,23 +7,15 @@
         orientation: 'vertical'
         size_hint: 1, 1
 
-        AppLabel:
+        BaseLabel:
             size_hint_y: None
             height: self.parent.height / 3
             width: self.texture_size[0]
             text: root.label_txt
 
-        TextInput:
+        BaseTextInput:
             id: text_input
-            size_hint_y: None
             height: self.parent.height / 2.25
-            font_size: sp(18)
-            foreground_color: 0, 0, 0, 1
-            background_color: 1, 1, 1, 1
-            cursor_color: 0, 0, 0, 1
-            padding: [10, 5, 2.5, 2.5]
-            multiline: False
-            write_tab: False
             readonly: root.is_readonly
             disabled: root.is_readonly
             on_focus: self.text = "0" if not self.focus and len(self.text) == 0 else self.text

@@ -1,4 +1,4 @@
-from kivy.graphics import Color, Rectangle
+from kivy.graphics import Color, RoundedRectangle
 from kivy.properties import StringProperty, ListProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.label import Label
@@ -35,4 +35,4 @@ class IconButton(ButtonBehavior, Label):
         self.canvas.before.clear()  # clear existent drawing
         with self.canvas.before:  # redraw with bg_color values
             Color(*self.bg_color)
-            self.rect = Rectangle(size=self.size, pos=self.pos)
+            self.rect = RoundedRectangle(size=self.size, pos=self.pos)

@@ -41,7 +41,7 @@
                 on_press: root.subtract_minutes_and_seconds(int(minutes_input_field.ids.text_input.text), int(seconds_input_field.ids.text_input.text))
 
             Filler:
-        AppLabel:
+        BaseLabel:
             markup: True
             text: f"{root.timer['hours']}:{root.timer['minutes']:02}:{root.timer['seconds']:02}"
             font_size: sp(24)

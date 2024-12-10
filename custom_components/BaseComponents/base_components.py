@@ -12,7 +12,7 @@ class AppButton(Button):
     pass
 
 
-class AppLabel(Label):
+class BaseLabel(Label):
     bg_color = ListProperty([1, 1, 1, 0])  # default to transparent
 
 
@@ -32,9 +32,6 @@ class SimpleDropdown(Spinner):
         longest_option = max(self.options, key=len)  # find the longest option by character length
         # calculate the width of the longest option
         self.width = max(self.texture_size[0], len(longest_option) * dp(10))
-
-    def on_kv_post(self, base_widget):
-        pass
 
 
 class SegmentedButton(ToggleButton):

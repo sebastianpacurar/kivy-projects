@@ -3,9 +3,54 @@
     BoxLayout:
         orientation: 'vertical'
         padding: 10
-        spacing: 10
+        spacing: 20
+        canvas.before:
+            Color:
+                rgba: 250/255, 235/255, 215/255, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         TopBar:
             project_name: 'Material Design Icons'
+
+        GridLayout:
+            cols: 6
+            size_hint_y: None
+            height: dp(25)
+            spacing: 5
+            SegmentedButton:
+                text: 'All'
+                group: 'md_icon_types'
+                on_state: if self.state == 'down': root.set_filter_selection(self.text)
+                state: 'down'
+            SegmentedButton:
+                text: 'Filled'
+                group: 'md_icon_types'
+                on_state: if self.state == 'down': root.set_filter_selection(self.text)
+            SegmentedButton:
+                text: 'Outlined'
+                group: 'md_icon_types'
+                on_state: if self.state == 'down': root.set_filter_selection(self.text)
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: 1, None
+            height: filter_input.height
+
+            BaseTextInput:
+                id: filter_input
+                size_hint_x: 1
+                height: 40
+                hint_text: 'Filter icons based on name'
+                on_text: root.filter_data(self.text)
+
+            BaseLabel:
+                text: f'({str(root.counter)})'
+                width: dp(100)
+                height: 40
+                halign: 'center'
+                font_size: sp(24)
+
         ResponsiveGridView:
             id: responsive_grid
             view_class: 'IconItem'
@@ -16,12 +61,12 @@
 <IconItem>:
     canvas.before:
         Color:
-            rgba: .9, .9, .9, 1
-        Rectangle:
+            rgba: 1, 1, 1, 1
+        RoundedRectangle:
             pos: self.pos
             size: self.size
     size: root.size
-    AppLabel:
+    BaseLabel:
         id: icon_label
         font_name: 'assets/fonts/material_design/materialdesignicons-webfont.ttf'
         font_size: sp(52)
@@ -30,7 +75,7 @@
         pos_hint: {'center_x': 0.5, 'center_y': 0.7}
         halign: 'center'
         valign: 'middle'
-    AppLabel:
+    BaseLabel:
         text: root.icon_name
         font_size: sp(12)
         size_hint: None, None
