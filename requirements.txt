@@ -1,4 +1,6 @@
 Kivy==2.3.0
 requests==2.32.3
 pytest==8.3.4
+pytest-asyncio==0.24.0
+pytest-kivy==0.1.0.dev2
 coverage==7.6.8

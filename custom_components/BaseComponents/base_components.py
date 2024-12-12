@@ -8,7 +8,7 @@ from kivy.uix.spinner import Spinner
 from kivy.uix.togglebutton import ToggleButton
 
 
-class AppButton(Button):
+class BaseButton(Button):
     pass
 
 
@@ -37,6 +37,3 @@ class SimpleDropdown(Spinner):
 class SegmentedButton(ToggleButton):
     option_index = NumericProperty(0)
 
-
-class RV(RecycleView):
-    pass

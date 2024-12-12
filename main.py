@@ -1,20 +1,70 @@
+import os
+
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.factory import Factory
+from kivy.lang import Builder
 
-import custom_components.BaseComponents.base_components
+from path_finder import find_project_root
+
+# custom components
+from custom_components.BaseComponents.base_components import *
 import custom_components.AutoSuggestionInputBox.auto_suggestion_input_box
 import custom_components.NumericInputBox.numeric_input_box
 import custom_components.IconButton.icon_button
 import custom_components.ResponsiveGridView.responsive_grid_view
+
+# projects
+import projects.md_icons_viewer.screen
+import projects.time_calculator.screen
+import projects.unit_converter.screen
+import projects.countries.screen
+
+# material design icons
 from assets.fonts.material_design.webfont_unicodes import icons
 
 
 class KivyProjectsApp(App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.pm = None
-        self.icons = icons
+        self.project_root = find_project_root()
+
+        # load the KV file for rule-based components like <Filler@Widget>
+        Builder.load_file(os.path.join(self.project_root, 'custom_components', 'BaseComponents', 'BaseComponents.kv'))
+
+        # register python-defined components (present in BaseComponents.kv but without a specific python class)
+        Factory.register('BaseButton', cls=BaseButton)
+        Factory.register('BaseLabel', cls=BaseLabel)
+        Factory.register('TopBar', cls=TopBar)
+        Factory.register('SimpleDropdown', cls=SimpleDropdown)
+        Factory.register('SegmentedButton', cls=SegmentedButton)
+
+        # register custom components (python classes with corresponding .kv files)
+        Factory.register('AutoSuggestionInputBox', cls=custom_components.AutoSuggestionInputBox)
+        Factory.register('NumericInputBox', cls=custom_components.NumericInputBox)
+        Factory.register('IconButton', cls=custom_components.IconButton)
+        Factory.register('ResponsiveGridView', cls=custom_components.ResponsiveGridView)
+
+        # register screen classes (the projects of the app)
+        Factory.register('MdIconsViewerScreen', cls=projects.md_icons_viewer.screen.MdIconsViewerScreen)
+        Factory.register('CountriesMainScreen', cls=projects.countries.screen.CountriesMainScreen)
+        Factory.register('TimeCalculatorScreen', cls=projects.time_calculator.screen.TimeCalculatorScreen)
+        Factory.register('UnitConverterScreen', cls=projects.unit_converter.screen.UnitConverterScreen)
+
+        self.pm = None  # initialize project manager
+        self.icons = icons  # material design icons dictionary
+
+    def build(self):
+        Builder.load_file(os.path.join(self.project_root, 'custom_components', 'AutoSuggestionInputBox', 'AutoSuggestionInputBox.kv'))
+        Builder.load_file(os.path.join(self.project_root, 'custom_components', 'NumericInputBox', 'NumericInputBox.kv'))
+        Builder.load_file(os.path.join(self.project_root, 'custom_components', 'IconButton', 'IconButton.kv'))
+        Builder.load_file(os.path.join(self.project_root, 'custom_components', 'ResponsiveGridView', 'ResponsiveGridView.kv'))
+
+        # load the screens dynamically
+        Builder.load_file(os.path.join(self.project_root, 'projects', 'md_icons_viewer', 'MdIconsViewerScreen.kv'))
+        Builder.load_file(os.path.join(self.project_root, 'projects', 'countries', 'CountriesScreen.kv'))
+        Builder.load_file(os.path.join(self.project_root, 'projects', 'time_calculator', 'TimeCalculatorScreen.kv'))
+        Builder.load_file(os.path.join(self.project_root, 'projects', 'unit_converter', 'UnitConverterScreen.kv'))
 
     def get_icon(self, icon_name):
         """ Returns the icon unicode based on the webfonts material design font """
