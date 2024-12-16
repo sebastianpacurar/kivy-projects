@@ -12,6 +12,7 @@
                 size: self.size
 
         TopBar:
+            id: top_bar
             project_name: 'Time Calculator'
 
         BoxLayout:
@@ -46,7 +47,7 @@
             text: f"{root.timer['hours']}:{root.timer['minutes']:02}:{root.timer['seconds']:02}"
             font_size: sp(24)
             pos_hint: {'center_x': .5}
-            font_name: 'assets/fonts/digital_numbers/DigitalNumbers-Regular.ttf'
+            font_name: 'digital'
         Filler:
 
 

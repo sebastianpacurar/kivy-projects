@@ -53,6 +53,7 @@ def time_input(request):
     return request.param
 
 
+@pytest.mark.functional
 def test_add_minutes_and_seconds(screen, initial_time, time_input):
     """
     Verify adding minutes and seconds to the timer using the provided time_input returns correct output.
@@ -85,6 +86,7 @@ def test_add_minutes_and_seconds(screen, initial_time, time_input):
           f"Expected: {expected_hours} hours, {expected_minutes} minutes, {expected_seconds} seconds\n")
 
 
+@pytest.mark.functional
 def test_subtract_minutes_and_seconds(screen, initial_time, time_input):
     """
     Verify subtracting minutes and seconds from the timer using the provided time_input returns correct output.

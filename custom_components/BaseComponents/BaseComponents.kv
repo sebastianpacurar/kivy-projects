@@ -5,7 +5,7 @@
     font_size: sp(18)
     background_color: 0.01176, 0.8549, 0.7765, 1
     color: 1, 1, 1, 1
-    font_name: 'assets/fonts/roboto/Roboto-Medium.ttf'
+    font_name: 'roboto-medium'
 
 <BaseLabel>:
     color: 0, 0, 0, 1
@@ -52,6 +52,7 @@
         text_size: self.size  # ensure the text is wrapped within its widget
 #        bg_color: [1, 0, 0, .5]
     IconButton:
+        id: home_button
         pos_hint: {'center_y': .5}
         on_release: app.nav_to_home()
         icon: app.get_icon('home')

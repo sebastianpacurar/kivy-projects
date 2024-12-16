@@ -1,6 +1,7 @@
 import os
 
 from kivy.app import App
+from kivy.core.text import LabelBase
 from kivy.core.window import Window
 from kivy.factory import Factory
 from kivy.lang import Builder
@@ -28,6 +29,21 @@ class KivyProjectsApp(App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.project_root = find_project_root()
+
+        LabelBase.register(
+            name="roboto-medium",
+            fn_regular=os.path.join(self.project_root, "assets/fonts/roboto/Roboto-Medium.ttf"),
+        )
+
+        LabelBase.register(
+            name="md-icon",
+            fn_regular=os.path.join(self.project_root, "assets/fonts/material_design/materialdesignicons-webfont.ttf"),
+        )
+
+        LabelBase.register(
+            name="digital",
+            fn_regular=os.path.join(self.project_root, "assets/fonts/digital_numbers/DigitalNumbers-Regular.ttf"),
+        )
 
         # load the KV file for rule-based components like <Filler@Widget>
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'BaseComponents', 'BaseComponents.kv'))
@@ -66,14 +82,18 @@ class KivyProjectsApp(App):
         Builder.load_file(os.path.join(self.project_root, 'projects', 'time_calculator', 'TimeCalculatorScreen.kv'))
         Builder.load_file(os.path.join(self.project_root, 'projects', 'unit_converter', 'UnitConverterScreen.kv'))
 
+        # attach AppContainer() to root explicitly, to make sure pytests instantiate the app and widget tree properly
+        self.root = AppContainer()
+        return self.root
+
     def get_icon(self, icon_name):
         """ Returns the icon unicode based on the webfonts material design font """
         return self.icons.get(icon_name, None)
 
     def on_start(self):
+        super().on_start()
         self.pm = self.root.ids.projectManager
         Window.bind(on_key_down=self.on_key_down)
-        super().on_start()
 
     def nav_to_project(self, project_screen_name):
         """ Navigate to a screen, loading it dynamically if needed """
@@ -98,6 +118,10 @@ class KivyProjectsApp(App):
         if keycode == 27 or keycode == 41:  # 27 = Escape; 41 = Space, although 41 binds to Escape as well
             return True
         return False
+
+
+class AppContainer(BoxLayout):
+    pass
 
 
 if __name__ == '__main__':
