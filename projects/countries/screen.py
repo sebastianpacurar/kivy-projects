@@ -1,10 +1,10 @@
 from threading import Thread
 
 from kivy.app import App
-from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen
 
 from backend.countries_project.rest_countries import CountriesApi
+from utils import explicit_wait
 
 
 class CountriesMainScreen(Screen):
@@ -25,22 +25,20 @@ class AllCountriesScreen(Screen):
         if len(self.data) == 0:
             Thread(target=self.fetch_country_names).start()
 
+    @explicit_wait(wait=0.75, callback=lambda self, countries: self.update_countries_ui_after_fetch(countries))
     def fetch_country_names(self):
-        countries = CountriesApi().get_country_names()
-        Clock.schedule_once(lambda dt: self.app.show_spinner(.5), 0)
-        Clock.schedule_once(lambda dt: self.update_countries_ui_after_fetch(countries), .5)
+        return CountriesApi().get_country_names()
 
+    @explicit_wait(wait=0.75, callback=lambda self, country_data: self.set_country_data(country_data))
     def fetch_country_data(self, country):
-        self.manager.current = 'CountryScreen'
-        country_data = CountriesApi().get_country_data(country)
-        Clock.schedule_once(lambda dt: self.app.show_spinner(.5), 0)
-        Clock.schedule_once(lambda dt: self.set_country_data(country_data), .5)
+        return CountriesApi().get_country_data(country)
 
     def update_countries_ui_after_fetch(self, countries):
         self.data = [{'text': country, 'on_release': lambda b=country: self.fetch_country_data(b)} for country in countries]
         self.ids.countries_recycle.data = self.data
 
     def set_country_data(self, country_data):
+        self.manager.current = 'CountryScreen'
         self.manager.get_screen('CountryScreen').country_data = country_data
 
 

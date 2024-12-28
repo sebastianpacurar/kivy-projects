@@ -9,7 +9,7 @@ from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 
 from custom_components.LoadingSpinner.loading_spinner import LoadingSpinner
-from path_finder import find_project_root
+from utils import find_project_root
 
 # custom components
 from custom_components.BaseComponents.base_components import *
