@@ -1,11 +1,14 @@
 import os
 
 from kivy.app import App
+from kivy.clock import Clock
 from kivy.core.text import LabelBase
 from kivy.core.window import Window
 from kivy.factory import Factory
 from kivy.lang import Builder
+from kivy.uix.floatlayout import FloatLayout
 
+from custom_components.LoadingSpinner.loading_spinner import LoadingSpinner
 from path_finder import find_project_root
 
 # custom components
@@ -14,6 +17,7 @@ import custom_components.AutoSuggestionInputBox.auto_suggestion_input_box
 import custom_components.NumericInputBox.numeric_input_box
 import custom_components.IconButton.icon_button
 import custom_components.ResponsiveGridView.responsive_grid_view
+import custom_components.LoadingSpinner.loading_spinner
 
 # projects
 import projects.md_icons_viewer.screen
@@ -60,6 +64,7 @@ class KivyProjectsApp(App):
         Factory.register('NumericInputBox', cls=custom_components.NumericInputBox)
         Factory.register('IconButton', cls=custom_components.IconButton)
         Factory.register('ResponsiveGridView', cls=custom_components.ResponsiveGridView)
+        Factory.register('LoadingSpinner', cls=custom_components.LoadingSpinner)
 
         # register screen classes (the projects of the app)
         Factory.register('MdIconsViewerScreen', cls=projects.md_icons_viewer.screen.MdIconsViewerScreen)
@@ -67,7 +72,7 @@ class KivyProjectsApp(App):
         Factory.register('TimeCalculatorScreen', cls=projects.time_calculator.screen.TimeCalculatorScreen)
         Factory.register('UnitConverterScreen', cls=projects.unit_converter.screen.UnitConverterScreen)
 
-        self.pm = None  # initialize project manager
+        self.pm, self.spinner = None, None  # initialize project manager and global spinner
         self.icons = icons  # material design icons dictionary
 
     def build(self):
@@ -75,6 +80,7 @@ class KivyProjectsApp(App):
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'NumericInputBox', 'NumericInputBox.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'IconButton', 'IconButton.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'ResponsiveGridView', 'ResponsiveGridView.kv'))
+        Builder.load_file(os.path.join(self.project_root, 'custom_components', 'LoadingSpinner', 'LoadingSpinner.kv'))
 
         # load the screens dynamically
         Builder.load_file(os.path.join(self.project_root, 'projects', 'md_icons_viewer', 'MdIconsViewerScreen.kv'))
@@ -92,6 +98,7 @@ class KivyProjectsApp(App):
 
     def on_start(self):
         super().on_start()
+        self.spinner = self.root.ids.loadingSpinner
         self.pm = self.root.ids.projectManager
         Window.bind(on_key_down=self.on_key_down)
 
@@ -113,6 +120,18 @@ class KivyProjectsApp(App):
         self.pm.transition.direction = 'right'
         self.pm.current = 'home_screen'
 
+    def show_spinner(self, seconds):
+        """ Disable projectManager and display Spinner \n
+            Schedule hide in given seconds
+        """
+        self.pm.disabled = True
+        self.spinner.opacity = 1
+        Clock.schedule_once(self.hide_spinner, seconds)
+
+    def hide_spinner(self, *args):
+        self.spinner.opacity = 0
+        self.pm.disabled = False
+
     # prevent app from closing when hitting Escape key
     def on_key_down(self, instance, keyboard, keycode, text, modifiers):
         if keycode == 27 or keycode == 41:  # 27 = Escape; 41 = Space, although 41 binds to Escape as well
@@ -120,7 +139,7 @@ class KivyProjectsApp(App):
         return False
 
 
-class AppContainer(BoxLayout):
+class AppContainer(FloatLayout):
     pass
 
 
