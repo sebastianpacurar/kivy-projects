@@ -31,34 +31,6 @@
 <Filler@Widget>:
 
 
-<TopBar>:
-    orientation: 'horizontal'
-    size_hint_y: None
-    height: dp(50)
-    padding: dp(10)
-    canvas.before:
-        Color:
-            rgba: 125/255, 254/255, 227/255, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    BaseLabel:
-        text: root.project_name
-        font_size: sp(24)
-        size_hint_x: 1  # take the remaining horizontal space
-        size_hint_y: 1  # match parent height
-        halign: 'center'
-        valign: 'middle'
-        text_size: self.size  # ensure the text is wrapped within its widget
-        disabled_color: self.color
-#        bg_color: [1, 0, 0, .5]
-    IconButton:
-        id: home_button
-        pos_hint: {'center_y': .5}
-        on_release: app.nav_to_home()
-        icon: app.get_icon('home')
-
-
 <SimpleDropdown>:
     size_hint: None, None
     width: self.width

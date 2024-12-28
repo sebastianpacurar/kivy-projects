@@ -10,9 +10,6 @@
             Rectangle:
                 pos: self.pos
                 size: self.size
-        TopBar:
-            id: top_bar
-            project_name: 'Countries'
 
         ScreenManager:
             id: screen_manager
@@ -22,22 +19,40 @@
 
 <AllCountriesScreen>:
     name: 'AllCountriesScreen'
-    RecycleView:
-        id: countries_recycle
-        viewclass: 'BaseButton'
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 10
 
-        RecycleBoxLayout:
-            orientation: 'vertical'
-            default_size: None, 40
-            default_size_hint: 1, None
-            size_hint_y: None
-            height: self.minimum_height
-            orientation: 'vertical'
+        TopBar:
+            id: top_bar
+            project_name: 'Countries'
+
+        RecycleView:
+            id: countries_recycle
+            viewclass: 'BaseButton'
+            RecycleBoxLayout:
+                orientation: 'vertical'
+                default_size: None, 40
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+                orientation: 'vertical'
 
 
 <CountryScreen>:
     name: 'CountryScreen'
-    BaseLabel:
-        id: title
-        text: 'test'
-        bg_color: 1, 0, 0, 1
+
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 10
+
+        TopBar:
+            id: top_bar
+            project_name: 'Country' # will be changed during runtime
+            pos_hint: {'top': 1}
+
+        BaseLabel:
+            id: title
+            text: 'test'
+            bg_color: 1, 0, 0, 1
+        Filler:

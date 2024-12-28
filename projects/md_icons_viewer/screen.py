@@ -1,3 +1,4 @@
+from kivy.app import App
 from kivy.properties import StringProperty, ListProperty, NumericProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
@@ -18,8 +19,14 @@ class MdIconsViewerScreen(Screen):
         self.counter = len(self.data)
 
     def on_kv_post(self, base_widget):
+        top_bar = self.ids.top_bar
+        top_bar.add_right_button(icon=App.get_running_app().get_icon('grid'), on_release=self.test_hello)
+        top_bar.add_right_button(icon=App.get_running_app().get_icon('grid-large'), on_release= self.test_hello)
         self.set_data()
         self.ids.responsive_grid.ids.rv.data = self.data
+
+    def test_hello(self, *args):
+        print('test')
 
     def set_filter_selection(self, toggle_value):
         """ Update the filtered_data based on toggle button selection """
@@ -30,7 +37,7 @@ class MdIconsViewerScreen(Screen):
             self.filtered_data = [item for item in self.original_data if 'outline' not in item['icon_name'].lower()]
         elif toggle_value == 'Outlined':
             self.filtered_data = [item for item in self.original_data if 'outline' in item['icon_name'].lower()]
-        self.ids.responsive_grid.ids.rv.scroll_y = 1.0 # reset REcycleView scroll to top
+        self.ids.responsive_grid.ids.rv.scroll_y = 1.0  # reset REcycleView scroll to top
         self.filter_data(query)
 
     def filter_data(self, text):

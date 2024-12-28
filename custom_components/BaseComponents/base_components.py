@@ -1,9 +1,7 @@
 from kivy.metrics import dp
 from kivy.properties import NumericProperty, StringProperty, ListProperty
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
-from kivy.uix.recycleview import RecycleView
 from kivy.uix.spinner import Spinner
 from kivy.uix.togglebutton import ToggleButton
 
@@ -14,10 +12,6 @@ class BaseButton(Button):
 
 class BaseLabel(Label):
     bg_color = ListProperty([1, 1, 1, 0])  # default to transparent
-
-
-class TopBar(BoxLayout):
-    project_name = StringProperty('')
 
 
 class SimpleDropdown(Spinner):
@@ -36,4 +30,3 @@ class SimpleDropdown(Spinner):
 
 class SegmentedButton(ToggleButton):
     option_index = NumericProperty(0)
-

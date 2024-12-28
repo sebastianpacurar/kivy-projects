@@ -38,10 +38,33 @@ class AllCountriesScreen(Screen):
         self.ids.countries_recycle.data = self.data
 
     def set_country_data(self, country_data):
+        self.manager.transition.direction = 'left'
         self.manager.current = 'CountryScreen'
         self.manager.get_screen('CountryScreen').country_data = country_data
 
 
 class CountryScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.app = App.get_running_app()
+        self.top_bar = None
+
+    def on_pre_enter(self, *args):
+        self.ids.title.text = 'Loading...'
+        self.top_bar.project_name = 'Loading...'
+
     def on_enter(self, *args):
         self.ids.title.text = self.country_data['name']['common']
+        self.top_bar.project_name = self.ids.title.text
+
+    def on_leave(self, *args):
+        self.ids.title.text = ''
+        self.top_bar.project_name = ''
+
+    def on_kv_post(self, base_widget):
+        self.top_bar = self.ids.top_bar
+        self.top_bar.add_left_button(icon=self.app.get_icon('arrow-left-bold-circle-outline'), on_release=self.go_back)
+
+    def go_back(self, *args):
+        self.manager.transition.direction = 'right'
+        self.manager.current = 'AllCountriesScreen'

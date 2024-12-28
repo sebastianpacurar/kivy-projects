@@ -1,0 +1,53 @@
+<TopBar>:
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: dp(50)
+    padding: dp(10)
+    spacing: dp(5)
+    canvas.before:
+        Color:
+            rgba: 125/255, 254/255, 227/255, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    # left button container
+    BoxLayout:
+        id: button_container_left
+        orientation: 'horizontal'
+        size_hint: None, 1
+        width: self.minimum_width
+        spacing: dp(5)
+
+    # top bar title
+    BaseLabel:
+        text: root.project_name
+        font_size: sp(24)
+        size_hint: 1, 1
+        halign: 'center'
+        valign: 'middle'
+        text_size: self.size
+        disabled_color: self.color
+
+    # right button container
+    BoxLayout:
+        id: button_container_right
+        orientation: 'horizontal'
+        size_hint: None, 1
+        width: self.minimum_width
+        spacing: dp(5)
+
+    # vertical separator
+    BaseLabel:
+        height: self.parent.height
+        width: dp(5)
+        pos_hint: {'center_y': .5}
+        padding: 0, dp(20), 0, 0
+        bg_color: 125/255 * .8, 254/255 * .8, 227/255 * .8, .5
+
+    # home button (present on all screens)
+    IconButton:
+        id: home_button
+        pos_hint: {'center_y': .5}
+        on_release: app.nav_to_home()
+        icon: app.get_icon('home')
