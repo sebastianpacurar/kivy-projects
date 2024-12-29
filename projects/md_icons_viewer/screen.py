@@ -15,6 +15,12 @@ class MdIconsViewerScreen(Screen):
     counter = NumericProperty(0)  # count of currently filtered options
     is_compact = BooleanProperty(False)  # used to switch between small icons and large icons
 
+    def on_leave(self, *args):
+        """ Make sure compact is reset to False when leaving screen"""
+        if self.is_compact:
+            # toggle grid to extended to prevent tooltip from being displayed on other screens
+            self.toggle_grid_display_size()
+
     def set_data(self):
         # Convert icons dictionary to a list of dictionaries for RecycleView
         self.original_data = [{'icon': v, 'icon_name': k, 'is_name_displayed': not self.is_compact} for k, v in icons.items()]
