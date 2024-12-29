@@ -1,9 +1,11 @@
 from kivy.app import App
+from kivy.core.window import Window
 from kivy.metrics import dp, sp
 from kivy.properties import StringProperty, ListProperty, NumericProperty, BooleanProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
 from assets.fonts.material_design.webfont_unicodes import icons
+from custom_components.Tooltip.tooltip import Tooltip
 
 
 class MdIconsViewerScreen(Screen):
@@ -50,16 +52,22 @@ class MdIconsViewerScreen(Screen):
         self.refresh_recycle_view()
 
     def toggle_grid_display_size(self, *args):
-        self.is_compact = not self.is_compact
+        """ Change layout for IconItem \n
+            When is compact, then display small IconItems with tooltip
+            When not compact, display large IconItems
+            Update all data lists and refresh RV
+        """
+        self.is_compact = not self.is_compact  # toggle compact
 
-        self.ids.responsive_grid.item_width = dp(200) if not self.is_compact else dp(75)
         for lst in [self.data, self.filtered_data, self.original_data]:
             for item in lst:
                 item['is_name_displayed'] = not self.is_compact
 
         if self.is_compact:
+            self.ids.responsive_grid.item_width = dp(75)
             self.ids.top_bar.ids.button_container_right.children[0].icon = App.get_running_app().get_icon('grid-large')
         else:
+            self.ids.responsive_grid.item_width = dp(200)
             self.ids.top_bar.ids.button_container_right.children[0].icon = App.get_running_app().get_icon('grid')
 
         self.refresh_recycle_view()
@@ -73,15 +81,39 @@ class IconItem(FloatLayout):
     icon_name = StringProperty('')  # icon name
     is_name_displayed = BooleanProperty(True)  # start with large grid
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.tooltip = Tooltip()
+
     def on_icon(self, instance, value):
+        """ Change icon text to the unicode value of the icon """
         self.ids.icon_label.text = value
 
+    def on_icon_name(self, instance, value):
+        """ Update tooltip_text after icon_name receives its value """
+        self.tooltip.tooltip_text = value
+
     def on_is_name_displayed(self, instance, value):
+        """ Toggle between expanded and compact view of icons """
         if value:
+            # if True, extended view enabled, no tooltip needed
             self.ids.icon_label.pos_hint = {'center_x': 0.5, 'center_y': 0.7}
             self.ids.icon_label.font_size = sp(52)
             self.ids.icon_name.opacity = 1
+            Window.unbind(mouse_pos=self.on_mouse_pos_tooltip)  # unbind hover tooltip logic
         else:
+            # if False, compact view enabled, tooltip needed
             self.ids.icon_name.opacity = 0
             self.ids.icon_label.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
             self.ids.icon_label.font_size = sp(34)
+            Window.bind(mouse_pos=self.on_mouse_pos_tooltip)  # bind hover tooltip logic
+
+    def on_mouse_pos_tooltip(self, *args):
+        """ Toggle tooltip when mouse hovers over icon_label"""
+        pos = args[1]
+        # add tooltip widget when mouse hovers icon-label specifically
+        if self.ids.icon_label.collide_point(*self.to_widget(*pos)):
+            self.tooltip.show_tooltip((pos[0] + 10, pos[1] - 10))
+        # destroy tooltip widget when not hovering icon-label
+        else:
+            self.tooltip.hide_tooltip()

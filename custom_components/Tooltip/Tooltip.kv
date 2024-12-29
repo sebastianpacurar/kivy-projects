@@ -1,0 +1,22 @@
+<Tooltip>:
+    size_hint: None, None
+    size: tooltip_label.size
+    pos: 0, 0
+    BaseLabel:
+        id: tooltip_label
+        size_hint: None, None
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        font_size: sp(20)
+        halign: "left"
+        valign: "middle"
+        text: root.tooltip_text
+        size: self.texture_size[0] + 10, self.texture_size[1] + 10
+        bg_color:  .75, .75, .75, 1
+
+        # border
+        canvas.before:
+            Color:
+                rgba: .25, .25, .25, 1
+            Line:
+                width: 1.5
+                rectangle: self.x, self.y, self.width, self.height

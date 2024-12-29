@@ -19,6 +19,7 @@ import custom_components.IconButton.icon_button
 import custom_components.ResponsiveGridView.responsive_grid_view
 import custom_components.LoadingSpinner.loading_spinner
 import custom_components.TopBar.top_bar
+import custom_components.Tooltip.tooltip
 
 # projects
 import projects.md_icons_viewer.screen
@@ -66,6 +67,7 @@ class KivyProjectsApp(App):
         Factory.register('ResponsiveGridView', cls=custom_components.ResponsiveGridView)
         Factory.register('LoadingSpinner', cls=custom_components.LoadingSpinner)
         Factory.register('TopBar', cls=custom_components.TopBar)
+        Factory.register('TopBar', cls=custom_components.Tooltip)
 
         # register screen classes (the projects of the app)
         Factory.register('MdIconsViewerScreen', cls=projects.md_icons_viewer.screen.MdIconsViewerScreen)
@@ -83,6 +85,7 @@ class KivyProjectsApp(App):
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'ResponsiveGridView', 'ResponsiveGridView.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'LoadingSpinner', 'LoadingSpinner.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'TopBar', 'TopBar.kv'))
+        Builder.load_file(os.path.join(self.project_root, 'custom_components', 'Tooltip', 'Tooltip.kv'))
 
         # load the screens dynamically
         Builder.load_file(os.path.join(self.project_root, 'projects', 'md_icons_viewer', 'MdIconsViewerScreen.kv'))
