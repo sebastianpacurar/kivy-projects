@@ -26,7 +26,3 @@ class SimpleDropdown(Spinner):
         longest_option = max(self.options, key=len)  # find the longest option by character length
         # calculate the width of the longest option
         self.width = max(self.texture_size[0], len(longest_option) * dp(10))
-
-
-class SegmentedButton(ToggleButton):
-    option_index = NumericProperty(0)

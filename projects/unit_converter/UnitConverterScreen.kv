@@ -14,43 +14,11 @@
             id: top_bar
             project_name: 'Unit Converter'
 
-        GridLayout:
-            cols: 6
+        SegmentedController:
+            id: seg_controller
             size_hint_y: None
             height: dp(25)
-            spacing: 1
-
-            SegmentedButton:
-                text: 'Length'
-                group: 'unit_converters'
-                on_state: root.change_unit_screen(self, 'LengthScreen')
-                state: 'down'
-                option_index: 0
-            SegmentedButton:
-                text: 'Area'
-                group: 'unit_converters'
-                on_state: root.change_unit_screen(self, 'AreaScreen')
-                option_index: 1
-            SegmentedButton:
-                text: 'Volume'
-                group: 'unit_converters'
-                on_state: root.change_unit_screen(self, 'VolumeScreen')
-                option_index: 2
-            SegmentedButton:
-                text: 'Energy'
-                group: 'unit_converters'
-                on_state: root.change_unit_screen(self, 'EnergyScreen')
-                option_index: 3
-            SegmentedButton:
-                text: 'Force'
-                group: 'unit_converters'
-                on_state: root.change_unit_screen(self, 'ForceScreen')
-                option_index: 4
-            SegmentedButton:
-                text: 'Speed'
-                group: 'unit_converters'
-                on_state: root.change_unit_screen(self, 'SpeedScreen')
-                option_index: 5
+            spacing: 10
 
         BoxLayout:
             orientation: 'vertical'

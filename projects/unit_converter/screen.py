@@ -11,12 +11,23 @@ class UnitConverterScreen(Screen):
         self.sm = self.ids.screen_manager
         self.curr_screen_index = 0
 
-    def change_unit_screen(self, button, unit_screen_name):
-        if button.state == 'down':
-            self.sm.transition.direction = 'left' if button.option_index > self.curr_screen_index else 'right'
-            self.curr_screen_index = button.option_index
-            self.sm.current = unit_screen_name
+    def change_unit_screen(self, instance, state, screen_name):
+        """Handles state change and screen transition """
+        print(f"State changed to {state}, changing screen to {screen_name}")
+        if state == 'down':
+            self.sm.transition.direction = 'left' if instance.option_index > self.curr_screen_index else 'right'
+            self.curr_screen_index = instance.option_index
+            self.sm.current = screen_name
 
+    def on_kv_post(self, base_widget):
+        """This method is called after the KV language is parsed """
+        self.add_segmented_buttons()
+
+    def add_segmented_buttons(self):
+        """Add segmented buttons dynamically """
+        btns = ['Length', 'Area', 'Volume', 'Energy', 'Force', 'Speed']
+        seg_controller = self.ids.seg_controller  # SegmentedController instance
+        seg_controller.add_segmented_buttons(btns, self.change_unit_screen)
 
 class BaseUnitScreen(Screen):
     def __init__(self, screen, unit_type, initial_conversion, **kw):

@@ -20,6 +20,8 @@ import custom_components.ResponsiveGridView.responsive_grid_view
 import custom_components.LoadingSpinner.loading_spinner
 import custom_components.TopBar.top_bar
 import custom_components.Tooltip.tooltip
+import custom_components.SegmentedController.segmented_controller
+
 
 # projects
 import projects.md_icons_viewer.screen
@@ -58,7 +60,6 @@ class KivyProjectsApp(App):
         Factory.register('BaseButton', cls=BaseButton)
         Factory.register('BaseLabel', cls=BaseLabel)
         Factory.register('SimpleDropdown', cls=SimpleDropdown)
-        Factory.register('SegmentedButton', cls=SegmentedButton)
 
         # register custom components (python classes with corresponding .kv files)
         Factory.register('AutoSuggestionInputBox', cls=custom_components.AutoSuggestionInputBox)
@@ -67,7 +68,8 @@ class KivyProjectsApp(App):
         Factory.register('ResponsiveGridView', cls=custom_components.ResponsiveGridView)
         Factory.register('LoadingSpinner', cls=custom_components.LoadingSpinner)
         Factory.register('TopBar', cls=custom_components.TopBar)
-        Factory.register('TopBar', cls=custom_components.Tooltip)
+        Factory.register('Tooltip', cls=custom_components.Tooltip)
+        Factory.register('SegmentedController', cls=custom_components.SegmentedController)
 
         # register screen classes (the projects of the app)
         Factory.register('MdIconsViewerScreen', cls=projects.md_icons_viewer.screen.MdIconsViewerScreen)
