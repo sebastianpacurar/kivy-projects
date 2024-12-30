@@ -125,15 +125,13 @@ class KivyProjectsApp(App):
         self.pm.transition.direction = 'right'
         self.pm.current = 'home_screen'
 
-    def show_spinner(self, seconds):
-        """ Disable projectManager and display Spinner \n
-            Schedule hide in given seconds
-        """
+    def show_spinner(self):
+        """ Disable projectManager and display Spinner """
         self.pm.disabled = True
         self.spinner.opacity = 1
-        Clock.schedule_once(self.hide_spinner, seconds)
 
     def hide_spinner(self, *args):
+        """ Enable projectManager and hide spinner """
         self.spinner.opacity = 0
         self.pm.disabled = False
 

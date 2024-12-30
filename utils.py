@@ -1,28 +1,45 @@
 import os
 from functools import wraps
+from threading import Thread
 
 from kivy.clock import Clock
 
 
-def explicit_wait(wait=0.5, callback=None):
-    """ Display Loading Spinner for given wait in seconds \n
-        Pass in the callback function for which the wait is performed, and provide the result param \n
-        Result is the api response
+def wait_implicitly(callback):
+    """
+    Run the decorated function in a thread and execute the callback once it is finished \n
+    Show global spinner during execution without blocking the main thread
     """
 
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            Clock.schedule_once(lambda dt: args[0].app.show_spinner(wait), 0)
-            result = func(*args, **kwargs)
-            if callback:
-                Clock.schedule_once(lambda dt: callback(args[0], result), 0)
+            res = {'data': None}  # store result from the thread
 
-            return result
+            def run_function():
+                try:
+                    # run the decorated function and store its result
+                    res['data'] = func(*args, **kwargs)
+
+                    # schedule the callback to execute in the main thread
+                    Clock.schedule_once(lambda dt: callback(args[0], res['data']))
+
+                finally:
+                    # ensure the spinner is hidden after the function execution
+                    Clock.schedule_once(lambda dt: args[0].app.hide_spinner())
+
+            # show the spinner immediately
+            Clock.schedule_once(lambda dt: args[0].app.show_spinner())
+
+            # start the function in a thread
+            Thread(target=run_function).start()
+
+            # return nothing since it's non-blocking
 
         return wrapper
 
     return decorator
+
 
 
 def find_project_root(target="README.md"):
