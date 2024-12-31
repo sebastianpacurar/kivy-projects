@@ -10,12 +10,16 @@
 <BaseLabel>:
     color: 0, 0, 0, 1
     size_hint: None, None
+    font_name: 'roboto-medium'
     canvas.before:
         Color:
             rgba: root.bg_color
         Rectangle:
             pos: self.pos
             size: self.size
+
+<TextLabel>:
+    size: self.texture_size[0], self.texture_size[1]
 
 <BaseTextInput@TextInput>:
     size_hint_y: None

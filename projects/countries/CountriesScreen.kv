@@ -27,16 +27,41 @@
             id: top_bar
             project_name: 'Countries'
 
-        RecycleView:
-            id: countries_recycle
-            viewclass: 'BaseButton'
-            RecycleBoxLayout:
-                orientation: 'vertical'
-                default_size: None, 40
-                default_size_hint: 1, None
-                size_hint_y: None
-                height: self.minimum_height
-                orientation: 'vertical'
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: 1, None
+            height: filter_input.height
+
+            BaseTextInput:
+                id: filter_input
+                size_hint_x: 1
+                height: 40
+                hint_text: 'Filter icons based on name'
+                on_text: root.filter_data(self.text)
+
+            BaseLabel:
+                text: f'({str(root.counter)})'
+                width: dp(100)
+                height: 40
+                halign: 'center'
+                font_size: sp(24)
+
+        ResponsiveGridView:
+            id: responsive_grid
+            view_class: 'CountryItem'
+            item_width: dp(280)
+            item_spacing: dp(20)
+
+#        RecycleView:
+#            id: countries_recycle
+#            viewclass: 'BaseButton'
+#            RecycleBoxLayout:
+#                orientation: 'vertical'
+#                default_size: None, 40
+#                default_size_hint: 1, None
+#                size_hint_y: None
+#                height: self.minimum_height
+#                orientation: 'vertical'
 
 
 <CountryScreen>:
@@ -51,8 +76,40 @@
             project_name: 'Country' # will be changed during runtime
             pos_hint: {'top': 1}
 
-        BaseLabel:
-            id: title
+        TextLabel:
+            id: common_name
             text: 'test'
-            bg_color: 1, 0, 0, 1
+        TextLabel:
+            id: official_name
+            text: 'test'
+        TextLabel:
+            id: capital
+            text: 'test'
+        AsyncImage:
+            id: flag
+            size_hint: None, None
+            size: self.texture_size[0], self.texture_size[1]
         Filler:
+
+
+<CountryItem>:
+    canvas.before:
+        Color:
+            rgba: .8, .8, .8, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+    size: root.size
+
+    BaseButton:
+        id: btn
+        text: root.country_name
+        font_size: sp(13)
+        pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+        on_release: root.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen').go_to_country_screen(root.country_name)
+    AsyncImage:
+        id: flag
+        source: root.country_flag
+        size_hint: None, None
+        pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+        on_load: root.update_size(root.size, self)

@@ -13,6 +13,9 @@ class BaseButton(Button):
 class BaseLabel(Label):
     bg_color = ListProperty([1, 1, 1, 0])  # default to transparent
 
+class TextLabel(BaseLabel):
+    pass
+
 
 class SimpleDropdown(Spinner):
     options = ListProperty([])

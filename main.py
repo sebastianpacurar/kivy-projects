@@ -1,7 +1,6 @@
 import os
 
 from kivy.app import App
-from kivy.clock import Clock
 from kivy.core.text import LabelBase
 from kivy.core.window import Window
 from kivy.factory import Factory
@@ -54,13 +53,14 @@ class KivyProjectsApp(App):
         # load the KV file for rule-based components like <Filler@Widget>
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'BaseComponents', 'BaseComponents.kv'))
 
-        # register python-defined components (present in BaseComponents.kv but without a specific python class)
+        # register python-defined components: present in BaseComponents.kv but without a specific python module
         Factory.register('BaseButton', cls=BaseButton)
         Factory.register('BaseLabel', cls=BaseLabel)
+        Factory.register('TextLabel', cls=TextLabel)
         Factory.register('SimpleDropdown', cls=SimpleDropdown)
         Factory.register('SegmentedButton', cls=SegmentedButton)
 
-        # register custom components (python classes with corresponding .kv files)
+        # register custom components: python modules with corresponding class and .kv file
         Factory.register('AutoSuggestionInputBox', cls=custom_components.AutoSuggestionInputBox)
         Factory.register('NumericInputBox', cls=custom_components.NumericInputBox)
         Factory.register('IconButton', cls=custom_components.IconButton)

@@ -4,14 +4,13 @@ import requests
 class CountriesApi:
     BASE_URL = 'https://restcountries.com/v3.1'
 
-    def get_country_names(self):
-        url = f'{self.BASE_URL}/all?fields=name'
+    def get_country_names_and_flags(self):
+        url = f'{self.BASE_URL}/all?fields=name,flags'
         try:
             response = requests.get(url, timeout=30, verify=False)
             response.raise_for_status()
             countries = response.json()
-
-            return [country['name']['common'] for country in countries]
+            return {country.get('name').get('common'): country.get('flags').get('png', 'svg') for country in countries}
         except requests.RequestException as e:
             print(f"Error fetching countries: {e}")
             return []
