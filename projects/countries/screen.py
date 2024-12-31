@@ -54,6 +54,7 @@ class AllCountriesScreen(Screen):
         self.original_data = [{'country_name': country, 'country_flag': flag} for country, flag in countries.items()]
 
         self.data = self.original_data.copy()
+        self.counter = len(self.data)
         self.refresh_recycle_view()
 
     def refresh_recycle_view(self):
