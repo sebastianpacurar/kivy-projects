@@ -11,6 +11,15 @@ class IconButton(ButtonBehavior, Label):
     pressed_bg_color = [0.01176, 0.8549, 0.7765, 1]
     is_round = BooleanProperty(True)
 
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos) and touch.button == 'left':
+            if touch.button == 'left':
+                # if left click, proceed with the button press logic
+                return super(IconButton, self).on_touch_down(touch)
+            if touch.button == 'right':
+                # do nothing if right click
+                return False
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # make sure no other drawings are made while there is an animation or screen transition

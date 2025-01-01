@@ -1,5 +1,6 @@
 import os
 
+from kivy import Config
 from kivy.app import App
 from kivy.core.text import LabelBase
 from kivy.core.window import Window
@@ -30,6 +31,8 @@ import projects.countries.screen
 # material design icons
 from assets.fonts.material_design.webfont_unicodes import icons
 
+Config.set('input', 'mouse', 'mouse,disable_multitouch')  # get rid of the red circle upon right-click on mouse
+
 
 class KivyProjectsApp(App):
     def __init__(self, **kwargs):
@@ -58,7 +61,6 @@ class KivyProjectsApp(App):
         Factory.register('BaseButton', cls=BaseButton)
         Factory.register('BaseLabel', cls=BaseLabel)
         Factory.register('TextLabel', cls=TextLabel)
-        Factory.register('SimpleDropdown', cls=SimpleDropdown)
         Factory.register('SegmentedButton', cls=SegmentedButton)
 
         # register custom components: python modules with corresponding class and .kv file
@@ -89,7 +91,6 @@ class KivyProjectsApp(App):
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'TopBar', 'TopBar.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'Tooltip', 'Tooltip.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'MapUi', 'MapUi.kv'))
-
 
         # load the screens dynamically
         Builder.load_file(os.path.join(self.project_root, 'projects', 'md_icons_viewer', 'MdIconsViewerScreen.kv'))
