@@ -1,0 +1,76 @@
+from kivy.clock import Clock
+from kivy.properties import ListProperty, StringProperty, NumericProperty, BooleanProperty
+from kivy.uix.floatlayout import FloatLayout
+from kivy_garden.mapview import MapMarker
+
+
+class MapUi(FloatLayout):
+    lat_long = ListProperty([0, 0]) # [latitude, longitude]
+    target_name = StringProperty('')  # map marker name
+    min_zoom = NumericProperty(3)  # scroll out limit
+    max_zoom = NumericProperty(15)  # scroll in limit
+    is_fullscreen = BooleanProperty(False)
+    map_size = NumericProperty(0)  # is rectangular, size = (map_size, map_size)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.map_marker = MapMarker()
+
+    def on_lat_long(self, instance, value):
+        """ Update the map's position and markers when lat_long changes"""
+        self.ids.map_view.remove_widget(self.map_marker)
+        self.ids.map_view.center_on(*self.lat_long)
+        self.map_marker.lat, self.map_marker.lon = self.lat_long
+        self.ids.map_view.add_marker(self.map_marker)
+
+    def on_kv_post(self, base_widget):
+        self.ids.map_view.bind(zoom=self.enforce_zoom_limits)
+        self.size = self.map_size, self.map_size
+
+    def enforce_zoom_limits(self, instance, value):
+        """ Force the zoom level to stay within the min_zoom and max_zoom range """
+        if value < self.min_zoom:
+            self.ids.map_view.zoom = self.min_zoom
+        elif value > self.max_zoom:
+            self.ids.map_view.zoom = self.max_zoom
+
+    def toggle_full_screen(self):
+        """ Switch between fullscreen and given size """
+        self.is_fullscreen = not self.is_fullscreen
+        if self.is_fullscreen:
+            self.size_hint = (1, 1)
+            self.size = (0, 0)
+        else:
+            self.size_hint = (None, None)
+            self.size = self.map_size, self.map_size
+
+    def smooth_scroll_to_marker(self, *args):
+        """ Animate the map to smoothly scroll to the marker """
+        target_lat = self.map_marker.lat
+        target_lon = self.map_marker.lon
+
+        # define animation steps
+        start_lat = self.ids.map_view.lat
+        start_lon = self.ids.map_view.lon
+        step_count = 100
+        duration = .05
+        step_time = duration / step_count
+
+        # calculate lat/lon deltas for each step
+        delta_lat = (target_lat - start_lat) / step_count
+        delta_lon = (target_lon - start_lon) / step_count
+
+        def animate_step(step=0):
+            # move the map one step closer to the target
+            if step < step_count:
+                new_lat = start_lat + delta_lat * step
+                new_lon = start_lon + delta_lon * step
+                self.ids.map_view.center_on(new_lat, new_lon)
+                Clock.schedule_once(lambda dt: animate_step(step + 1), step_time)
+
+        try:
+            # start the animation
+            animate_step(0)
+        except Exception as e:
+            print(e)
+            pass  # prevent from crashing if map image is not properly processed

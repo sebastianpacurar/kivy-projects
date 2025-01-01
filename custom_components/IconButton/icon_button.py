@@ -1,5 +1,5 @@
-from kivy.graphics import Color, RoundedRectangle
-from kivy.properties import StringProperty, ListProperty
+from kivy.graphics import Color, RoundedRectangle, Rectangle
+from kivy.properties import StringProperty, ListProperty, BooleanProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.label import Label
 
@@ -9,6 +9,7 @@ class IconButton(ButtonBehavior, Label):
     bg_color = ListProperty([0.00823, 0.59843, 0.54355, 1])  # listener for color changing events
     default_bg_color = [0.00823, 0.59843, 0.54355, 1]
     pressed_bg_color = [0.01176, 0.8549, 0.7765, 1]
+    is_round = BooleanProperty(True)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -35,4 +36,4 @@ class IconButton(ButtonBehavior, Label):
         self.canvas.before.clear()  # clear existent drawing
         with self.canvas.before:  # redraw with bg_color values
             Color(*self.bg_color)
-            self.rect = RoundedRectangle(size=self.size, pos=self.pos)
+            self.rect = RoundedRectangle(size=self.size, pos=self.pos) if self.is_round else Rectangle(size=self.size, pos=self.pos)

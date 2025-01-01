@@ -89,8 +89,14 @@
             id: flag
             size_hint: None, None
             size: self.texture_size[0], self.texture_size[1]
+
         Filler:
 
+    MapUi:
+        id: map
+        map_size: dp(300)
+        size_hint: None, None
+        pos_hint: {'right': 1, 'bottom': 1}
 
 <CountryItem>:
     canvas.before:
@@ -103,13 +109,15 @@
 
     BaseButton:
         id: btn
-        text: root.country_name
+        text: root.common_name
         font_size: sp(13)
         pos_hint: {'center_x': 0.5, 'center_y': 0.7}
-        on_release: root.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen').go_to_country_screen(root.country_name)
+        on_release: root.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen').go_to_country_screen(root.common_name)
     AsyncImage:
         id: flag
-        source: root.country_flag
+        source: root.flag
         size_hint: None, None
         pos_hint: {'center_x': 0.5, 'center_y': 0.3}
         on_load: root.update_size(root.size, self)
+        on_error: self.source = 'assets/images/img_not_found.png'
+

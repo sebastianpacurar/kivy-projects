@@ -24,41 +24,42 @@ class AllCountriesScreen(Screen):
         super().__init__(**kwargs)
         self.app = App.get_running_app()
 
-    def filter_data(self, text):
-        """ Filter data based on query and update RecycleView """
-        if text:  # filter only if query is not empty
-            words = text.strip().lower().split()
-
-            self.data = [
-                # match any combination of the query string
-                item for item in self.original_data
-                if any(item.get('country_name').lower().startswith(word) for word in words) or
-                   any(word in item.get('country_name').lower() for word in words)
-            ]
-        else:  # reset data if text is empty
-            self.data = self.original_data
-
-        self.counter = len(self.data)
-        self.refresh_recycle_view()
-
     def on_pre_enter(self):
         if len(self.data) == 0:
             self.fetch_country_names()
 
+    def filter_data(self, text):
+        """ Filter data based on query and update RecycleView """
+        if text:  # filter only if query is not empty
+            words = text.strip().lower().split()
+            self.data = []
+            for i in self.original_data:
+                country_name = list(i.keys())[0].lower()
+                if ' '.join(words) in country_name:
+                    self.data.append(i)
+
+        else:  # reset data if text is empty
+            self.data = self.original_data
+
+        # Update counter and refresh the RecycleView
+        self.counter = len(self.data)
+        self.refresh_recycle_view()
+
     @wait_implicitly(callback=lambda self, countries: self.update_countries_ui_after_fetch(countries))
     def fetch_country_names(self):
         """ Fetch data for all countries names"""
-        return CountriesApi().get_country_names_and_flags()
+        return CountriesApi().get_countries_data()
 
     def update_countries_ui_after_fetch(self, countries):
-        self.original_data = [{'country_name': country, 'country_flag': flag} for country, flag in countries.items()]
-
+        self.original_data = [{c[0]: c[1]} for c in countries.items()]
         self.data = self.original_data.copy()
         self.counter = len(self.data)
         self.refresh_recycle_view()
 
     def refresh_recycle_view(self):
-        self.ids.responsive_grid.ids.rv.data = self.data
+        # current display is only for responsive grid cards
+        country_and_flag_display = [{'common_name': k, 'flag': v['flag']} for i in self.data for (k, v) in i.items()]
+        self.ids.responsive_grid.ids.rv.data = country_and_flag_display
 
     def go_to_country_screen(self, country):
         """ Navigate to CountryScreen and fetch data """
@@ -84,6 +85,7 @@ class CountryScreen(Screen):
     def on_pre_enter(self, *args):
         self.ids.common_name.text = 'Loading...'
         self.top_bar.project_name = 'Loading...'
+        self.ids.flag.source = 'assets/images/img_transparent.png'
 
     @wait_implicitly(callback=lambda self, country_data: self.set_country_data(country_data))
     def fetch_country_data(self, country):
@@ -98,6 +100,8 @@ class CountryScreen(Screen):
         self.ids.capital.text = self.country_data['capital'][0]
         self.top_bar.project_name = self.ids.common_name.text
         self.ids.flag.source = self.country_data['flag']
+        self.ids.map.lat_long = self.country_data['latlng']
+        self.ids.map.target_name = self.country_data['name']['common']
 
     def go_back(self, *args):
         """Transition back to AllCountriesScreen."""
@@ -106,8 +110,8 @@ class CountryScreen(Screen):
 
 
 class CountryItem(FloatLayout):
-    country_name = StringProperty('')
-    country_flag = StringProperty('')
+    common_name = StringProperty('')
+    flag = StringProperty('')
 
     def update_size(self, *args):
         """ Resize logic as described above """
