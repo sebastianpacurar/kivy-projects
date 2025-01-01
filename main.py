@@ -9,7 +9,7 @@ from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 
 from custom_components.LoadingSpinner.loading_spinner import LoadingSpinner
-from utils import find_project_root
+from utils import find_project_root, clear_cache
 
 # custom components
 from custom_components.BaseComponents.base_components import *
@@ -38,6 +38,7 @@ class KivyProjectsApp(App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.project_root = find_project_root()
+        clear_cache()
 
         LabelBase.register(
             name="roboto-medium",
@@ -111,6 +112,9 @@ class KivyProjectsApp(App):
         self.spinner = self.root.ids.loadingSpinner
         self.pm = self.root.ids.projectManager
         Window.bind(on_key_down=self.on_key_down)
+
+    def on_stop(self):
+        clear_cache()
 
     def nav_to_project(self, project_screen_name):
         """ Navigate to a screen, loading it dynamically if needed """

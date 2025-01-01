@@ -1,14 +1,13 @@
-from kivy.clock import Clock
 from kivy.properties import ListProperty, StringProperty, NumericProperty, BooleanProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy_garden.mapview import MapMarker
 
 
 class MapUi(FloatLayout):
-    lat_long = ListProperty([0, 0]) # [latitude, longitude]
+    lat_long = ListProperty([0, 0])  # [latitude, longitude]
     target_name = StringProperty('')  # map marker name
     min_zoom = NumericProperty(3)  # scroll out limit
-    max_zoom = NumericProperty(15)  # scroll in limit
+    max_zoom = NumericProperty(10)  # scroll in limit
     is_fullscreen = BooleanProperty(False)
     map_size = NumericProperty(0)  # is rectangular, size = (map_size, map_size)
 
@@ -44,33 +43,5 @@ class MapUi(FloatLayout):
             self.size_hint = (None, None)
             self.size = self.map_size, self.map_size
 
-    def smooth_scroll_to_marker(self, *args):
-        """ Animate the map to smoothly scroll to the marker """
-        target_lat = self.map_marker.lat
-        target_lon = self.map_marker.lon
-
-        # define animation steps
-        start_lat = self.ids.map_view.lat
-        start_lon = self.ids.map_view.lon
-        step_count = 100
-        duration = .05
-        step_time = duration / step_count
-
-        # calculate lat/lon deltas for each step
-        delta_lat = (target_lat - start_lat) / step_count
-        delta_lon = (target_lon - start_lon) / step_count
-
-        def animate_step(step=0):
-            # move the map one step closer to the target
-            if step < step_count:
-                new_lat = start_lat + delta_lat * step
-                new_lon = start_lon + delta_lon * step
-                self.ids.map_view.center_on(new_lat, new_lon)
-                Clock.schedule_once(lambda dt: animate_step(step + 1), step_time)
-
-        try:
-            # start the animation
-            animate_step(0)
-        except Exception as e:
-            print(e)
-            pass  # prevent from crashing if map image is not properly processed
+    def scroll_to_marker(self, *args):
+        self.ids.map_view.center_on(*self.lat_long)

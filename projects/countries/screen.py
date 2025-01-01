@@ -97,7 +97,7 @@ class CountryScreen(Screen):
         self.country_data = country_data
         self.ids.common_name.text = self.country_data['name']['common']
         self.ids.official_name.text = self.country_data['name']['official']
-        self.ids.capital.text = self.country_data['capital'][0] if self.country_data['capital']  else 'N/A'
+        self.ids.capital.text = self.country_data['capital'][0] if self.country_data['capital'] else 'N/A'
         self.top_bar.project_name = self.ids.common_name.text
         self.ids.flag.source = self.country_data['flag']
         self.ids.map.lat_long = self.country_data['latlng']

@@ -1,4 +1,5 @@
 import os
+import shutil
 from functools import wraps
 from threading import Thread
 
@@ -48,4 +49,16 @@ def find_project_root(target="README.md"):
         if target in os.listdir(current_dir):
             return current_dir  # return directory if README.md is present
         current_dir = os.path.dirname(current_dir)  # go up one level
+
+
+def clear_cache():
+    # delete contents of root/cache folder
+    cache_folder = os.path.join(find_project_root(), 'cache')
+    if os.path.exists(cache_folder):
+        for file_name in os.listdir(cache_folder):
+            file_path = os.path.join(cache_folder, file_name)
+            if os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+            else:
+                os.remove(file_path)
 

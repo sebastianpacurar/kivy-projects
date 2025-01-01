@@ -22,9 +22,8 @@ class MdIconsViewerScreen(Screen):
             self.toggle_grid_display_size()
 
     def set_data(self):
-        # Convert icons dictionary to a list of dictionaries for RecycleView
         self.original_data = [{'icon': v, 'icon_name': k, 'is_name_displayed': not self.is_compact} for k, v in icons.items()]
-        self.filtered_data = self.original_data.copy()  # Start with all items
+        self.filtered_data = self.original_data.copy()  # start with all items
         self.data = self.filtered_data.copy()
         self.counter = len(self.data)
 
@@ -33,9 +32,16 @@ class MdIconsViewerScreen(Screen):
         top_bar.add_right_button(icon=App.get_running_app().get_icon('grid'), on_release=self.toggle_grid_display_size)
         self.set_data()
         self.ids.responsive_grid.ids.rv.data = self.data
+        self.ids.responsive_grid.ids.rv.bind(on_scroll_start=self.clear_tooltips, on_scroll_stop=self.clear_tooltips)
+
+    def clear_tooltips(self, *args):
+        for widget in self.ids.responsive_grid.ids.rv.children[0].children:
+            if isinstance(widget, IconItem):
+                widget.tooltip.hide_tooltip()
 
     def set_filter_selection(self, toggle_value):
         """ Update the filtered_data based on toggle button selection """
+        self.clear_tooltips()
         query = self.ids.filter_input.text.strip().lower()
         if toggle_value == 'All':
             self.filtered_data = self.original_data.copy()
@@ -48,6 +54,7 @@ class MdIconsViewerScreen(Screen):
 
     def filter_data(self, text):
         """ Filter data based on query and update RecycleView """
+        self.clear_tooltips()
         if text:  # filter only if query is not empty
             self.data = [item for item in self.filtered_data if item['icon_name'].lower().startswith(text)]
 
@@ -119,8 +126,8 @@ class IconItem(FloatLayout):
         try:
             data = self.parent.parent.parent.parent.parent.data  # if this is null then do not continue logic
             pos = args[1]
-            # add tooltip widget when mouse hovers icon-label specifically
-            if self.ids.icon_label.collide_point(*self.to_widget(*pos)):
+            # add tooltip widget when mouse hovers over IconItem
+            if self.collide_point(*self.to_widget(*pos)):
                 self.tooltip.show_tooltip((pos[0] + 10, pos[1] - 10))
             # destroy tooltip widget when not hovering icon-label
             else:
