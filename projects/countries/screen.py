@@ -1,5 +1,6 @@
 from kivy.app import App
-from kivy.properties import ListProperty, NumericProperty, StringProperty
+from kivy.properties import ListProperty, NumericProperty, StringProperty, BooleanProperty
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
 
@@ -19,6 +20,7 @@ class AllCountriesScreen(Screen):
     data = ListProperty([])
     original_data = ListProperty([])
     counter = NumericProperty(0)
+    is_tabular = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -27,6 +29,36 @@ class AllCountriesScreen(Screen):
     def on_pre_enter(self):
         if len(self.data) == 0:
             self.fetch_country_names()
+
+    def on_kv_post(self, base_widget):
+        # responsive grid view is displayed on start
+        self.ids.table_view.opacity = 0
+        self.ids.table_view.size_hint_y = None
+        self.ids.table_view.height = 0
+
+        # toggle button
+        top_bar = self.ids.top_bar
+        top_bar.add_right_button(
+            icon=self.app.get_icon('list-box-outline'),
+            on_release=self.toggle_layout,
+        )
+
+    def toggle_layout(self, *args):
+        """ Toggle between table and grid views """
+        self.is_tabular = not self.is_tabular
+
+        def update_view(view, show):
+            view.opacity = 1 if show else 0
+            view.size_hint_y = 1 if show else None
+            view.height = self.ids.responsive_grid.height if show else 0
+
+        # update views based on the current layout
+        update_view(self.ids.table_view, self.is_tabular)
+        update_view(self.ids.responsive_grid, not self.is_tabular)
+
+        # change the toggle button icon
+        new_icon = 'grid-large' if self.is_tabular else 'list-box-outline'
+        self.ids.top_bar.ids.button_container_right.children[0].icon = self.app.get_icon(new_icon)
 
     def filter_data(self, text):
         """ Filter data based on query and update RecycleView """
@@ -41,9 +73,10 @@ class AllCountriesScreen(Screen):
         else:  # reset data if text is empty
             self.data = self.original_data
 
-        # Update counter and refresh the RecycleView
+        # update counter and refresh the RecycleViews
         self.counter = len(self.data)
-        self.refresh_recycle_view()
+        self.refresh_grid_recycle_view()
+        self.refresh_table_recycle_view()
 
     @wait_implicitly(callback=lambda self, countries: self.update_countries_ui_after_fetch(countries))
     def fetch_country_names(self):
@@ -54,12 +87,22 @@ class AllCountriesScreen(Screen):
         self.original_data = [{c[0]: c[1]} for c in countries.items()]
         self.data = self.original_data.copy()
         self.counter = len(self.data)
-        self.refresh_recycle_view()
+        self.refresh_grid_recycle_view()
+        self.refresh_table_recycle_view()
 
-    def refresh_recycle_view(self):
-        # current display is only for responsive grid cards
+    def refresh_grid_recycle_view(self, *args):
+        responsive_grid = self.ids.get('responsive_grid', None)
         country_and_flag_display = [{'common_name': k, 'flag': v['flag']} for i in self.data for (k, v) in i.items()]
-        self.ids.responsive_grid.ids.rv.data = country_and_flag_display
+        responsive_grid.ids.rv.data = country_and_flag_display
+
+    def refresh_table_recycle_view(self, *args):
+        table_view = self.ids.get('table_view', None)
+        table_data = [
+            {'common_name': k, 'region': v['region'], 'capital': v['capital'],
+             'population': v.get('population', 'N/A'), 'row_color': (95, .95, .95, 1) if i % 2 == 0 else (1, 1, 1, 1)}
+            for (i, item) in enumerate(self.data) for (k, v) in item.items()
+        ]
+        table_view.ids.rv.data = table_data
 
     def go_to_country_screen(self, country):
         """ Navigate to CountryScreen and fetch data """
@@ -97,7 +140,13 @@ class CountryScreen(Screen):
         self.country_data = country_data
         self.ids.common_name.text = self.country_data['name']['common']
         self.ids.official_name.text = self.country_data['name']['official']
-        self.ids.capital.text = self.country_data['capital'][0] if self.country_data['capital'] else 'N/A'
+
+        val = self.country_data.get('capital')
+        if isinstance(val, list) and len(val) > 0:
+            self.ids.capital.text = ', '.join(val)
+        else:
+            self.ids.capital.text = 'N/A'
+
         self.top_bar.project_name = self.ids.common_name.text
         self.ids.flag.source = self.country_data['flag']
         self.ids.map.lat_long = self.country_data['latlng']
@@ -109,7 +158,7 @@ class CountryScreen(Screen):
         self.manager.current = 'AllCountriesScreen'
 
 
-class CountryItem(FloatLayout):
+class CountryGridCardItem(FloatLayout):
     common_name = StringProperty('')
     flag = StringProperty('')
 
@@ -131,3 +180,11 @@ class CountryItem(FloatLayout):
             scaled_height = scaled_width / image_aspect
 
         args[1].size = (scaled_width, scaled_height)
+
+
+class CountryTableRowItem(BoxLayout):
+    common_name = StringProperty('')
+    region = StringProperty('')
+    capital = StringProperty('')
+    population = NumericProperty(0)
+    row_color = ListProperty([])

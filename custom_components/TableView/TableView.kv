@@ -1,0 +1,31 @@
+<TableView>:
+    orientation: 'vertical'
+
+    # columns header
+    BoxLayout:
+        id: columns
+        orientation: 'horizontal'
+        size_hint: 1, None
+        height: height_dummy.height
+        padding: 0, dp(5), 0, dp(5)
+
+        # used only to be referenced by parent to set height of columns
+        TextLabel:
+            id: height_dummy
+            text: 'test'
+            font_size: sp(15)
+            size_hint_x: None
+            width: 0
+
+    # rows
+    RecycleView:
+        id: rv
+        viewclass: root.view_class
+        RecycleBoxLayout:
+            id: box_layout
+            orientation: 'vertical'
+            default_size: None, 40
+            default_size_hint: 1, None
+            size_hint_y: None
+            height: self.minimum_height
+            orientation: 'vertical'

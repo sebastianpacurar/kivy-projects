@@ -28,11 +28,16 @@ class CountriesApi:
                     match field:
                         case 'name':
                             country_info['common_name'] = country.get(field).get('common')
-                            country_info['official_name'] = country.get(field).get('official')
                         case 'capitalInfo':
                             country_info['capitalCoords'] = country.get(field).get('latlng')
                         case 'flags':
                             country_info['flag'] = country.get('flags', {}).get('png', 'svg')
+                        case 'capital':
+                            val = country.get('capital')
+                            if isinstance(val, list) and len(val) > 0:
+                                country_info['capital'] = ', '.join(val)
+                            else:
+                                country_info['capital'] = 'N/A'
                         case _:
                             country_info[field] = country.get(field, 'N/A')
 
