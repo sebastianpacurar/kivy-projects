@@ -60,10 +60,10 @@ class AllCountriesScreen(Screen):
         new_icon = 'grid-large' if self.is_tabular else 'list-box-outline'
         self.ids.top_bar.ids.button_container_right.children[0].icon = self.app.get_icon(new_icon)
 
-    def filter_data(self, text):
+    def filter_data(self, instance, value):
         """ Filter data based on query and update RecycleView """
-        if text:  # filter only if query is not empty
-            words = text.strip().lower().split()
+        if value:  # filter only if query is not empty
+            words = value.strip().lower().split()
             self.data = []
             for i in self.original_data:
                 country_name = list(i.keys())[0].lower()
@@ -74,7 +74,7 @@ class AllCountriesScreen(Screen):
             self.data = self.original_data
 
         # update counter and refresh the RecycleViews
-        self.counter = len(self.data)
+        instance.counter = len(self.data)
         self.refresh_grid_recycle_view()
         self.refresh_table_recycle_view()
 

@@ -9,6 +9,7 @@ class IconButton(ButtonBehavior, Label):
     bg_color = ListProperty([0.00823, 0.59843, 0.54355, 1])  # listener for color changing events
     default_bg_color = [0.00823, 0.59843, 0.54355, 1]
     pressed_bg_color = [0.01176, 0.8549, 0.7765, 1]
+    disabled_bg_color = [0.6, 0.6, 0.6, 1]
     is_round = BooleanProperty(True)
 
     def on_touch_down(self, touch):
@@ -39,6 +40,13 @@ class IconButton(ButtonBehavior, Label):
             if not self.collide_point(*self.to_window(0, 0)):  # check if mouse is not hovering
                 self.bg_color = self.default_bg_color
         self.update_canvas()
+
+    def on_disabled(self, instance, value):
+        """ Update bg color to greyed out when disabled """
+        if value:
+            self.bg_color = self.disabled_bg_color
+        else:
+            self.bg_color = self.default_bg_color
 
     def update_canvas(self, *args):
         """ Update the background color and rectangle to match a button's behavior """

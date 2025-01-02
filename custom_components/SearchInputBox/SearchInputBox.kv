@@ -1,0 +1,30 @@
+<SearchInputBox>:
+    orientation: 'horizontal'
+    size_hint: 1, None
+    height: dp(35)
+
+    RelativeLayout:
+        size_hint_x: 1
+        height: dp(35)
+
+        BaseTextInput:
+            id: search_input
+            size_hint: 1, None
+            height: dp(35)
+            hint_text: root.search_hint_text
+
+        IconButton:
+            size: dp(25), dp(25)
+            font_size: sp(20)
+            pos_hint: {'center_y': 0.5}
+            disabled: len(search_input.text) == 0
+            x: self.parent.width - self.width - dp(5)
+            icon: app.get_icon('close-circle-outline')
+            on_release: root.clear_text()
+
+    BaseLabel:
+        text: f'({str(root.counter)})'
+        width: dp(100)
+        height: dp(35)
+        halign: 'center'
+        font_size: sp(24)

@@ -42,7 +42,7 @@ class MdIconsViewerScreen(Screen):
     def set_filter_selection(self, toggle_value):
         """ Update the filtered_data based on toggle button selection """
         self.clear_tooltips()
-        query = self.ids.filter_input.text.strip().lower()
+        query = self.ids.search_box.ids.search_input.text.strip().lower()
         if toggle_value == 'All':
             self.filtered_data = self.original_data.copy()
         elif toggle_value == 'Filled':
@@ -50,13 +50,13 @@ class MdIconsViewerScreen(Screen):
         elif toggle_value == 'Outlined':
             self.filtered_data = [item for item in self.original_data if 'outline' in item['icon_name'].lower()]
         self.ids.responsive_grid.ids.rv.scroll_y = 1.0  # reset REcycleView scroll to top
-        self.filter_data(query)
+        self.filter_data(self.ids.search_box, query)
 
-    def filter_data(self, text):
+    def filter_data(self, instance, value):
         """ Filter data based on query and update RecycleView """
         self.clear_tooltips()
-        if text:  # filter only if query is not empty
-            self.data = [item for item in self.filtered_data if item['icon_name'].lower().startswith(text)]
+        if value:  # filter only if query is not empty
+            self.data = [item for item in self.filtered_data if item['icon_name'].lower().startswith(value)]
 
         else:  # reset data if text is empty
             self.data = self.filtered_data.copy()

@@ -22,6 +22,7 @@ import custom_components.TopBar.top_bar
 import custom_components.Tooltip.tooltip
 import custom_components.MapUi.map_ui
 import custom_components.TableView.table_view
+import custom_components.SearchInputBox.search_input_box
 
 # projects
 import projects.md_icons_viewer.screen
@@ -75,6 +76,7 @@ class KivyProjectsApp(App):
         Factory.register('Tooltip', cls=custom_components.Tooltip)
         Factory.register('MapUi', cls=custom_components.MapUi)
         Factory.register('TableView', cls=custom_components.TableView)
+        Factory.register('SearchInputBox', cls=custom_components.SearchInputBox)
 
         # register screen classes (the projects of the app)
         Factory.register('MdIconsViewerScreen', cls=projects.md_icons_viewer.screen.MdIconsViewerScreen)
@@ -95,6 +97,7 @@ class KivyProjectsApp(App):
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'Tooltip', 'Tooltip.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'MapUi', 'MapUi.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'TableView', 'TableView.kv'))
+        Builder.load_file(os.path.join(self.project_root, 'custom_components', 'SearchInputBox', 'SearchInputBox.kv'))
 
         # load the screens dynamically
         Builder.load_file(os.path.join(self.project_root, 'projects', 'md_icons_viewer', 'MdIconsViewerScreen.kv'))

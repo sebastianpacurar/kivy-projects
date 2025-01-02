@@ -27,24 +27,11 @@
             id: top_bar
             project_name: 'Countries'
 
-        BoxLayout:
-            orientation: 'horizontal'
-            size_hint: 1, None
-            height: filter_input.height
-
-            BaseTextInput:
-                id: filter_input
-                size_hint_x: 1
-                height: 40
-                hint_text: 'Filter icons based on name'
-                on_text: root.filter_data(self.text)
-
-            BaseLabel:
-                text: f'({str(root.counter)})'
-                width: dp(100)
-                height: 40
-                halign: 'center'
-                font_size: sp(24)
+        SearchInputBox:
+            id: search_box
+            search_func: lambda i, v: root.filter_data(i, v)
+            search_hint_text: 'Search for a country'
+            counter: len(root.data)
 
         ResponsiveGridView:
             id: responsive_grid
@@ -56,41 +43,6 @@
             id: table_view
             view_class: 'CountryTableRowItem'
             column_names: ['Name', 'Region', 'Capital', 'Population']
-
-
-<CountryTableRowItem>:
-    size_hint: 1, None
-    height: 40
-    orientation: 'horizontal'
-    canvas.before:
-        Color:
-            rgba: root.row_color
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    BaseButton:
-        id: btn
-        size_hint_x: 1
-        text: root.common_name
-        font_size: sp(13)
-        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        on_release: root.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen').go_to_country_screen(root.common_name)
-    TextLabel:
-        size_hint_x: 1
-        font_size: sp(15)
-        text: root.region
-        pos_hint: {'center_y': .5}
-    TextLabel:
-        size_hint_x: 1
-        font_size: sp(15)
-        text: root.capital
-        pos_hint: {'center_y': .5}
-
-    TextLabel:
-        size_hint_x: 1
-        font_size: sp(15)
-        text: str(root.population)
-        pos_hint: {'center_y': .5}
 
 
 <CountryScreen>:
@@ -150,3 +102,37 @@
         on_load: root.update_size(root.size, self)
         on_error: self.source = 'assets/images/img_not_found.png'
 
+
+<CountryTableRowItem>:
+    size_hint: 1, None
+    height: 40
+    orientation: 'horizontal'
+    canvas.before:
+        Color:
+            rgba: root.row_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BaseButton:
+        id: btn
+        size_hint_x: 1
+        text: root.common_name
+        font_size: sp(13)
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        on_release: root.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen').go_to_country_screen(root.common_name)
+    TextLabel:
+        size_hint_x: 1
+        font_size: sp(15)
+        text: root.region
+        pos_hint: {'center_y': .5}
+    TextLabel:
+        size_hint_x: 1
+        font_size: sp(15)
+        text: root.capital
+        pos_hint: {'center_y': .5}
+
+    TextLabel:
+        size_hint_x: 1
+        font_size: sp(15)
+        text: str(root.population)
+        pos_hint: {'center_y': .5}
