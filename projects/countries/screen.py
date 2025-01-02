@@ -11,9 +11,15 @@ from utils import wait_implicitly
 class CountriesMainScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.app = App.get_running_app()
 
     def on_leave(self, *args):
         self.ids.screen_manager.current = 'AllCountriesScreen'
+
+    def on_pre_leave(self, *args):
+        self.app.toggle_app_map(False)
+        self.ids.screen_manager.get_screen('AllCountriesScreen').close_map()
+        self.ids.screen_manager.get_screen('CountryScreen').close_map()
 
 
 class AllCountriesScreen(Screen):
@@ -21,6 +27,7 @@ class AllCountriesScreen(Screen):
     original_data = ListProperty([])
     counter = NumericProperty(0)
     is_tabular = BooleanProperty(False)
+    is_map_on = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -31,17 +38,32 @@ class AllCountriesScreen(Screen):
             self.fetch_country_names()
 
     def on_kv_post(self, base_widget):
-        # responsive grid view is displayed on start
         self.ids.table_view.opacity = 0
         self.ids.table_view.size_hint_y = None
         self.ids.table_view.height = 0
 
-        # toggle button
+        # toggle buttons
         top_bar = self.ids.top_bar
         top_bar.add_right_button(
-            icon=self.app.get_icon('list-box-outline'),
-            on_release=self.toggle_layout,
+            icon=self.app.get_icon('map-search'),
+            on_release=self.toggle_map_visibility
         )
+        top_bar.add_right_button(
+            icon=self.app.get_icon('list-box-outline'),
+            on_release=self.toggle_layout
+        )
+
+    def toggle_map_visibility(self, *args):
+        self.is_map_on = not self.is_map_on
+        self.manager.get_screen('CountryScreen').is_map_on = self.is_map_on
+
+    def close_map(self):
+        self.is_map_on = False
+
+    def on_is_map_on(self, instance, value):
+        self.app.toggle_app_map(self.is_map_on)
+        new_icon = 'map-minus' if self.is_map_on else 'map-search'
+        self.ids.top_bar.ids.button_container_right.children[1].icon = self.app.get_icon(new_icon)
 
     def toggle_layout(self, *args):
         """ Toggle between table and grid views """
@@ -115,6 +137,8 @@ class AllCountriesScreen(Screen):
 
 
 class CountryScreen(Screen):
+    is_map_on = BooleanProperty(False)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.app = App.get_running_app()
@@ -124,6 +148,22 @@ class CountryScreen(Screen):
     def on_kv_post(self, base_widget):
         self.top_bar = self.ids.top_bar
         self.top_bar.add_left_button(icon=self.app.get_icon('arrow-left-bold-circle-outline'), on_release=self.go_back)
+        self.top_bar.add_right_button(
+            icon=self.app.get_icon('map-search'),
+            on_release=self.toggle_map_visibility
+        )
+
+    def toggle_map_visibility(self, *args):
+        self.is_map_on = not self.is_map_on
+        self.manager.get_screen('AllCountriesScreen').is_map_on = self.is_map_on
+
+    def close_map(self):
+        self.is_map_on = False
+
+    def on_is_map_on(self, instance, value):
+        self.app.toggle_app_map(self.is_map_on)
+        new_icon = 'map-minus' if self.is_map_on else 'map-search'
+        self.ids.top_bar.ids.button_container_right.children[0].icon = self.app.get_icon(new_icon)
 
     def on_pre_enter(self, *args):
         self.ids.common_name.text = 'Loading...'
@@ -149,8 +189,8 @@ class CountryScreen(Screen):
 
         self.top_bar.project_name = self.ids.common_name.text
         self.ids.flag.source = self.country_data['flag']
-        self.ids.map.lat_long = self.country_data['latlng']
-        self.ids.map.target_name = self.country_data['name']['common']
+        self.app.map_ui.lat_long = self.country_data['latlng']
+        self.app.map_ui.target_name = self.country_data['name']['common']
 
     def go_back(self, *args):
         """Transition back to AllCountriesScreen."""

@@ -20,6 +20,7 @@
                     size: self.size
 
             BaseButton:
+                disabled: len(root.target_name) < 0
                 id: reset_loc_btn
                 text: root.target_name
                 size_hint: 1, None

@@ -8,8 +8,7 @@ from kivy.factory import Factory
 from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 
-from custom_components.LoadingSpinner.loading_spinner import LoadingSpinner
-from utils import find_project_root, clear_cache
+from utils import find_project_root
 
 # custom components
 from custom_components.BaseComponents.base_components import *
@@ -40,7 +39,6 @@ class KivyProjectsApp(App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.project_root = find_project_root()
-        clear_cache()
 
         LabelBase.register(
             name="roboto-medium",
@@ -84,7 +82,7 @@ class KivyProjectsApp(App):
         Factory.register('TimeCalculatorScreen', cls=projects.time_calculator.screen.TimeCalculatorScreen)
         Factory.register('UnitConverterScreen', cls=projects.unit_converter.screen.UnitConverterScreen)
 
-        self.pm, self.spinner = None, None  # initialize project manager and global spinner
+        self.pm, self.spinner, self.map_ui = None, None, None  # initialize project manager and global spinner
         self.icons = icons  # material design icons dictionary
 
     def build(self):
@@ -116,11 +114,10 @@ class KivyProjectsApp(App):
     def on_start(self):
         super().on_start()
         self.spinner = self.root.ids.loadingSpinner
+        self.map_ui = self.root.ids.map
+        # self.map_ui.ids.map_view.map_source = self.cached_map_source
         self.pm = self.root.ids.projectManager
         Window.bind(on_key_down=self.on_key_down)
-
-    def on_stop(self):
-        clear_cache()
 
     def nav_to_project(self, project_screen_name):
         """ Navigate to a screen, loading it dynamically if needed """
@@ -149,6 +146,9 @@ class KivyProjectsApp(App):
         """ Enable projectManager and hide spinner """
         self.spinner.opacity = 0
         self.pm.disabled = False
+
+    def toggle_app_map(self, value):
+        self.map_ui.is_map_displayed = value
 
     # prevent app from closing when hitting Escape key
     def on_key_down(self, instance, keyboard, keycode, text, modifiers):
