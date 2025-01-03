@@ -1,10 +1,12 @@
+from kivy.clock import Clock
 from kivy.graphics import Color, RoundedRectangle, Rectangle
-from kivy.properties import StringProperty, ListProperty, BooleanProperty
+from kivy.metrics import dp, sp
+from kivy.properties import StringProperty, ListProperty, BooleanProperty, NumericProperty
 from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.label import Label
+from kivy.uix.boxlayout import BoxLayout
 
 
-class IconButton(ButtonBehavior, Label):
+class IconButton(ButtonBehavior, BoxLayout):
     icon = StringProperty('')  # icon unicode
     bg_color = ListProperty([0.00823, 0.59843, 0.54355, 1])  # listener for color changing events
     default_bg_color = [0.00823, 0.59843, 0.54355, 1]
@@ -14,6 +16,9 @@ class IconButton(ButtonBehavior, Label):
     disabled_bg_color = [0.6, 0.6, 0.6, 1]
     is_round = BooleanProperty(True)
     is_red_state = BooleanProperty(False)  # change color to red if is_red_state is True
+    label_text = StringProperty('')  # button label text. if empty, it's just an icon button, else labeled icon button
+    bg_size_val = NumericProperty(dp(36))  # used with font_size_val to get different sized icons
+    font_size_val = NumericProperty(sp(24))  # used with bg_size_val to get different sized icons
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -31,9 +36,22 @@ class IconButton(ButtonBehavior, Label):
         self.bind(bg_color=self.update_canvas)  # when bg_color changes, trigger canvas redraw
         self.bind(state=self.on_state, is_red_state=self.on_state)  # bind the state property to the on_state method
 
+        self.setup_initialized = False
+
     def on_icon(self, instance, value):
-        """ Set text to the Unicode value when the icon is assigned """
-        self.text = value
+        """ Set text to the Unicode value when the icon is assigned \n
+            Set sizing and positioning for label when first runs
+        """
+        Clock.schedule_once(lambda dt: self.delayed_setup(value), .1)
+
+    def delayed_setup(self, value):
+        self.ids.icon_label.text = value  # set unicode icon
+        # if empty string, format icon to be placed in the middle. one time only
+        if len(self.label_text) == 0 and not self.setup_initialized:
+            self.ids.text_label.size = [0, 0]
+            self.ids.space_filler.size = [0, 0]
+            self.width = self.bg_size_val
+            self.setup_initialized = True
 
     def on_state(self, instance, value):
         """ Set bg_color based on the state of the button and is_red_state """

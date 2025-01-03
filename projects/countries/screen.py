@@ -25,6 +25,7 @@ class CountriesMainScreen(Screen):
 class AllCountriesScreen(Screen):
     data = ListProperty([])
     original_data = ListProperty([])
+    pinned_countries = ListProperty([])
     counter = NumericProperty(0)
     is_tabular = BooleanProperty(False)
     is_map_on = BooleanProperty(False)
@@ -46,10 +47,12 @@ class AllCountriesScreen(Screen):
         top_bar = self.ids.top_bar
         top_bar.add_right_button(
             icon=self.app.get_icon('map-search'),
+            text='Open Map',
             on_release=self.toggle_map_visibility
         )
         top_bar.add_right_button(
             icon=self.app.get_icon('list-box-outline'),
+            text='List',
             on_release=self.toggle_layout
         )
 
@@ -61,9 +64,11 @@ class AllCountriesScreen(Screen):
         self.is_map_on = False
 
     def on_is_map_on(self, instance, value):
-        self.app.toggle_app_map(self.is_map_on)
-        new_icon = 'map-minus' if self.is_map_on else 'map-search'
-        self.ids.top_bar.ids.button_container_right.children[1].icon = self.app.get_icon(new_icon)
+        self.app.toggle_app_map(value)
+        map_btn = self.ids.top_bar.ids.button_container_right.children[1]
+        map_btn.is_red_state = value
+        map_btn.icon = self.app.get_icon('map-minus') if value else self.app.get_icon('map-search')
+        map_btn.label_text = 'Close Map' if value else 'Open Map'
 
     def toggle_layout(self, *args):
         """ Toggle between table and grid views """
@@ -79,8 +84,9 @@ class AllCountriesScreen(Screen):
         update_view(self.ids.responsive_grid, not self.is_tabular)
 
         # change the toggle button icon
-        new_icon = 'grid-large' if self.is_tabular else 'list-box-outline'
-        self.ids.top_bar.ids.button_container_right.children[0].icon = self.app.get_icon(new_icon)
+        layout_btn = self.ids.top_bar.ids.button_container_right.children[0]
+        layout_btn.icon = self.app.get_icon('grid-large') if self.is_tabular else self.app.get_icon('list-box-outline')
+        layout_btn.label_text = 'Grid' if self.is_tabular else 'List'
 
     def filter_data(self, instance, value):
         """ Filter data based on query and update RecycleView """
@@ -114,18 +120,11 @@ class AllCountriesScreen(Screen):
 
     def refresh_grid_recycle_view(self, *args):
         responsive_grid = self.ids.get('responsive_grid', None)
-        # country_and_flag_display = [{'common_name': k, 'flag': v['flag']} for i in self.data for (k, v) in i.items()]
         country_and_flag_display = [{'common_name': k, 'flag': v['flag'], 'coords': v['latlng'], 'is_pinned': v['is_pinned']} for i in self.data for (k, v) in i.items()]
         responsive_grid.ids.rv.data = country_and_flag_display
 
     def refresh_table_recycle_view(self, *args):
         table_view = self.ids.get('table_view', None)
-        # table_data = [
-        #     {'common_name': k, 'region': v['region'], 'capital': v['capital'],
-        #      'population': v.get('population', 'N/A'), 'row_color': (95, .95, .95, 1) if i % 2 == 0 else (1, 1, 1, 1)}
-        #     for (i, item) in enumerate(self.data) for (k, v) in item.items()
-        # ]
-
         table_data = [
             {'common_name': k, 'region': v['region'], 'capital': v['capital'],
              'population': v.get('population', 'N/A'), 'coords': v['latlng'], 'is_pinned': v['is_pinned'], 'row_color': (95, .95, .95, 1) if i % 2 == 0 else (1, 1, 1, 1)}
@@ -196,7 +195,6 @@ class CountryScreen(Screen):
 
         self.top_bar.project_name = self.ids.common_name.text
         self.ids.flag.source = self.country_data['flag']
-
         lat, lon = self.country_data['latlng']
         self.app.map_ui.lat_long = (lat, lon)
         self.app.map_ui.target_name = self.country_data['name']['common']
@@ -218,7 +216,6 @@ class CountryGridCardItem(FloatLayout):
     common_name = StringProperty('')
     flag = StringProperty('')
     coords = ListProperty([])
-    card_bg_color = ListProperty([.8, .8, .8, 1])
     is_pinned = BooleanProperty(False)
 
     def __init__(self, **kwargs):
@@ -244,21 +241,8 @@ class CountryGridCardItem(FloatLayout):
 
         args[1].size = (scaled_width, scaled_height)
 
-    def add_marker_to_map(self):
-        """ Adds a marker to the map with the given coordinates and country name """
-        self.app.map_ui.add_ui_marker(self.coords[0], self.coords[1], self.common_name)
-        self.app.map_ui.center_map(*self.coords)
-        self.card_bg_color = [122 / 255, 225 / 255, 191 / 255, 1]
-        self.is_pinned = True
-        self.ids.pin_btn.is_red_state = self.is_pinned
-
-
-    def remove_marker_from_map(self):
-        """ Removes a marker from the map with the given coordinates and country name """
-        self.app.map_ui.remove_ui_marker(self.common_name)
-        self.card_bg_color = [.8, .8, .8, 1]
-        self.is_pinned = False
-        self.ids.pin_btn.is_red_state = self.is_pinned
+    def toggle_pinning(self):
+        self.is_pinned = not self.is_pinned
 
 
 class CountryTableRowItem(BoxLayout):
@@ -269,24 +253,25 @@ class CountryTableRowItem(BoxLayout):
     row_color = ListProperty([])
     coords = ListProperty([])
     is_pinned = BooleanProperty(False)
+    data = ListProperty([])
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.app = App.get_running_app()
 
+    def pin_country(self):
+        pass
+
     def add_marker_to_map(self):
         """ Adds a marker to the map with the given coordinates and country name """
-        self.app.map_ui.add_ui_marker(self.coords[0], self.coords[1], self.common_name)
-        self.app.map_ui.center_map(*self.coords)
-        self.row_color = [122 / 255, 225 / 255, 191 / 255, 1]
-        self.is_pinned = True
-        self.ids.pin_btn.is_red_state = self.is_pinned
-
+        all_countries_screen = self.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen')
+        all_countries_screen.update_pinned_state(self.common_name, True)
 
     def remove_marker_from_map(self):
         """ Removes a marker from the map with the given coordinates and country name """
-        self.app.map_ui.remove_ui_marker(self.common_name)
-        self.row_color = self.original_color
-        self.is_pinned = False
-        self.ids.pin_btn.is_red_state = self.is_pinned
+        all_countries_screen = self.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen')
+        all_countries_screen.update_pinned_state(self.common_name, False)
 
+
+class PinnedCountries(BoxLayout):
+    pass

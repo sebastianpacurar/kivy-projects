@@ -33,6 +33,31 @@
             search_hint_text: 'Search for a country'
             counter: len(root.data)
 
+        BoxLayout:
+            id: pinned countries
+            size_hint_y: None
+            height: self.minimum_height
+            orientation: 'horizontal'
+            BaseLabel:
+                text: 'A'
+                font_size: sp(24)
+                bg_color: 1, 0, 0, 1
+
+            BaseLabel:
+                text: 'B'
+                font_size: sp(24)
+                bg_color: 1, 1, 0, 1
+
+            BaseLabel:
+                text: 'C'
+                font_size: sp(24)
+                bg_color: 1, 0, 1, 1
+
+            BaseLabel:
+                text: 'D'
+                font_size: sp(24)
+                bg_color: 1, 1, 1, 1
+
         ResponsiveGridView:
             id: responsive_grid
             view_class: 'CountryGridCardItem'
@@ -77,17 +102,16 @@
 <CountryGridCardItem>:
     canvas.before:
         Color:
-            rgba: root.card_bg_color
+            rgba: [.8, .8, .8, 1]
         RoundedRectangle:
             pos: self.pos
             size: self.size
     size: root.size
 
     IconButton:
-        id: pin_btn
         pos_hint: {'top': 1, 'right': 1}
-        icon: app.get_icon('map-marker') if not root.is_pinned else app.get_icon('map-marker-off')
-        on_release: root.add_marker_to_map() if not root.is_pinned else root.remove_marker_from_map()
+        icon: app.get_icon('map-marker')
+        on_release: root.toggle_pinning()
 
     BaseButton:
         id: btn
@@ -128,7 +152,7 @@
         size: dp(20), dp(20)
         font_size: sp(15)
         pos_hint: {'center_x': .5, 'center_y': .5}
-        icon: app.get_icon('map-marker') if not root.is_pinned else app.get_icon('map-marker-off')
+        icon: app.get_icon('map-marker')
         on_release: root.add_marker_to_map() if not root.is_pinned else root.remove_marker_from_map()
 
     TextLabel:
@@ -149,3 +173,5 @@
 
 
 
+#<PinnedCountries>:
+#

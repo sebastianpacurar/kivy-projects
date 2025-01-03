@@ -1,6 +1,28 @@
 <IconButton>:
+    orientation: 'horizontal'
     size_hint: None, None
-    size: dp(36), dp(36)
-    font_name: 'md-icon'
-    font_size: sp(24)
-    disabled_color: 1, 1, 1, 1
+    height: root.bg_size_val
+    padding: dp(6), 0, dp(6), 0
+    width: text_label.texture_size[0] + icon_label.texture_size[0] + dp(24)
+
+    TextLabel:
+        id: text_label
+        font_size: sp(16)
+        height: self.texture_size[1]
+        text: root.label_text
+        pos_hint: {'center_y': .5}
+        disabled_color: 1, 1, 1, 1
+        color: 1, 1, 1, 1
+
+    Filler:
+        id: space_filler
+
+    BaseLabel:
+        id: icon_label
+        size_hint: None, None
+        size: root.bg_size_val, root.bg_size_val
+        pos_hint: {'center_y': .5}
+        font_name: 'md-icon'
+        font_size: root.font_size_val
+        disabled_color: 1, 1, 1, 1
+        color: 1, 1, 1, 1

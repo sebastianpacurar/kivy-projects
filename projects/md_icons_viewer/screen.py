@@ -9,11 +9,12 @@ from custom_components.Tooltip.tooltip import Tooltip
 
 
 class MdIconsViewerScreen(Screen):
-    data = ListProperty()
-    original_data = ListProperty()  # unfiltered complete data
-    filtered_data = ListProperty()  # data subset based on toggle buttons
+    data = ListProperty([])
+    original_data = ListProperty([])  # unfiltered complete data
+    filtered_data = ListProperty([])  # data subset based on toggle buttons
     counter = NumericProperty(0)  # count of currently filtered options
     is_compact = BooleanProperty(False)  # used to switch between small icons and large icons
+    app = App().get_running_app()
 
     def on_leave(self, *args):
         """ Make sure compact is reset to False when leaving screen"""
@@ -28,8 +29,9 @@ class MdIconsViewerScreen(Screen):
         self.counter = len(self.data)
 
     def on_kv_post(self, base_widget):
+        self.app = App.get_running_app()
         top_bar = self.ids.top_bar
-        top_bar.add_right_button(icon=App.get_running_app().get_icon('grid'), on_release=self.toggle_grid_display_size)
+        top_bar.add_right_button(icon=self.app.get_icon('grid'), text='Small', on_release=self.toggle_grid_display_size)
         self.set_data()
         self.ids.responsive_grid.ids.rv.data = self.data
         self.ids.responsive_grid.ids.rv.bind(on_scroll_start=self.clear_tooltips, on_scroll_stop=self.clear_tooltips)
@@ -76,12 +78,16 @@ class MdIconsViewerScreen(Screen):
             for item in lst:
                 item['is_name_displayed'] = not self.is_compact
 
+        layout_btn = self.ids.top_bar.ids.button_container_right.children[0]
+
         if self.is_compact:
+            layout_btn.icon = self.app.get_icon('grid-large')
+            layout_btn.label_text = 'Large'
             self.ids.responsive_grid.item_width = dp(75)
-            self.ids.top_bar.ids.button_container_right.children[0].icon = App.get_running_app().get_icon('grid-large')
         else:
+            layout_btn.icon = self.app.get_icon('grid')
+            layout_btn.label_text = 'Small'
             self.ids.responsive_grid.item_width = dp(200)
-            self.ids.top_bar.ids.button_container_right.children[0].icon = App.get_running_app().get_icon('grid')
 
         self.refresh_recycle_view()
 
