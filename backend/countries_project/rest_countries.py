@@ -6,7 +6,7 @@ class CountriesApi:
 
     def get_countries_data(self, fields=None):
         if fields is None:
-            fields = ['name', 'capital', 'capitalInfo', 'region', 'subregion', 'flags', 'population']
+            fields = ['name', 'capital', 'capitalInfo', 'region', 'subregion', 'flags', 'population', 'latlng']
 
         fields_param = ",".join(fields)
         url = f"{self.BASE_URL}/all"

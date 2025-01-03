@@ -1,4 +1,11 @@
 <MapUi>:
+    canvas.before:
+        # Draw the border here
+        Color:
+            rgba: 0, 0, 0, 1  # Black color for the border
+        Line:
+            width: 2  # Border thickness
+            rectangle: (self.x, self.y, self.width, self.height)
     BoxLayout:
         orientation: 'vertical'
         pos_hint: {'center_x': .5, 'center_y': .5}

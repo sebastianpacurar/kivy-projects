@@ -1,7 +1,6 @@
-from kivy.clock import Clock
-from kivy.properties import ListProperty, StringProperty, NumericProperty, BooleanProperty
+from kivy.properties import ListProperty, StringProperty, NumericProperty, BooleanProperty, DictProperty
 from kivy.uix.floatlayout import FloatLayout
-from kivy_garden.mapview import MapMarker, MapView
+from kivy_garden.mapview import MapMarker
 
 
 class MapUi(FloatLayout):
@@ -12,19 +11,31 @@ class MapUi(FloatLayout):
     is_fullscreen = BooleanProperty(False)
     is_map_displayed = BooleanProperty(False)
     map_size = NumericProperty(0)  # is rectangular, size = (map_size, map_size)
+    markers = DictProperty({})  # store markers in a list
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.map_marker = MapMarker()
         self.is_zoom_set = False
         self.cached_size = None
 
     def on_lat_long(self, instance, value):
         """ Update the map's position and markers when lat_long changes"""
-        self.ids.map_view.remove_widget(self.map_marker)
+        # Update the map center
         self.ids.map_view.center_on(*self.lat_long)
-        self.map_marker.lat, self.map_marker.lon = self.lat_long
-        self.ids.map_view.add_marker(self.map_marker)
+
+    def add_ui_marker(self, lat, lon, name):
+        """ Add a new marker to the map """
+        marker = MapMarker(lat=lat, lon=lon)
+        if name not in self.markers:
+            self.markers[name] = marker
+        self.ids.map_view.add_marker(marker)
+
+    def remove_ui_marker(self, name):
+        """ Remove a marker from the map based on its name """
+        if name in self.markers:
+            marker = self.markers[name]
+            del self.markers[name]
+            self.ids.map_view.remove_marker(marker)
 
     def on_kv_post(self, base_widget):
         self.cached_size = self.map_size, self.map_size
@@ -53,3 +64,7 @@ class MapUi(FloatLayout):
 
     def scroll_to_marker(self, *args):
         self.ids.map_view.center_on(*self.lat_long)
+
+    def center_map(self, lat, lon):
+        """ Manually center the map on given lat/lon """
+        self.ids.map_view.center_on(lat, lon)

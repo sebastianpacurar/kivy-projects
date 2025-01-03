@@ -106,7 +106,7 @@ class AllCountriesScreen(Screen):
         return CountriesApi().get_countries_data()
 
     def update_countries_ui_after_fetch(self, countries):
-        self.original_data = [{c[0]: c[1]} for c in countries.items()]
+        self.original_data = [{c[0]: {**c[1], 'is_pinned': False}} for c in countries.items()]
         self.data = self.original_data.copy()
         self.counter = len(self.data)
         self.refresh_grid_recycle_view()
@@ -114,14 +114,21 @@ class AllCountriesScreen(Screen):
 
     def refresh_grid_recycle_view(self, *args):
         responsive_grid = self.ids.get('responsive_grid', None)
-        country_and_flag_display = [{'common_name': k, 'flag': v['flag']} for i in self.data for (k, v) in i.items()]
+        # country_and_flag_display = [{'common_name': k, 'flag': v['flag']} for i in self.data for (k, v) in i.items()]
+        country_and_flag_display = [{'common_name': k, 'flag': v['flag'], 'coords': v['latlng'], 'is_pinned': v['is_pinned']} for i in self.data for (k, v) in i.items()]
         responsive_grid.ids.rv.data = country_and_flag_display
 
     def refresh_table_recycle_view(self, *args):
         table_view = self.ids.get('table_view', None)
+        # table_data = [
+        #     {'common_name': k, 'region': v['region'], 'capital': v['capital'],
+        #      'population': v.get('population', 'N/A'), 'row_color': (95, .95, .95, 1) if i % 2 == 0 else (1, 1, 1, 1)}
+        #     for (i, item) in enumerate(self.data) for (k, v) in item.items()
+        # ]
+
         table_data = [
             {'common_name': k, 'region': v['region'], 'capital': v['capital'],
-             'population': v.get('population', 'N/A'), 'row_color': (95, .95, .95, 1) if i % 2 == 0 else (1, 1, 1, 1)}
+             'population': v.get('population', 'N/A'), 'coords': v['latlng'], 'is_pinned': v['is_pinned'], 'row_color': (95, .95, .95, 1) if i % 2 == 0 else (1, 1, 1, 1)}
             for (i, item) in enumerate(self.data) for (k, v) in item.items()
         ]
         table_view.ids.rv.data = table_data
@@ -176,7 +183,7 @@ class CountryScreen(Screen):
         return CountriesApi().get_country_data(country)
 
     def set_country_data(self, country_data):
-        """Set the country data and update the ui."""
+        """ Set the country data and update the UI, and add map markers """
         self.country_data = country_data
         self.ids.common_name.text = self.country_data['name']['common']
         self.ids.official_name.text = self.country_data['name']['official']
@@ -189,11 +196,20 @@ class CountryScreen(Screen):
 
         self.top_bar.project_name = self.ids.common_name.text
         self.ids.flag.source = self.country_data['flag']
-        self.app.map_ui.lat_long = self.country_data['latlng']
+
+        lat, lon = self.country_data['latlng']
+        self.app.map_ui.lat_long = (lat, lon)
         self.app.map_ui.target_name = self.country_data['name']['common']
 
+        self.app.map_ui.center_map(lat, lon)
+        self.add_marker_to_map(lat, lon)
+
+    def add_marker_to_map(self, lat, lon):
+        """ Add a marker to the map at a specific location """
+        self.app.map_ui.add_ui_marker(lat, lon, self.country_data['name']['common'])
+
     def go_back(self, *args):
-        """Transition back to AllCountriesScreen."""
+        """ Transition back to AllCountriesScreen """
         self.manager.transition.direction = 'right'
         self.manager.current = 'AllCountriesScreen'
 
@@ -201,9 +217,16 @@ class CountryScreen(Screen):
 class CountryGridCardItem(FloatLayout):
     common_name = StringProperty('')
     flag = StringProperty('')
+    coords = ListProperty([])
+    card_bg_color = ListProperty([.8, .8, .8, 1])
+    is_pinned = BooleanProperty(False)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.app = App.get_running_app()
 
     def update_size(self, *args):
-        """ Resize logic as described above """
+        """ Resize logic to scale image based on its aspect ratio to fit proeprly """
         scale_factor = 0.5
         container_width = args[0][0]
         container_height = args[0][1]
@@ -221,6 +244,22 @@ class CountryGridCardItem(FloatLayout):
 
         args[1].size = (scaled_width, scaled_height)
 
+    def add_marker_to_map(self):
+        """ Adds a marker to the map with the given coordinates and country name """
+        self.app.map_ui.add_ui_marker(self.coords[0], self.coords[1], self.common_name)
+        self.app.map_ui.center_map(*self.coords)
+        self.card_bg_color = [122 / 255, 225 / 255, 191 / 255, 1]
+        self.is_pinned = True
+        self.ids.pin_btn.is_red_state = self.is_pinned
+
+
+    def remove_marker_from_map(self):
+        """ Removes a marker from the map with the given coordinates and country name """
+        self.app.map_ui.remove_ui_marker(self.common_name)
+        self.card_bg_color = [.8, .8, .8, 1]
+        self.is_pinned = False
+        self.ids.pin_btn.is_red_state = self.is_pinned
+
 
 class CountryTableRowItem(BoxLayout):
     common_name = StringProperty('')
@@ -228,3 +267,26 @@ class CountryTableRowItem(BoxLayout):
     capital = StringProperty('')
     population = NumericProperty(0)
     row_color = ListProperty([])
+    coords = ListProperty([])
+    is_pinned = BooleanProperty(False)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.app = App.get_running_app()
+
+    def add_marker_to_map(self):
+        """ Adds a marker to the map with the given coordinates and country name """
+        self.app.map_ui.add_ui_marker(self.coords[0], self.coords[1], self.common_name)
+        self.app.map_ui.center_map(*self.coords)
+        self.row_color = [122 / 255, 225 / 255, 191 / 255, 1]
+        self.is_pinned = True
+        self.ids.pin_btn.is_red_state = self.is_pinned
+
+
+    def remove_marker_from_map(self):
+        """ Removes a marker from the map with the given coordinates and country name """
+        self.app.map_ui.remove_ui_marker(self.common_name)
+        self.row_color = self.original_color
+        self.is_pinned = False
+        self.ids.pin_btn.is_red_state = self.is_pinned
+

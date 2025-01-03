@@ -77,11 +77,17 @@
 <CountryGridCardItem>:
     canvas.before:
         Color:
-            rgba: .8, .8, .8, 1
+            rgba: root.card_bg_color
         RoundedRectangle:
             pos: self.pos
             size: self.size
     size: root.size
+
+    IconButton:
+        id: pin_btn
+        pos_hint: {'top': 1, 'right': 1}
+        icon: app.get_icon('map-marker') if not root.is_pinned else app.get_icon('map-marker-off')
+        on_release: root.add_marker_to_map() if not root.is_pinned else root.remove_marker_from_map()
 
     BaseButton:
         id: btn
@@ -108,6 +114,7 @@
         Rectangle:
             pos: self.pos
             size: self.size
+
     BaseButton:
         id: btn
         size_hint_x: 1
@@ -115,6 +122,15 @@
         font_size: sp(13)
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
         on_release: root.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen').go_to_country_screen(root.common_name)
+
+    IconButton:
+        id: pin_btn
+        size: dp(20), dp(20)
+        font_size: sp(15)
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        icon: app.get_icon('map-marker') if not root.is_pinned else app.get_icon('map-marker-off')
+        on_release: root.add_marker_to_map() if not root.is_pinned else root.remove_marker_from_map()
+
     TextLabel:
         size_hint_x: 1
         font_size: sp(15)
@@ -125,9 +141,11 @@
         font_size: sp(15)
         text: root.capital
         pos_hint: {'center_y': .5}
-
     TextLabel:
         size_hint_x: 1
         font_size: sp(15)
         text: str(root.population)
         pos_hint: {'center_y': .5}
+
+
+
