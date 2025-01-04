@@ -16,13 +16,12 @@
             AllCountriesScreen:
             CountryScreen:
 
-
 <AllCountriesScreen>:
     name: 'AllCountriesScreen'
-    BoxLayout:
-        orientation: 'vertical'
+    GridLayout:
+        orientation: 'tb-lr'
+        cols: 1
         spacing: 10
-
         TopBar:
             id: top_bar
             project_name: 'Countries'
@@ -33,30 +32,8 @@
             search_hint_text: 'Search for a country'
             counter: len(root.data)
 
-        BoxLayout:
-            id: pinned countries
-            size_hint_y: None
-            height: self.minimum_height
-            orientation: 'horizontal'
-            BaseLabel:
-                text: 'A'
-                font_size: sp(24)
-                bg_color: 1, 0, 0, 1
-
-            BaseLabel:
-                text: 'B'
-                font_size: sp(24)
-                bg_color: 1, 1, 0, 1
-
-            BaseLabel:
-                text: 'C'
-                font_size: sp(24)
-                bg_color: 1, 0, 1, 1
-
-            BaseLabel:
-                text: 'D'
-                font_size: sp(24)
-                bg_color: 1, 1, 1, 1
+        PillContainer:
+            id: pill_container
 
         ResponsiveGridView:
             id: responsive_grid
@@ -111,7 +88,7 @@
     IconButton:
         pos_hint: {'top': 1, 'right': 1}
         icon: app.get_icon('map-marker')
-        on_release: root.toggle_pinning()
+        on_release: root.add_marker_to_map()
 
     BaseButton:
         id: btn
@@ -170,8 +147,3 @@
         font_size: sp(15)
         text: str(root.population)
         pos_hint: {'center_y': .5}
-
-
-
-#<PinnedCountries>:
-#

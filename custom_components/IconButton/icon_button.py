@@ -71,11 +71,15 @@ class IconButton(ButtonBehavior, BoxLayout):
         self.update_canvas()
 
     def on_disabled(self, instance, value):
-        """ Update bg color to greyed out when disabled """
-        if value:
-            self.bg_color = self.disabled_bg_color
-        else:
-            self.bg_color = self.default_bg_color
+        """ Update bg color to greyed out based on disabled and on_is_red_state states"""
+        if value:  # when the button is disabled
+            self.bg_color = self.disabled_bg_color  # always greyed out when disabled
+        else:  # when the button is enabled
+            # check the is_red_state to determine the active background color
+            if self.is_red_state:
+                self.bg_color = self.red_state_default_bg_color  # set red default color
+            else:
+                self.bg_color = self.default_bg_color  # set default teal color
 
     def update_canvas(self, *args):
         """ Update the background color and rectangle to match a button's behavior """

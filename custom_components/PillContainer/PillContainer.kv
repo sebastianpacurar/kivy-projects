@@ -1,0 +1,21 @@
+<PillContainer>:
+    size_hint_y: None
+    height: self.minimum_height
+    orientation: 'horizontal'
+
+    ScrollView:
+        size_hint_y: None
+        height: test.height * 2
+        do_scroll_x: False
+        do_scroll_y: True
+
+        StackLayout:
+            id: pills_stack
+            orientation: 'lr-tb'
+            spacing: [3, 5]
+            size_hint_y: None
+            height: self.minimum_height
+
+            IconButton:
+                id: test
+                label_text:  "test_dummy, will be deleted during runtime"

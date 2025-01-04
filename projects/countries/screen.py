@@ -3,6 +3,7 @@ from kivy.properties import ListProperty, NumericProperty, StringProperty, Boole
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
+from kivy_garden.mapview import MapMarker
 
 from backend.countries_project.rest_countries import CountriesApi
 from utils import wait_implicitly
@@ -56,12 +57,41 @@ class AllCountriesScreen(Screen):
             on_release=self.toggle_layout
         )
 
+    def add_marker_to_map_and_update_data(self, instance):
+        """ Logic to add marker on map, and attach Pill component as pinned """
+        container = self.ids.pill_container
+        country_name = instance.common_name
+        container.add_pill(icon=self.app.get_icon('map-marker-off-outline'), text=country_name, on_press=lambda pill, name=country_name: self.remove_marker_from_map(pill, name))
+        self.app.map_ui.add_ui_marker(instance.coords[0], instance.coords[1], instance.common_name)
+        self.app.map_ui.center_map(*instance.coords)
+
+        if not self.is_map_on:
+            self.is_map_on = True
+
+        for i in self.data:
+            for k, v in i.items():
+                if k == instance.common_name:
+                    v['is_pinned'] = True
+        self.refresh_grid_recycle_view()
+        self.refresh_table_recycle_view()
+
+    def remove_marker_from_map(self, instance, country_name):
+        """ The callback used as on_press event, before executing on_release (deleting pill widget) """
+        for i in self.data:
+            for k, v in i.items():
+                if k == country_name:
+                    v['is_pinned'] = False
+
+        self.refresh_grid_recycle_view()
+        self.refresh_table_recycle_view()
+        self.app.map_ui.remove_ui_marker(country_name)
+
     def toggle_map_visibility(self, *args):
         self.is_map_on = not self.is_map_on
-        self.manager.get_screen('CountryScreen').is_map_on = self.is_map_on
 
     def close_map(self):
         self.is_map_on = False
+        self.manager.get_screen('CountryScreen').is_map_on = False
 
     def on_is_map_on(self, instance, value):
         self.app.toggle_app_map(value)
@@ -69,6 +99,7 @@ class AllCountriesScreen(Screen):
         map_btn.is_red_state = value
         map_btn.icon = self.app.get_icon('map-minus') if value else self.app.get_icon('map-search')
         map_btn.label_text = 'Close Map' if value else 'Open Map'
+        self.manager.get_screen('CountryScreen').is_map_on = self.is_map_on
 
     def toggle_layout(self, *args):
         """ Toggle between table and grid views """
@@ -120,15 +151,21 @@ class AllCountriesScreen(Screen):
 
     def refresh_grid_recycle_view(self, *args):
         responsive_grid = self.ids.get('responsive_grid', None)
-        country_and_flag_display = [{'common_name': k, 'flag': v['flag'], 'coords': v['latlng'], 'is_pinned': v['is_pinned']} for i in self.data for (k, v) in i.items()]
+        country_and_flag_display = [
+            {'common_name': k, 'flag': v['flag'], 'coords': v['latlng'], 'is_pinned': v['is_pinned']}
+            for i in self.data for (k, v) in i.items()
+            if v['is_pinned'] is False  # only include data where is_pinned is False
+        ]
         responsive_grid.ids.rv.data = country_and_flag_display
 
     def refresh_table_recycle_view(self, *args):
         table_view = self.ids.get('table_view', None)
         table_data = [
             {'common_name': k, 'region': v['region'], 'capital': v['capital'],
-             'population': v.get('population', 'N/A'), 'coords': v['latlng'], 'is_pinned': v['is_pinned'], 'row_color': (95, .95, .95, 1) if i % 2 == 0 else (1, 1, 1, 1)}
+             'population': v.get('population', 'N/A'), 'coords': v['latlng'], 'is_pinned': v['is_pinned'],
+             'row_color': (95, .95, .95, 1) if i % 2 == 0 else (1, 1, 1, 1)}
             for (i, item) in enumerate(self.data) for (k, v) in item.items()
+            if v['is_pinned'] is False  # only include data where is_pinned is False
         ]
         table_view.ids.rv.data = table_data
 
@@ -144,6 +181,7 @@ class AllCountriesScreen(Screen):
 
 class CountryScreen(Screen):
     is_map_on = BooleanProperty(False)
+    map_marker = MapMarker()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -154,27 +192,43 @@ class CountryScreen(Screen):
     def on_kv_post(self, base_widget):
         self.top_bar = self.ids.top_bar
         self.top_bar.add_left_button(icon=self.app.get_icon('arrow-left-bold-circle-outline'), on_release=self.go_back)
+
         self.top_bar.add_right_button(
-            icon=self.app.get_icon('map-search'),
-            on_release=self.toggle_map_visibility
+            icon=self.app.get_icon('map-minus') if self.is_map_on else self.app.get_icon('map-search'),
+            text='Close Map' if self.is_map_on else 'Open Map',
+            on_release=self.toggle_map_visibility,
+            is_red_state=not self.is_map_on
         )
-
-    def toggle_map_visibility(self, *args):
-        self.is_map_on = not self.is_map_on
-        self.manager.get_screen('AllCountriesScreen').is_map_on = self.is_map_on
-
-    def close_map(self):
-        self.is_map_on = False
-
-    def on_is_map_on(self, instance, value):
-        self.app.toggle_app_map(self.is_map_on)
-        new_icon = 'map-minus' if self.is_map_on else 'map-search'
-        self.ids.top_bar.ids.button_container_right.children[0].icon = self.app.get_icon(new_icon)
 
     def on_pre_enter(self, *args):
         self.ids.common_name.text = 'Loading...'
         self.top_bar.project_name = 'Loading...'
         self.ids.flag.source = 'assets/images/img_transparent.png'
+
+    def on_enter(self, *args):
+        map_btn = self.ids.top_bar.ids.button_container_right.children[0]
+        map_btn.is_red_state = self.is_map_on
+
+    def on_leave(self, *args):
+        self.app.map_ui.target_name = ""
+
+    def on_pre_leave(self, *args):
+        self.app.map_ui.toggle_displayed_markers(self.map_marker, switch_to_target_marker=False)
+
+    def toggle_map_visibility(self, *args):
+        self.is_map_on = not self.is_map_on
+
+    def close_map(self):
+        self.is_map_on = False
+        self.manager.get_screen('AllCountriesScreen').is_map_on = False
+
+    def on_is_map_on(self, instance, value):
+        self.app.toggle_app_map(value)
+        map_btn = self.ids.top_bar.ids.button_container_right.children[0]
+        map_btn.is_red_state = value
+        map_btn.icon = self.app.get_icon('map-minus') if value else self.app.get_icon('map-search')
+        map_btn.label_text = 'Close Map' if value else 'Open Map'
+        self.manager.get_screen('AllCountriesScreen').is_map_on = self.is_map_on
 
     @wait_implicitly(callback=lambda self, country_data: self.set_country_data(country_data))
     def fetch_country_data(self, country):
@@ -198,9 +252,12 @@ class CountryScreen(Screen):
         lat, lon = self.country_data['latlng']
         self.app.map_ui.lat_long = (lat, lon)
         self.app.map_ui.target_name = self.country_data['name']['common']
+        self.map_marker.lat = lat
+        self.map_marker.lon = lon
+        self.map_marker.name = country_data['name']['common']
 
+        self.app.map_ui.toggle_displayed_markers(self.map_marker, switch_to_target_marker=True)
         self.app.map_ui.center_map(lat, lon)
-        self.add_marker_to_map(lat, lon)
 
     def add_marker_to_map(self, lat, lon):
         """ Add a marker to the map at a specific location """
@@ -241,8 +298,10 @@ class CountryGridCardItem(FloatLayout):
 
         args[1].size = (scaled_width, scaled_height)
 
-    def toggle_pinning(self):
-        self.is_pinned = not self.is_pinned
+    def add_marker_to_map(self):
+        """ Adds a marker to the map with the given coordinates and country name """
+        all_countries_screen = self.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen')
+        all_countries_screen.add_marker_to_map_and_update_data(self)
 
 
 class CountryTableRowItem(BoxLayout):
@@ -252,26 +311,12 @@ class CountryTableRowItem(BoxLayout):
     population = NumericProperty(0)
     row_color = ListProperty([])
     coords = ListProperty([])
-    is_pinned = BooleanProperty(False)
-    data = ListProperty([])
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.app = App.get_running_app()
 
-    def pin_country(self):
-        pass
-
     def add_marker_to_map(self):
         """ Adds a marker to the map with the given coordinates and country name """
         all_countries_screen = self.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen')
-        all_countries_screen.update_pinned_state(self.common_name, True)
-
-    def remove_marker_from_map(self):
-        """ Removes a marker from the map with the given coordinates and country name """
-        all_countries_screen = self.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen')
-        all_countries_screen.update_pinned_state(self.common_name, False)
-
-
-class PinnedCountries(BoxLayout):
-    pass
+        all_countries_screen.add_marker_to_map_and_update_data(self)

@@ -1,10 +1,10 @@
 <MapUi>:
     canvas.before:
-        # Draw the border here
+        # draw the border here
         Color:
-            rgba: 0, 0, 0, 1  # Black color for the border
+            rgba: 0, 0, 0, 1  # black color for the border
         Line:
-            width: 2  # Border thickness
+            width: 2  # border thickness
             rectangle: (self.x, self.y, self.width, self.height)
     BoxLayout:
         orientation: 'vertical'
@@ -27,16 +27,17 @@
                     size: self.size
 
             BaseButton:
-                disabled: len(root.target_name) < 0
+                disabled: len(root.target_name) <= 0
                 id: reset_loc_btn
                 text: root.target_name
                 size_hint: 1, None
-                height: resize_btn.height
-                on_release: root.scroll_to_marker()
+                height: resize_btn.height if self.disabled else self.height
+                on_release: root.center_map(*root.lat_long)
+
 
             IconButton:
                 id: resize_btn
+                pos_hint: {'center_y': .5}
                 is_round: False
-                size: reset_loc_btn.size[1], reset_loc_btn.size[1]
                 icon: app.get_icon('window-minimize') if root.is_fullscreen else app.get_icon('window-maximize')
                 on_release: root.toggle_full_screen()
