@@ -1,0 +1,15 @@
+<SegmentedController>:
+    orientation: 'horizontal'
+    size_hint: 1, None
+    height: root.controller_height
+
+<SegmentedButton>:
+    size_hint: 1, 1
+    disabled: self.state == 'down'
+
+    TextLabel:
+        size: self.parent.size
+        color: 0, 0, 0, 1
+        disabled_color: 1, 1, 1, 1
+        font_size: sp(20)
+        text: root.btn_text

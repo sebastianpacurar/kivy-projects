@@ -14,55 +14,28 @@
             id: top_bar
             project_name: 'Unit Converter'
 
-        GridLayout:
-            cols: 6
-            size_hint_y: None
-            height: dp(27.5)
-            spacing: 1
-
-            SegmentedButton:
-                text: 'Length'
-                group: 'unit_converters'
-                on_state: root.change_unit_screen(self, 'LengthScreen')
-                state: 'down'
-                option_index: 0
-            SegmentedButton:
-                text: 'Area'
-                group: 'unit_converters'
-                on_state: root.change_unit_screen(self, 'AreaScreen')
-                option_index: 1
-            SegmentedButton:
-                text: 'Volume'
-                group: 'unit_converters'
-                on_state: root.change_unit_screen(self, 'VolumeScreen')
-                option_index: 2
-            SegmentedButton:
-                text: 'Energy'
-                group: 'unit_converters'
-                on_state: root.change_unit_screen(self, 'EnergyScreen')
-                option_index: 3
-            SegmentedButton:
-                text: 'Force'
-                group: 'unit_converters'
-                on_state: root.change_unit_screen(self, 'ForceScreen')
-                option_index: 4
-            SegmentedButton:
-                text: 'Speed'
-                group: 'unit_converters'
-                on_state: root.change_unit_screen(self, 'SpeedScreen')
-                option_index: 5
+        SegmentedController:
+            id: segmented_controller
+            toggle_func: lambda i, v: root.change_unit_screen(i, v)
+            button_labels: ['Length', 'Area', 'Volume', 'Energy', 'Force', 'Speed']
+            seg_group: 'unit_converters'
 
         BoxLayout:
             orientation: 'vertical'
             ScreenManager:
                 id: screen_manager
                 LengthScreen:
+                    initial_conversion: ['meter [m]', 'yard [yd]']
                 AreaScreen:
+                    initial_conversion: ['square meter [m²]', 'square centimeter [cm²]']
                 VolumeScreen:
+                    initial_conversion: ['liter [L]', 'cubic meter [m³]']
                 EnergyScreen:
+                    initial_conversion: ['joule [J]', 'calorie [cal]']
                 ForceScreen:
+                    initial_conversion: ['newton [N]', 'gram-force [gf]']
                 SpeedScreen:
-
+                    initial_conversion: ['meter per second [m/s]', 'inch per second [in/s]']
 
 
 <LengthScreen>:

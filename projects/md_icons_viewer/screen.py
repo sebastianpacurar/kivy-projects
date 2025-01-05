@@ -41,15 +41,15 @@ class MdIconsViewerScreen(Screen):
             if isinstance(widget, IconItem):
                 widget.tooltip.hide_tooltip()
 
-    def set_filter_selection(self, toggle_value):
+    def set_filter_selection(self, instance, value):
         """ Update the filtered_data based on toggle button selection """
         self.clear_tooltips()
         query = self.ids.search_box.ids.search_input.text.strip().lower()
-        if toggle_value == 'All':
+        if instance.btn_text == 'All':
             self.filtered_data = self.original_data.copy()
-        elif toggle_value == 'Filled':
+        elif instance.btn_text == 'Filled':
             self.filtered_data = [item for item in self.original_data if 'outline' not in item['icon_name'].lower()]
-        elif toggle_value == 'Outlined':
+        elif instance.btn_text == 'Outlined':
             self.filtered_data = [item for item in self.original_data if 'outline' in item['icon_name'].lower()]
         self.ids.responsive_grid.ids.rv.scroll_y = 1.0  # reset REcycleView scroll to top
         self.filter_data(self.ids.search_box, query)

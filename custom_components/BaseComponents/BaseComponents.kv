@@ -34,25 +34,3 @@
 
 <Filler@Widget>:
 
-
-<SegmentedButton>:
-    disabled: self.state == 'down'
-    background_disabled_down: self.background_down
-    background_disabled_normal: self.background_normal
-    disabled_color: 1, 1, 1, 1
-
-
-<SegmentedController>:
-    GridLayout:
-        orientation: 'tb-lr' if root.direction == 'vertical' else 'lr-tb'
-        size_hint_y: None
-        height: dp(25)
-        spacing: 1
-
-        # example of button:
-#        SegmentedButton:
-#            text: 'Length'
-#            group: 'unit_converters'
-#            on_state: root.change_unit_screen(self, 'LengthScreen')
-#            state: 'down'
-#            option_index: 0

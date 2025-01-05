@@ -13,32 +13,16 @@
         TopBar:
             id: top_bar
             project_name: 'Material Design Icons'
-
-        GridLayout:
-            cols: 6
-            size_hint_y: None
-            height: dp(25)
-            spacing: 5
-            SegmentedButton:
-                text: 'All'
-                group: 'md_icon_types'
-                on_state: if self.state == 'down': root.set_filter_selection(self.text)
-                state: 'down'
-            SegmentedButton:
-                text: 'Filled'
-                group: 'md_icon_types'
-                on_state: if self.state == 'down': root.set_filter_selection(self.text)
-            SegmentedButton:
-                text: 'Outlined'
-                group: 'md_icon_types'
-                on_state: if self.state == 'down': root.set_filter_selection(self.text)
-
+        SegmentedController:
+            id: segmented_controller
+            toggle_func: lambda i, v: root.set_filter_selection(i, v)
+            button_labels: ['All', 'Filled', 'Outlined']
+            seg_group: 'md-icon-types'
         SearchInputBox:
             id: search_box
             search_func: lambda i, v: root.filter_data(i, v)
             search_hint_text: 'Search for icons'
             counter: len(root.data)
-
         ResponsiveGridView:
             id: responsive_grid
             view_class: 'IconItem'

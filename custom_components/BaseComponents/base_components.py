@@ -1,7 +1,6 @@
-from kivy.properties import NumericProperty, ListProperty
+from kivy.properties import ListProperty
 from kivy.uix.button import Button
 from kivy.uix.label import Label
-from kivy.uix.togglebutton import ToggleButton
 
 
 class BaseButton(Button):
@@ -10,19 +9,6 @@ class BaseButton(Button):
             if touch.button == 'left':
                 # if left click, proceed with the button press logic
                 return super(Button, self).on_touch_down(touch)
-            if touch.button == 'right':
-                # do nothing if right click
-                return False
-
-
-class SegmentedButton(ToggleButton):
-    option_index = NumericProperty(0)
-
-    def on_touch_down(self, touch):
-        if self.collide_point(*touch.pos):
-            if touch.button == 'left':
-                # if left click, proceed with the button press logic
-                return super(ToggleButton, self).on_touch_down(touch)
             if touch.button == 'right':
                 # do nothing if right click
                 return False
