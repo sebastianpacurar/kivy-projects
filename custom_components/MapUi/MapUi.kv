@@ -41,3 +41,22 @@
                 is_round: False
                 icon: app.get_icon('window-minimize') if root.is_fullscreen else app.get_icon('window-maximize')
                 on_release: root.toggle_full_screen()
+
+
+<MarkerPopupLabel>:
+    text: root.label_text
+    pos_hint: {'center_x': .5, 'center_y': .2}
+    color: 0, 0, 0, 1
+    size: self.texture_size[0] + dp(15), self.texture_size[1] + dp(5)
+    canvas.before:
+        Color:
+            rgba: .9, .9, .9, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+
+        Color:
+            rgba: .5, .5, .5, 1
+        Line:
+            width: 1.5
+            rounded_rectangle: (self.x, self.y, self.width, self.height, 10)

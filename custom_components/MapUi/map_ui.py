@@ -1,7 +1,11 @@
 from kivy.animation import Animation
+from kivy.clock import Clock
+from kivy.core.window import Window
 from kivy.properties import ListProperty, StringProperty, NumericProperty, BooleanProperty, DictProperty
 from kivy.uix.floatlayout import FloatLayout
-from kivy_garden.mapview import MapMarker
+from kivy_garden.mapview import MapMarkerPopup
+
+from custom_components.BaseComponents.base_components import TextLabel
 
 
 class MapUi(FloatLayout):
@@ -19,17 +23,31 @@ class MapUi(FloatLayout):
         self.is_zoom_set = False
         self.cached_size = None
 
+        # check for any map marker popup mouse hover events
+        Clock.schedule_interval(self.handle_marker_popup_display, 1 / 60.0)
+
     def on_lat_long(self, instance, value):
         """ Update the map's position and markers when lat_long changes"""
-        # Update the map center
-        self.ids.map_view.center_on(*self.lat_long)
+        self.center_map(*self.lat_long)
 
     def add_ui_marker(self, lat, lon, name):
-        """ Add a new marker to the map """
-        marker = MapMarker(lat=lat, lon=lon)
+        """Add a new marker with popup"""
         if name not in self.markers:
+            marker = MapMarkerPopup(lat=lat, lon=lon)
+            marker.add_widget(MarkerPopupLabel(label_text=name))
             self.markers[name] = marker
-        self.ids.map_view.add_marker(marker)
+
+        self.ids.map_view.add_marker(self.markers[name])
+
+    def handle_marker_popup_display(self, *args):
+        """ Open MapMarkerPopup when mouse is hovering, close otherwise """
+        for name, marker in self.markers.items():
+            if marker.collide_point(*Window.mouse_pos):
+                if not marker.is_open:
+                    marker.is_open = True
+            else:
+                if marker.is_open:
+                    marker.is_open = False
 
     def remove_ui_marker(self, name):
         """ Remove a marker from the map based on its name """
@@ -109,3 +127,7 @@ class MapUi(FloatLayout):
     def center_map(self, lat, lon):
         """ Manually center the map on given lat/lon """
         self.ids.map_view.center_on(lat, lon)
+
+
+class MarkerPopupLabel(TextLabel):
+    label_text = StringProperty('blank')
