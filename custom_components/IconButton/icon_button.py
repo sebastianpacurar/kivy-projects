@@ -18,7 +18,8 @@ class IconButton(ButtonBehavior, BoxLayout):
     is_red_state = BooleanProperty(False)  # change color to red if is_red_state is True
     label_text = StringProperty('')  # button label text. if empty, it's just an icon button, else labeled icon button
     bg_size_val = NumericProperty(dp(36))  # used with font_size_val to get different sized icons
-    font_size_val = NumericProperty(sp(24))  # used with bg_size_val to get different sized icons
+    font_size_val = NumericProperty(sp(28))  # if no text label, this should be of the size of the bg_size_val
+    x_padding = NumericProperty(dp(24))  # if no text, this should be 0
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -46,11 +47,15 @@ class IconButton(ButtonBehavior, BoxLayout):
 
     def delayed_setup(self, value):
         self.ids.icon_label.text = value  # set unicode icon
-        # if empty string, format icon to be placed in the middle. one time only
+        # if empty string, format icon to be placed in the middle
         if len(self.label_text) == 0 and not self.setup_initialized:
+            # remove all spacing and padding. set font_size_val ref to bg_size_val
+            self.x_padding = 0
+            self.padding = [0, 0, 0, dp(1)]
             self.ids.text_label.size = [0, 0]
-            self.ids.space_filler.size = [0, 0]
-            self.width = self.bg_size_val
+            self.ids.icon_label.font_size = self.bg_size_val
+            self.remove_widget(self.ids.space_filler)
+            self.remove_widget(self.ids.text_label)
             self.setup_initialized = True
 
     def on_state(self, instance, value):

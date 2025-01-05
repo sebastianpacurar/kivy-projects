@@ -9,7 +9,7 @@ class SegmentedController(BoxLayout):
     toggle_func = ObjectProperty(None)  # callback to execute on SegmentedButton on_state change
     seg_group = StringProperty('')  # toggle group
     button_labels = ListProperty([])  # toggle buttons text
-    controller_height = NumericProperty(dp(30))
+    controller_height = NumericProperty(dp(45))
 
     def on_button_labels(self, *args):
         for i, text in enumerate(self.button_labels):
@@ -53,67 +53,46 @@ class SegmentedButton(ToggleButtonBehavior, BoxLayout):
     def update_canvas(self):
         if not self.canvas:
             return  # prevent first time call crash
-        padding = dp(2)
-        line_width = dp(2)
-        corner_radius = dp(10)  # radius for round corners
         self.canvas.before.clear()
-
         with self.canvas.before:
             Color(0.00823, 0.59843, 0.54355, 1)
             # write the outlines
             if self.is_first:  # left curved side
                 Line(
-                    rounded_rectangle=(
-                        self.x + padding,
-                        self.y + padding,
-                        self.width - 2 * padding,
-                        self.height - 2 * padding,
-                        corner_radius, 0, 0, corner_radius  # left curved side
-                    ),
-                    width=line_width
+                    rounded_rectangle=(self.x, self.y, self.width, self.height, dp(17.5), 0, 0, dp(17.5)),  # left curved side
+                    width=dp(1.25)
                 )
 
             elif self.is_last:
                 Line(
-                    rounded_rectangle=(
-                        self.x + padding,
-                        self.y + padding,
-                        self.width - 2 * padding,
-                        self.height - 2 * padding,
-                        0, corner_radius, corner_radius, 0  # right curved side
-                    ),
-                    width=line_width
+                    rounded_rectangle=(self.x, self.y, self.width, self.height, 0, dp(17.5), dp(17.5), 0),  # right curved side
+                    width=dp(1.25)
                 )
 
             else:  # middle button
                 Line(
-                    rectangle=(
-                        self.x + padding,
-                        self.y + padding,
-                        self.width - 2 * padding,
-                        self.height - 2 * padding
-                    ),
-                    width=line_width
+                    rectangle=(self.x, self.y, self.width, self.height),
+                    width=dp(1.25)
                 )
 
             # when active fill the rectangle
             if self.state == 'down':
                 if self.is_first:
                     RoundedRectangle(
-                        pos=(self.x + padding, self.y + padding),
-                        size=(self.width - 2 * padding, self.height - 2 * padding),
-                        radius=[corner_radius, 0, 0, corner_radius]  # left curved side
+                        pos=(self.x, self.y),
+                        size=(self.width, self.height),
+                        radius=[dp(17.5), 0, 0, dp(17.5)]  # left curved side
                     )
 
                 elif self.is_last:
                     RoundedRectangle(
-                        pos=(self.x + padding, self.y + padding),
-                        size=(self.width - 2 * padding, self.height - 2 * padding),
-                        radius=[0, corner_radius, corner_radius, 0]  # right curved side
+                        pos=(self.x, self.y),
+                        size=(self.width, self.height),
+                        radius=[0, dp(17.5), dp(17.5), 0]  # right curved side
                     )
 
                 else:  # middle button
                     Rectangle(
-                        pos=(self.x + padding, self.y + padding),
-                        size=(self.width - 2 * padding, self.height - 2 * padding)
+                        pos=(self.x, self.y),
+                        size=(self.width, self.height)
                     )

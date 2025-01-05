@@ -38,8 +38,8 @@
         ResponsiveGridView:
             id: responsive_grid
             view_class: 'CountryGridCardItem'
-            item_width: dp(280)
-            item_spacing: dp(20)
+            item_width: dp(180)
+            item_spacing: dp(10)
 
         TableView:
             id: table_view
@@ -86,16 +86,18 @@
     size: root.size
 
     IconButton:
+        bg_size_val: dp(24)
         pos_hint: {'top': 1, 'right': 1}
         icon: app.get_icon('map-marker')
         on_release: root.add_marker_to_map()
 
     BaseButton:
-        id: btn
+        id: country_btn
         text: root.common_name
         font_size: sp(13)
         pos_hint: {'center_x': 0.5, 'center_y': 0.7}
         on_release: root.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen').go_to_country_screen(root.common_name)
+
     AsyncImage:
         id: flag
         source: root.flag
@@ -117,8 +119,9 @@
             size: self.size
 
     BaseButton:
+        min_width: dp(150)
         id: btn
-        size_hint_x: 1
+        size_hint_x: None
         text: root.common_name
         font_size: sp(13)
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
@@ -126,8 +129,7 @@
 
     IconButton:
         id: pin_btn
-        size: dp(20), dp(20)
-        font_size: sp(15)
+        bg_size_val: dp(30)
         pos_hint: {'center_x': .5, 'center_y': .5}
         icon: app.get_icon('map-marker')
         on_release: root.add_marker_to_map() if not root.is_pinned else root.remove_marker_from_map()

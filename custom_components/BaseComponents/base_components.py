@@ -1,9 +1,15 @@
-from kivy.properties import ListProperty
+from kivy.metrics import dp
+from kivy.properties import ListProperty, NumericProperty
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 
-
 class BaseButton(Button):
+    min_width = NumericProperty(dp(100))
+
+    def on_kv_post(self, base_widget):
+        if self.parent and self.parent.width > self.min_width:
+            self.min_width = self.parent.width - dp(20)
+
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
             if touch.button == 'left':

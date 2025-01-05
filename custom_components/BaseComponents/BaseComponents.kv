@@ -1,11 +1,15 @@
 <BaseButton>:
     size_hint: None, None
-    width: self.texture_size[0] + dp(20)
+    width: max(self.texture_size[0] + dp(20), self.min_width)
     height: self.texture_size[1] + dp(10)
     font_size: sp(18)
     background_color: 0.01176, 0.8549, 0.7765, 1
     color: 1, 1, 1, 1
     font_name: 'roboto-medium'
+    text_size: self.width - dp(20), None  # wrap text within button width (with padding)
+    halign: 'center'  # center text horizontally
+    valign: 'middle'  # center text vertically
+
 
 <BaseLabel>:
     color: 0, 0, 0, 1

@@ -25,24 +25,29 @@ AppContainer:
 <HomeScreen@Screen>:
     name: 'home_screen'
     BoxLayout:
+        size_hint: 1, 1
         orientation: 'vertical'
         Filler:
         BaseButton:
+            min_width: dp(200)
             pos_hint: {'center_x': .5}
             text: 'MD Icons Viewer'
             on_release: app.nav_to_project('MdIconsViewerScreen')
         Filler:
         BaseButton:
+            min_width: dp(200)
             pos_hint: {'center_x': .5}
             text: 'Time Calculator'
             on_release: app.nav_to_project('TimeCalculatorScreen')
         Filler:
         BaseButton:
+            min_width: dp(200)
             pos_hint: {'center_x': .5}
             text: 'Unit Converter'
             on_release: app.nav_to_project('UnitConverterScreen')
         Filler:
         BaseButton:
+            min_width: dp(200)
             pos_hint: {'center_x': .5}
             text: 'Countries'
             on_release: app.nav_to_project('CountriesMainScreen')

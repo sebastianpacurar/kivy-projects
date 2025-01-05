@@ -2,8 +2,8 @@
     orientation: 'horizontal'
     size_hint: None, None
     height: root.bg_size_val
-    padding: dp(6), 0, dp(6), 0
-    width: text_label.texture_size[0] + icon_label.texture_size[0] + dp(24)
+    padding: dp(8), 0, dp(8), 0
+    width: text_label.texture_size[0] + icon_label.texture_size[0] + root.x_padding
 
     TextLabel:
         id: text_label
@@ -19,9 +19,10 @@
 
     BaseLabel:
         id: icon_label
-        size_hint: None, None
-        size: root.bg_size_val, root.bg_size_val
+        size_hint: 1, 1
         pos_hint: {'center_y': .5}
+        halign: 'center'
+        valign: 'middle'
         font_name: 'md-icon'
         font_size: root.font_size_val
         disabled_color: 1, 1, 1, 1
