@@ -36,8 +36,7 @@ class MapUi(FloatLayout):
             marker = MapMarkerPopup(lat=lat, lon=lon)
             marker.add_widget(MarkerPopupLabel(label_text=name))
             self.markers[name] = marker
-
-        self.ids.map_view.add_marker(self.markers[name])
+            self.ids.map_view.add_marker(self.markers[name])
 
     def handle_marker_popup_display(self, *args):
         """ Open MapMarkerPopup when mouse is hovering, close otherwise """
