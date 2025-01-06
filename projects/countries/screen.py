@@ -1,11 +1,11 @@
 from kivy.app import App
 from kivy.properties import ListProperty, NumericProperty, StringProperty, BooleanProperty
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
 from kivy_garden.mapview import MapMarker
 
 from backend.countries_project.rest_countries import CountriesApi
+from custom_components.TableView.table_view import TableViewRow
 from utils import wait_implicitly
 
 
@@ -169,14 +169,14 @@ class AllCountriesScreen(Screen):
         ]
         table_view.ids.rv.data = table_data
 
-    def go_to_country_screen(self, country):
+    def go_to_country_screen(self, instance):
         """ Navigate to CountryScreen and fetch data """
         self.manager.transition.direction = 'left'
         self.manager.current = 'CountryScreen'
 
         # once the transition starts, fetch the country data
         country_screen = self.manager.get_screen('CountryScreen')
-        country_screen.fetch_country_data(country)
+        country_screen.fetch_country_data(instance.text)
 
 
 class CountryScreen(Screen):
@@ -304,13 +304,11 @@ class CountryGridCardItem(FloatLayout):
         all_countries_screen.add_marker_to_map_and_update_data(self)
 
 
-class CountryTableRowItem(BoxLayout):
+class CountryTableRowItem(TableViewRow):
     common_name = StringProperty('')
     region = StringProperty('')
     capital = StringProperty('')
     population = NumericProperty(0)
-    row_color = ListProperty([])
-    coords = ListProperty([])
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

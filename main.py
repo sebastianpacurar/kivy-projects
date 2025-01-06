@@ -120,7 +120,6 @@ class KivyProjectsApp(App):
         super().on_start()
         self.spinner = self.root.ids.loadingSpinner
         self.map_ui = self.root.ids.map
-        # self.map_ui.ids.map_view.map_source = self.cached_map_source
         self.pm = self.root.ids.projectManager
         Window.bind(on_key_down=self.on_key_down)
 

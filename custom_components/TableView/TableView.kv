@@ -1,3 +1,4 @@
+
 <TableView>:
     orientation: 'vertical'
 
@@ -24,8 +25,61 @@
         RecycleBoxLayout:
             id: box_layout
             orientation: 'vertical'
-            default_size: None, 40
+            default_size: None, 60
             default_size_hint: 1, None
             size_hint_y: None
             height: self.minimum_height
             orientation: 'vertical'
+
+<TableViewText>:
+    size_hint: None, 1
+    TextLabel:
+        size_hint_x: 1
+        font_size: sp(14)
+        pos_hint: {'center_y': .5}
+        text: root.text_val
+        text_size: self.width - dp(20), None  # wrap text within button width (with padding)
+        halign: 'center'
+        valign: 'middle'
+
+
+<TableViewButton>:
+    size_hint: None, None
+    width: base_btn.width
+    BaseButton:
+        id: base_btn
+        min_width: root.btn_width
+        font_size: sp(14)
+        text: root.text_val
+        pos_hint: {'center_y': .5}
+
+
+<TableViewIconButton>:
+    size_hint: None, 1
+    width: icon_btn.width
+    pos_hint: {'center_x': .5, 'center_y': .5}
+    IconButton:
+        id: icon_btn
+        pos_hint: {'center_y': .5}
+        bg_size_val: dp(30)
+        icon: root.icon
+
+
+<TableViewRow>:
+    orientation: 'horizontal'
+    size_hint: 1, None
+
+
+<TableData>:
+    size_hint: 1, 1
+    canvas.before:
+        Color:
+            rgba: 95, .95, .95, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: 0, 0, 0, 1
+        Line:
+            rectangle: self.x, self.y, self.width, self.height
+            width: 1.25

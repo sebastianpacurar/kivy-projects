@@ -52,7 +52,6 @@ class IconButton(ButtonBehavior, BoxLayout):
             # remove all spacing and padding. set font_size_val ref to bg_size_val
             self.x_padding = 0
             self.padding = [0, 0, 0, dp(1)]
-            self.ids.text_label.size = [0, 0]
             self.ids.icon_label.font_size = self.bg_size_val
             self.remove_widget(self.ids.space_filler)
             self.remove_widget(self.ids.text_label)
