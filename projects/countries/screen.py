@@ -1,5 +1,5 @@
 from kivy.app import App
-from kivy.properties import ListProperty, NumericProperty, StringProperty, BooleanProperty
+from kivy.properties import ListProperty, NumericProperty, StringProperty, BooleanProperty, DictProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
 from kivy_garden.mapview import MapMarker
@@ -24,20 +24,22 @@ class CountriesMainScreen(Screen):
 
 
 class AllCountriesScreen(Screen):
-    data = ListProperty([])
-    original_data = ListProperty([])
+    original_data = ListProperty([])  # original unfiltered data
+    filtered_data = ListProperty([])  # modified original data to filtered (resets to original_data)
+    data = ListProperty([])  # modified filtered data to specific data (resets to filtered_data)
     pinned_countries = ListProperty([])
-    counter = NumericProperty(0)
     is_tabular = BooleanProperty(False)
     is_map_on = BooleanProperty(False)
+    filter_option = DictProperty({'region': 'All'})  # segmented controller filter
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.init_seg_controller = False
         self.app = App.get_running_app()
 
     def on_pre_enter(self):
         if len(self.data) == 0:
-            self.fetch_country_names()
+            self.fetch_all_countries_data()
 
     def on_kv_post(self, base_widget):
         self.ids.table_view.opacity = 0
@@ -72,8 +74,7 @@ class AllCountriesScreen(Screen):
             for k, v in i.items():
                 if k == instance.common_name:
                     v['is_pinned'] = True
-        self.refresh_grid_recycle_view()
-        self.refresh_table_recycle_view()
+        self.refresh_rvs()
 
     def remove_marker_from_map(self, instance, country_name):
         """ The callback used as on_press event, before executing on_release (deleting pill widget) """
@@ -81,10 +82,8 @@ class AllCountriesScreen(Screen):
             for k, v in i.items():
                 if k == country_name:
                     v['is_pinned'] = False
-
-        self.refresh_grid_recycle_view()
-        self.refresh_table_recycle_view()
         self.app.map_ui.remove_ui_marker(country_name)
+        self.refresh_rvs()
 
     def toggle_map_visibility(self, *args):
         self.is_map_on = not self.is_map_on
@@ -119,35 +118,61 @@ class AllCountriesScreen(Screen):
         layout_btn.icon = self.app.get_icon('grid-large') if self.is_tabular else self.app.get_icon('list-box-outline')
         layout_btn.label_text = 'Grid' if self.is_tabular else 'List'
 
-    def filter_data(self, instance, value):
+    def search_data(self, instance, value):
         """ Filter data based on query and update RecycleView """
         if value:  # filter only if query is not empty
             words = value.strip().lower().split()
             self.data = []
-            for i in self.original_data:
+            for i in self.filtered_data:
                 country_name = list(i.keys())[0].lower()
                 if ' '.join(words) in country_name:
                     self.data.append(i)
 
         else:  # reset data if text is empty
-            self.data = self.original_data
+            self.data = self.filtered_data.copy()
+        self.refresh_rvs()
 
-        # update counter and refresh the RecycleViews
-        instance.counter = len(self.data)
-        self.refresh_grid_recycle_view()
-        self.refresh_table_recycle_view()
+    # TODO: currently unused
+    @wait_implicitly(callback=lambda self, countries: self.update_countries_ui_after_fetch(countries))
+    def fetch_countries_based_on_region(self, region_value):
+        """ Fetch data for all countries names"""
+        return CountriesApi().get_countries_data_based_on_region(region_value)
 
     @wait_implicitly(callback=lambda self, countries: self.update_countries_ui_after_fetch(countries))
-    def fetch_country_names(self):
+    def fetch_all_countries_data(self):
         """ Fetch data for all countries names"""
         return CountriesApi().get_countries_data()
 
-    def update_countries_ui_after_fetch(self, countries):
+    def change_displayed_region(self, instance, value):
+        query = self.ids.search_box.ids.search_input.text.strip().lower()
+        self.filter_option = {'filter_type': 'region', 'filter_option': instance.btn_text}
+        f_type = self.filter_option['filter_type']
+        f_option = self.filter_option['filter_option']
+
+        if f_option == 'All':
+            self.filtered_data = self.original_data.copy()
+        else:
+            self.filtered_data = []
+            for dict_item in self.original_data:
+                name = list(dict_item.keys())[0]
+                if dict_item[name][f_type] == f_option:
+                    self.filtered_data.append(dict_item)
+
+        self.search_data(self.ids.search_box, query)
+
+    def set_data(self, countries):
         self.original_data = [{c[0]: {**c[1], 'is_pinned': False}} for c in countries.items()]
-        self.data = self.original_data.copy()
-        self.counter = len(self.data)
+        self.filtered_data = self.original_data.copy()
+        self.data = self.filtered_data.copy()
+
+    def update_countries_ui_after_fetch(self, countries):
+        self.set_data(countries)
+        self.refresh_rvs()
+
+    def refresh_rvs(self):
         self.refresh_grid_recycle_view()
         self.refresh_table_recycle_view()
+        self.ids.search_box.counter = len(self.data)
 
     def refresh_grid_recycle_view(self, *args):
         responsive_grid = self.ids.get('responsive_grid', None)

@@ -26,9 +26,15 @@
             id: top_bar
             project_name: 'Countries'
 
+        SegmentedController:
+            id: segmented_controller
+            toggle_func: lambda i, v: root.change_displayed_region(i, v)
+            button_labels: ['All', 'Antarctic', 'Americas', 'Africa', 'Europe', 'Asia', 'Oceania']
+            seg_group: 'countries-region'
+
         SearchInputBox:
             id: search_box
-            search_func: lambda i, v: root.filter_data(i, v)
+            search_func: lambda i, v: root.search_data(i, v)
             search_hint_text: 'Search for a country'
             counter: len(root.data)
 

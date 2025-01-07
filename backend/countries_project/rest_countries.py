@@ -12,41 +12,11 @@ class CountriesApi:
         url = f"{self.BASE_URL}/all"
         params = {"fields": fields_param}
 
-        try:
-            response = requests.get(url, params=params, timeout=30, verify=False)
-            response.raise_for_status()
-            countries = response.json()
+        return get_multiple_countries_data(url, params)
 
-            countries_data = {}
-
-            for country in countries:
-                country_name = country.get('name', {}).get('common', '')
-                country_info = {}
-
-                for field in fields:
-
-                    match field:
-                        case 'name':
-                            country_info['common_name'] = country.get(field).get('common')
-                        case 'capitalInfo':
-                            country_info['capitalCoords'] = country.get(field).get('latlng')
-                        case 'flags':
-                            country_info['flag'] = country.get('flags', {}).get('png', 'svg')
-                        case 'capital':
-                            val = country.get('capital')
-                            if isinstance(val, list) and len(val) > 0:
-                                country_info['capital'] = ', '.join(val)
-                            else:
-                                country_info['capital'] = 'N/A'
-                        case _:
-                            country_info[field] = country.get(field, 'N/A')
-
-                countries_data[country_name] = country_info
-
-            return countries_data
-        except requests.RequestException as e:
-            print(f'Error fetching countries: {e}')
-            return {}
+    def get_countries_data_based_on_region(self, region):
+        url = f"{self.BASE_URL}/region/{region}"
+        return get_multiple_countries_data(url)
 
     def get_country_data(self, country_name):
         url = f'{self.BASE_URL}/name/{country_name}'
@@ -69,6 +39,7 @@ class CountriesApi:
                 'codes': {
                     'cca2': country_data.get('cca2'),
                     'cca3': country_data.get('cca3'),
+                    'ccn3': country_data.get('ccn3'),
                     'cioc': country_data.get('cioc'),
                 },
                 'tld': country_data.get('tld'),
@@ -93,3 +64,31 @@ class CountriesApi:
         except requests.exceptions.RequestException as e:
             print(f'An error occurred: {e}')
             return None
+
+
+def get_multiple_countries_data(url, params=None):
+    try:
+        response = requests.get(url, params=params, timeout=30, verify=False)
+        response.raise_for_status()
+        countries = response.json()
+
+        countries_data = {}
+
+        for country in countries:
+            capital = country.get('capital')
+
+            countries_data[country.get('name').get('common')] = {
+                'common_name': country.get('name').get('common'),
+                'capitalInfo': country.get('latlng'),
+                'flag': country.get('flags').get('png', 'svg'),
+                'capital': ', '.join(capital) if isinstance(capital, list) and len(capital) > 0 else 'N/A',
+                'population': country.get('population'),
+                'region': country.get('region'),
+                'subregion': country.get('subregion'),
+                'latlng': country.get('latlng'),
+            }
+
+        return countries_data
+    except requests.RequestException as e:
+        print(f'Error fetching countries: {e}')
+        return {}
