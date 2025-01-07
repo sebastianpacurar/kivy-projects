@@ -3,6 +3,7 @@ from kivy.core.window import Window
 from kivy.properties import StringProperty, ListProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
+from kivy.uix.floatlayout import FloatLayout
 
 
 class AutoSuggestionInputBox(BoxLayout):
@@ -23,9 +24,11 @@ class AutoSuggestionInputBox(BoxLayout):
         self.is_key_down_bound = False  # prevent multiple bindings at the same time, in case of multiple suggestion boxes
         self.filtered_options = []
         self.preprocessed_options = []  # preprocess options for faster matching
+        self.dropdown_widget = None  # reference to AutoSuggestionInputDropdown
 
     def on_kv_post(self, base_widget):
         self.preformat_options_for_filtering()
+        self.dropdown_widget = AutoSuggestionInputDropdown()
         self.set_selected_view()
 
     def set_selected_view(self):
@@ -34,9 +37,9 @@ class AutoSuggestionInputBox(BoxLayout):
             If enhanced is False, use ScrollView for few rendered items
         """
         if self.enhanced:
-            self.remove_widget(self.ids.dropdown_scroll)
+            self.dropdown_widget.remove_widget(self.dropdown_widget.ids.dropdown_scroll)
         else:
-            self.remove_widget(self.ids.dropdown_recycle)
+            self.dropdown_widget.remove_widget(self.dropdown_widget.ids.dropdown_recycle)
 
     def preformat_options_for_filtering(self):
         """ Store options in a tuple form for faster filtering \n
@@ -70,6 +73,7 @@ class AutoSuggestionInputBox(BoxLayout):
 
     def update_options(self):
         """ Re-render the displayed options. """
+        pass
         if self.enhanced:
             self.update_recycle_view()
         else:
@@ -80,7 +84,7 @@ class AutoSuggestionInputBox(BoxLayout):
             Clear dropdown options, then add them based on the filtered text value \n
             Bind the select_option(option_value) to the on_release button where option_value is the button text
         """
-        self.ids.options_layout.clear_widgets()  # clear initial content
+        self.dropdown_widget.ids.options_layout.clear_widgets()  # clear initial content
 
         if self.is_focused:  # only add buttons if text input is focused
             for index, option in enumerate(self.filtered_options):
@@ -91,7 +95,7 @@ class AutoSuggestionInputBox(BoxLayout):
                 self._handle_auto_select_highlight(index)
                 # set color for highlighted button
                 btn.background_color = (0.3, 0.6, 0.3, 1) if index == self.highlighted_index else (0.05, 0.3, 0.5, 1)
-                self.ids.options_layout.add_widget(btn)
+                self.dropdown_widget.ids.options_layout.add_widget(btn)
 
     def update_recycle_view(self):
         """ Re-render the displayed RecycleView options \n
@@ -102,7 +106,6 @@ class AutoSuggestionInputBox(BoxLayout):
             data = []
             for index, option in enumerate(self.filtered_options):
                 self._handle_auto_select_highlight(index)
-
                 data.append({
                     "text": option,
                     "background_color": (0.3, 0.6, 0.3, 1) if index == self.highlighted_index else (0.05, 0.3, 0.5, 1),  # set color for highlighted button
@@ -110,7 +113,7 @@ class AutoSuggestionInputBox(BoxLayout):
                 })
 
             # update RecycleView data
-            self.ids.dropdown_recycle.data = data
+            self.dropdown_widget.ids.dropdown_recycle.data = data
 
     def _handle_auto_select_highlight(self, index):
         """ Handle auto select functionality \n
@@ -144,6 +147,14 @@ class AutoSuggestionInputBox(BoxLayout):
             self.ids.input_field.text = ''
 
         self.is_focused = focus
+        if focus and not self.dropdown_widget.parent:
+            Window.add_widget(self.dropdown_widget)
+            input_field = self.ids.input_field
+            pos_x, pos_y = input_field.to_window(input_field.x, input_field.y)
+
+            # set the dropdown position and size
+            self.dropdown_widget.width = input_field.width
+            self.dropdown_widget.pos = (pos_x, pos_y)
         if focus and not self.ids.input_field.text:
             self.filtered_options = self.options
             self.update_options()
@@ -154,7 +165,7 @@ class AutoSuggestionInputBox(BoxLayout):
             Window.unbind(on_key_down=self.on_key_down)
             self.is_key_down_bound = False
             # destroy option widgets AFTER select_option() gets executed
-            Clock.schedule_once(self.clear_options_after_delay, 0.05)
+            Clock.schedule_once(self.clear_options_after_delay, 0.1)
 
     def clear_options_after_delay(self, dt):
         """ Clear the widgets after a delay \n
@@ -164,9 +175,11 @@ class AutoSuggestionInputBox(BoxLayout):
         """
         self.ids.input_field.text = self.selected_option
         if self.enhanced:
-            self.ids.dropdown_recycle.data = []
+            self.dropdown_widget.ids.dropdown_recycle.data = []
         else:
-            self.ids.options_layout.clear_widgets()
+            self.dropdown_widget.ids.options_layout.clear_widgets()
+        if self.dropdown_widget in Window.children:
+            Window.remove_widget(self.dropdown_widget)
 
     def select_option(self, option_value):
         """ Select the highlighted option, reset highlight index and hide the dropdown \n
@@ -206,4 +219,8 @@ class AutoSuggestionInputBox(BoxLayout):
 
 
 class AutoSuggestionInputOption(Button):
+    pass
+
+
+class AutoSuggestionInputDropdown(FloatLayout):
     pass

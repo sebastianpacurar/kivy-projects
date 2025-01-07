@@ -1,43 +1,13 @@
 <AutoSuggestionInputBox>:
     orientation: 'vertical'
     size_hint_y: None
-    height: self.minimum_height
+    height: 40
 
     BaseTextInput:
         id: input_field
         height: 40
         on_text: root.filter_options(self.text) # filter based on splitted option
         on_focus: root.show_options(self.focus) # add/clear dropdown option buttons
-
-    # using ScrollView for enhanced == False
-    ScrollView:
-        id: dropdown_scroll
-        size_hint_y: None
-        height: 200
-        do_scroll_x: False
-        do_scroll_y: True
-
-        GridLayout:
-            id: options_layout
-            cols: 1
-            size_hint_y: None
-            height: self.minimum_height
-
-    # using RecycleView for enhanced == True
-    RecycleView:
-        id: dropdown_recycle
-        viewclass: 'AutoSuggestionInputOption'
-        size_hint_y: None
-        height: 200
-
-        RecycleBoxLayout:
-            orientation: 'vertical'
-            default_size: None, 40
-            default_size_hint: 1, None
-            size_hint_y: None
-            height: self.minimum_height
-            orientation: 'vertical'
-
 
 # used as clickable dropdown option
 <AutoSuggestionInputOption>:
@@ -55,3 +25,39 @@
         Line:
             width: 2
             rectangle: self.x, self.y, self.width, self.height
+
+# this will be added to Window's widgets to overlap other existent widgets in the tree
+<AutoSuggestionInputDropdown>
+    size_hint: None, None
+    height: 200
+
+    # using ScrollView for enhanced == False
+    ScrollView:
+        id: dropdown_scroll
+        pos: root.pos[0], root.pos[1] - self.height
+        size_hint_y: None
+        height: root.height
+        do_scroll_x: False
+        do_scroll_y: True
+
+        GridLayout:
+            id: options_layout
+            cols: 1
+            size_hint_y: None
+            height: self.minimum_height
+
+    # using RecycleView for enhanced == True
+    RecycleView:
+        id: dropdown_recycle
+        pos: root.pos[0], root.pos[1] - self.height
+        viewclass: 'AutoSuggestionInputOption'
+        size_hint_y: None
+        height: root.height
+
+        RecycleBoxLayout:
+            orientation: 'vertical'
+            default_size: None, 40
+            default_size_hint: 1, None
+            size_hint_y: None
+            height: self.minimum_height
+            orientation: 'vertical'
