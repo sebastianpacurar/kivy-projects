@@ -6,7 +6,7 @@ class NumericInputBox(BoxLayout):
     is_readonly = BooleanProperty(False)
     allow_float = BooleanProperty(False)
     is_validate_digits = BooleanProperty(True)
-    label_txt = StringProperty('')
+    label_text = StringProperty('')
     container_width = NumericProperty(0)
     update_text_field_func = ObjectProperty(None)
 

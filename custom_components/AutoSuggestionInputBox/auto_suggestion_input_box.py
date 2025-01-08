@@ -12,6 +12,7 @@ class AutoSuggestionInputBox(BoxLayout):
         enhanced = uses RecycleView when True, and ScrollView when False
     """
     selected_option = StringProperty("")
+    label_text = StringProperty("")
     options = ListProperty([])
     enhanced = BooleanProperty(False)
 
@@ -30,6 +31,9 @@ class AutoSuggestionInputBox(BoxLayout):
         self.preformat_options_for_filtering()
         self.dropdown_widget = AutoSuggestionInputDropdown()
         self.set_selected_view()
+
+        if len(self.label_text) == 0:
+            self.remove_widget(self.ids.box_label)
 
     def set_selected_view(self):
         """ Disable the View which wasn't selected

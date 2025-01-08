@@ -6,7 +6,7 @@ class CountriesApi:
 
     def get_countries_data(self, fields=None):
         if fields is None:
-            fields = ['name', 'capital', 'capitalInfo', 'region', 'subregion', 'flags', 'population', 'latlng']
+            fields = ['name', 'capital', 'capitalInfo', 'region', 'subregion', 'languages', 'flags', 'population', 'latlng']
 
         fields_param = ",".join(fields)
         url = f"{self.BASE_URL}/all"
@@ -76,6 +76,7 @@ def get_multiple_countries_data(url, params=None):
 
         for country in countries:
             capital = country.get('capital')
+            subregion = country.get('region')
 
             countries_data[country.get('name').get('common')] = {
                 'common_name': country.get('name').get('common'),
@@ -84,8 +85,9 @@ def get_multiple_countries_data(url, params=None):
                 'capital': ', '.join(capital) if isinstance(capital, list) and len(capital) > 0 else 'N/A',
                 'population': country.get('population'),
                 'region': country.get('region'),
-                'subregion': country.get('subregion'),
+                'subregion': subregion if len(subregion) > 0 else 'Antarctic',  # for some reason this returns empty string from restcountries
                 'latlng': country.get('latlng'),
+                'languages': country.get('languages')
             }
 
         return countries_data

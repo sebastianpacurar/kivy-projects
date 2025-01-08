@@ -3,11 +3,22 @@
     size_hint_y: None
     height: 40
 
-    BaseTextInput:
-        id: input_field
-        height: 40
-        on_text: root.filter_options(self.text) # filter based on splitted option
-        on_focus: root.show_options(self.focus) # add/clear dropdown option buttons
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: 1, None
+        height: self.minimum_height
+        spacing: dp(3)
+
+        TextLabel:
+            id: box_label
+            text: root.label_text
+            font_size: sp(18)
+
+        BaseTextInput:
+            id: input_field
+            height: 40
+            on_text: root.filter_options(self.text) # filter based on splitted option
+            on_focus: root.show_options(self.focus) # add/clear dropdown option buttons
 
 # used as clickable dropdown option
 <AutoSuggestionInputOption>:

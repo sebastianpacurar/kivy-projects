@@ -5,17 +5,18 @@
 
     BoxLayout:
         orientation: 'vertical'
-        size_hint: 1, 1
+        size_hint: 1, None
+        height: self.minimum_height
+        spacing: dp(3)
 
-        BaseLabel:
-            size_hint_y: None
-            height: self.parent.height / 3
-            width: self.texture_size[0]
-            text: root.label_txt
+        TextLabel:
+            id: box_label
+            text: root.label_text
+            font_size: sp(18)
 
         BaseTextInput:
             id: text_input
-            height: self.parent.height / 2.25
+            height: 40
             readonly: root.is_readonly
             disabled: root.is_readonly
             on_focus: self.text = "0" if not self.focus and len(self.text) == 0 else self.text

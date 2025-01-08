@@ -6,6 +6,7 @@ from kivy_garden.mapview import MapMarker
 
 from backend.countries_project.rest_countries import CountriesApi
 from custom_components.TableView.table_view import TableViewRow
+from projects.countries import countries_data
 from utils import wait_implicitly
 
 
@@ -30,12 +31,21 @@ class AllCountriesScreen(Screen):
     pinned_countries = ListProperty([])
     is_tabular = BooleanProperty(False)
     is_map_on = BooleanProperty(False)
-    filter_option = DictProperty({'region': 'All'})  # segmented controller filter
+    filter_option = DictProperty({'Region': 'All', 'Subregion': 'All', 'Languages': 'All'})  # segmented controller filter
+    subregions = ListProperty([])
+    regions = ListProperty([])
+    languages = DictProperty({})
+
+    def get_vals(self):
+        return list(self.languages.values())
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_seg_controller = False
         self.app = App.get_running_app()
+        self.subregions = ['All'] + countries_data.subregions
+        self.regions = ['All'] + countries_data.regions
+        self.languages = countries_data.languages
 
     def on_pre_enter(self):
         if len(self.data) == 0:
@@ -58,6 +68,62 @@ class AllCountriesScreen(Screen):
             text='List',
             on_release=self.toggle_layout
         )
+
+        self.set_filter_options()
+
+    def set_filter_options(self):
+        f_region = self.ids.filter_regions
+        f_subregion = self.ids.filter_subregions
+        f_languages = self.ids.filter_languages
+
+        f_region.ids.input_field.focus = True
+        f_region.ids.input_field.focus = False
+        f_subregion.ids.input_field.focus = True
+        f_subregion.ids.input_field.focus = False
+        f_languages.ids.input_field.focus = True
+        f_languages.ids.input_field.focus = False
+
+        f_region.bind(selected_option=self.apply_filters)
+        f_subregion.bind(selected_option=self.apply_filters)
+        f_languages.bind(selected_option=self.apply_filters)
+
+    def apply_filters(self, instance, value):
+        self.filter_option[instance.label_text] = value
+
+    def on_filter_option(self, instance, value):
+        self.filtered_data = []
+
+        # apply each filter
+        for dict_item in self.original_data:
+            name = list(dict_item.keys())[0]
+            # extract the current item's attributes for filtering
+            region = dict_item[name].get('region', 'All')
+            subregion = dict_item[name].get('subregion', 'All')
+            country_languages = dict_item[name].get('languages', 'All')
+
+            # check conditions for each filter
+            region_match = (self.filter_option['Region'] == 'All' or self.filter_option['Region'] == region)
+            subregion_match = (self.filter_option['Subregion'] == 'All' or self.filter_option['Subregion'] == subregion)
+
+            chosen_lang = value['Languages']
+            language_match = chosen_lang == 'All'
+
+            if chosen_lang != 'All':
+                if isinstance(country_languages, dict):
+                    langs = list(country_languages.values())
+                    language_match = chosen_lang in langs
+
+            # if all filters match, add the item to the filtered data
+            if region_match and subregion_match and language_match:
+                self.filtered_data.append(dict_item)
+            # else:
+            # print(f'{name} - {region} - {subregion} - {country_languages}')
+
+        # Perform the search with the updated filters
+        query = self.ids.search_box.ids.search_input.text.strip().lower()
+        self.search_data(self.ids.search_box, query)
+
+        print(self.filter_option)
 
     def add_marker_to_map_and_update_data(self, instance):
         """ Logic to add marker on map, and attach Pill component as pinned """
@@ -143,23 +209,6 @@ class AllCountriesScreen(Screen):
         """ Fetch data for all countries names"""
         return CountriesApi().get_countries_data()
 
-    def change_displayed_region(self, instance, value):
-        query = self.ids.search_box.ids.search_input.text.strip().lower()
-        self.filter_option = {'filter_type': 'region', 'filter_option': instance.btn_text}
-        f_type = self.filter_option['filter_type']
-        f_option = self.filter_option['filter_option']
-
-        if f_option == 'All':
-            self.filtered_data = self.original_data.copy()
-        else:
-            self.filtered_data = []
-            for dict_item in self.original_data:
-                name = list(dict_item.keys())[0]
-                if dict_item[name][f_type] == f_option:
-                    self.filtered_data.append(dict_item)
-
-        self.search_data(self.ids.search_box, query)
-
     def set_data(self, countries):
         self.original_data = [{c[0]: {**c[1], 'is_pinned': False}} for c in countries.items()]
         self.filtered_data = self.original_data.copy()
@@ -186,7 +235,7 @@ class AllCountriesScreen(Screen):
     def refresh_table_recycle_view(self, *args):
         table_view = self.ids.get('table_view', None)
         table_data = [
-            {'common_name': k, 'region': v['region'], 'capital': v['capital'],
+            {'common_name': k, 'region': v['region'], 'subregion': v['subregion'], 'capital': v['capital'],
              'population': v.get('population', 'N/A'), 'coords': v['latlng'], 'is_pinned': v['is_pinned'],
              'row_color': (95, .95, .95, 1) if i % 2 == 0 else (1, 1, 1, 1)}
             for (i, item) in enumerate(self.data) for (k, v) in item.items()
@@ -332,6 +381,7 @@ class CountryGridCardItem(FloatLayout):
 class CountryTableRowItem(TableViewRow):
     common_name = StringProperty('')
     region = StringProperty('')
+    subregion = StringProperty('')
     capital = StringProperty('')
     population = NumericProperty(0)
 
