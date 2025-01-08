@@ -76,7 +76,7 @@ def get_multiple_countries_data(url, params=None):
 
         for country in countries:
             capital = country.get('capital')
-            subregion = country.get('region')
+            subregion = country.get('subregion')
 
             countries_data[country.get('name').get('common')] = {
                 'common_name': country.get('name').get('common'),

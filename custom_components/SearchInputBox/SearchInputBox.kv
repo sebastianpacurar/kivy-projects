@@ -19,10 +19,9 @@
         IconButton:
             bg_size_val: dp(30)
             disabled: len(search_input.text) == 0
-            x: self.parent.width - self.width - dp(10)
-            y: self.parent.height - self.height - dp(2.5)
+            x: search_input.width - self.width - dp(10)
+            y: search_input.height - search_input.height / 1.1
             icon: app.get_icon('close-circle-outline')
-            disabled: len(search_input.text) == 0
             on_release: root.clear_text()
 
     BaseLabel:

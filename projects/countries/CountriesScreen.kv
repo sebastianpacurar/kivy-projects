@@ -30,7 +30,7 @@
         BoxLayout:
             orientation: 'horizontal'
             size_hint: 1, None
-            height: dp(45)
+            height: dp(60)
             spacing: 10
 
             AutoSuggestionInputBox:
@@ -40,6 +40,8 @@
                 width: dp(150)
                 options: root.regions
                 selected_option: 'All'
+                default_option: 'All'
+                enhanced: True
 
             AutoSuggestionInputBox:
                 id: filter_subregions
@@ -48,6 +50,8 @@
                 width: dp(200)
                 options: root.subregions
                 selected_option: 'All'
+                default_option: 'All'
+                enhanced: True
 
             AutoSuggestionInputBox:
                 id: filter_languages
@@ -56,7 +60,8 @@
                 width: dp(200)
                 options: list(root.languages.values())
                 selected_option: 'All'
-
+                default_option: 'All'
+                enhanced: True
 
         SearchInputBox:
             id: search_box

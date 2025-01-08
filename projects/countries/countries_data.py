@@ -121,7 +121,25 @@ languages = {
     'mon': 'Mongolian',
     'heb': 'Hebrew',
     'mri': 'Māori',
-    'nzs': 'New Zealand Sign Language'
+    'nzs': 'New Zealand Sign Language',
+    'srp': 'Serbian',
+    'ces': 'Czech',
+    'slk': 'Slovak',
+    'bos': 'Bosnian',
+    'amh': 'Amharic',
+    'eus': 'Basque',
+    'glc': 'Galician',
+    'slv': 'Slovene',
+    'hmo': 'Hiri Motu',
+    'tpi': 'Tok Pisin',
+    'pih': 'Norfuk',
+    'urd': 'Urdu',
+    'fij': 'Fijian',
+    'hif': 'Fiji Hindi',
+    'tkl': 'Tokelauan',
+    'smo': 'Samoan',
+    'msa': 'Malay'
 }
-subregions = ['Antarctic', 'Caribbean', 'Western Europe', 'Western Africa', 'Central Europe', 'Eastern Asia', 'Polynesia', 'Northern Africa', 'Southern Europe', 'South-Eastern Asia', 'Eastern Africa', 'Southern Africa', 'North America', 'Middle Africa', 'Micronesia', 'Southeast Europe', 'Western Asia', 'Northern Europe', 'Melanesia', 'Central Asia', 'Southern Asia', 'South America', 'Australia and New Zealand', 'Central America', 'Eastern Europe']
+subregions = ['Antarctic', 'Caribbean', 'Western Europe', 'Western Africa', 'Central Europe', 'Eastern Asia', 'Polynesia', 'Northern Africa', 'Southern Europe', 'South-Eastern Asia', 'Eastern Africa', 'Southern Africa', 'North America',
+              'Middle Africa', 'Micronesia', 'Southeast Europe', 'Western Asia', 'Northern Europe', 'Melanesia', 'Central Asia', 'Southern Asia', 'South America', 'Australia and New Zealand', 'Central America', 'Eastern Europe']
 regions = ['Antarctic', 'Americas', 'Africa', 'Europe', 'Asia', 'Oceania']

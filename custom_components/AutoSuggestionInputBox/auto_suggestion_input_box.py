@@ -8,11 +8,14 @@ from kivy.uix.floatlayout import FloatLayout
 
 class AutoSuggestionInputBox(BoxLayout):
     """ selected_option = the currently selected option \n
+        default_option = the value to which the options should reset. if empty string, then no cancel button \n
+        label_txt = the label of the box. if empty string, then no label widget \n
         options = list of all dropdown options names as strings \n
         enhanced = uses RecycleView when True, and ScrollView when False
     """
-    selected_option = StringProperty("")
-    label_text = StringProperty("")
+    selected_option = StringProperty('')
+    default_option = StringProperty('')
+    label_text = StringProperty('')
     options = ListProperty([])
     enhanced = BooleanProperty(False)
 
@@ -32,8 +35,13 @@ class AutoSuggestionInputBox(BoxLayout):
         self.dropdown_widget = AutoSuggestionInputDropdown()
         self.set_selected_view()
 
+        # remove label widget if label_txt is empty string
         if len(self.label_text) == 0:
             self.remove_widget(self.ids.box_label)
+
+        # remove cancel_button if default_option is empty string
+        if len(self.default_option) == 0:
+            self.ids.cancel_button.clear_widgets()
 
     def set_selected_view(self):
         """ Disable the View which wasn't selected
@@ -191,6 +199,12 @@ class AutoSuggestionInputBox(BoxLayout):
         """
         self.ids.input_field.text = option_value
         self.selected_option = option_value
+        self.highlighted_index = -1
+
+    def reset_to_default(self):
+        """ Reset selected option to default option """
+        self.ids.input_field.text = self.default_option
+        self.selected_option = self.default_option
         self.highlighted_index = -1
 
     def on_key_down(self, window, keycode, scancode, modifiers, is_keyboard):
