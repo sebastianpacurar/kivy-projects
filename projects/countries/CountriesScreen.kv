@@ -63,6 +63,16 @@
                 default_option: 'All'
                 enhanced: True
 
+            AutoSuggestionInputBox:
+                id: filter_currencies
+                label_text: 'Currencies'
+                size_hint_x: None
+                width: dp(200)
+                options: list(root.currencies.values())
+                selected_option: 'All'
+                default_option: 'All'
+                enhanced: True
+
         SearchInputBox:
             id: search_box
             search_func: lambda i, v: root.search_data(i, v)

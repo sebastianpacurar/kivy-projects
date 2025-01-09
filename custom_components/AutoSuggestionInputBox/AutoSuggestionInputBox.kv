@@ -38,7 +38,7 @@
                 bg_size_val: dp(25)
                 x: input_field.width - self.width - dp(2)
                 y: input_field.height - input_field.height / 1.25
-                icon: app.get_icon('cancel')
+                icon: app.get_icon('filter-off')
                 disabled: input_field.text == root.default_option
                 on_release: root.reset_to_default()
 
@@ -50,6 +50,9 @@
     background_color: 0.05, 0.3, 0.5, 1
     color: 1, 1, 1, 1
     font_size: sp(15)
+    text_size: self.width - dp(2), None
+    halign: 'center'
+    valign: 'middle'
 
     #apply border
     canvas.before:
@@ -62,7 +65,7 @@
 # this will be added to Window's widgets to overlap other existent widgets in the tree
 <AutoSuggestionInputDropdown>
     size_hint: None, None
-    height: 200
+    height: 225
 
     # using ScrollView for enhanced == False
     ScrollView:
@@ -89,7 +92,7 @@
 
         RecycleBoxLayout:
             orientation: 'vertical'
-            default_size: None, 40
+            default_size: None, 45
             default_size_hint: 1, None
             size_hint_y: None
             height: self.minimum_height

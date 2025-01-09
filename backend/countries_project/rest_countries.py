@@ -4,17 +4,17 @@ import requests
 class CountriesApi:
     BASE_URL = 'https://restcountries.com/v3.1'
 
-    def get_countries_data(self, fields=None):
+    def get_countries_data(self, fields=None, debug=False):
         if fields is None:
-            fields = ['name', 'capital', 'capitalInfo', 'region', 'subregion', 'languages', 'flags', 'population', 'latlng']
+            fields = ['name', 'capital', 'capitalInfo', 'region', 'subregion', 'languages', 'flags', 'population', 'latlng', 'currencies']
 
         fields_param = ",".join(fields)
         url = f"{self.BASE_URL}/all"
         params = {"fields": fields_param}
 
-        return get_multiple_countries_data(url, params)
+        return get_multiple_countries_data(url, params, debug)
 
-    def get_countries_data_based_on_region(self, region):
+    def get_countries_data_based_on_region(self, region, debug=False):
         url = f"{self.BASE_URL}/region/{region}"
         return get_multiple_countries_data(url)
 
@@ -66,11 +66,14 @@ class CountriesApi:
             return None
 
 
-def get_multiple_countries_data(url, params=None):
+def get_multiple_countries_data(url, params=None, debug=False):
     try:
         response = requests.get(url, params=params, timeout=30, verify=False)
         response.raise_for_status()
         countries = response.json()
+
+        if debug:
+            return countries
 
         countries_data = {}
 
@@ -87,7 +90,8 @@ def get_multiple_countries_data(url, params=None):
                 'region': country.get('region'),
                 'subregion': subregion if len(subregion) > 0 else 'Antarctic',  # for some reason this returns empty string from restcountries
                 'latlng': country.get('latlng'),
-                'languages': country.get('languages')
+                'languages': country.get('languages'),
+                'currencies': country.get('currencies')
             }
 
         return countries_data

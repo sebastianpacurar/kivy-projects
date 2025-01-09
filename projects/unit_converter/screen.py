@@ -52,11 +52,7 @@ class BaseUnitScreen(Screen):
             Set default compared value to 1
         """
         self.ids.converter.ids.from_selection.ids.input_field.text = self.initial_conversion[0]
-        self.ids.converter.ids.from_selection.ids.input_field.focus = True
-        self.ids.converter.ids.from_selection.ids.input_field.focus = False
         self.ids.converter.ids.target_selection.ids.input_field.text = self.initial_conversion[1]
-        self.ids.converter.ids.target_selection.ids.input_field.focus = True
-        self.ids.converter.ids.target_selection.ids.input_field.focus = False
         self.ids.converter.ids.from_input_field.ids.text_input.text = '1'
 
     def update_target_input(self):

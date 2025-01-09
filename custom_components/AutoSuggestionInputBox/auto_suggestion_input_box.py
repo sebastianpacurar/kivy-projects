@@ -43,6 +43,10 @@ class AutoSuggestionInputBox(BoxLayout):
         if len(self.default_option) == 0:
             self.ids.cancel_button.clear_widgets()
 
+        # used to switch to the selected_option on start
+        self.ids.input_field.focus = True
+        self.ids.input_field.focus = False
+
     def set_selected_view(self):
         """ Disable the View which wasn't selected
             If enhanced is True, use RecycleView for performance rendering \n
@@ -115,6 +119,7 @@ class AutoSuggestionInputBox(BoxLayout):
             Bind the select_option(option_value) to the on_release button where option_value is the button text
         """
         if self.is_focused:
+            rv_drop = self.dropdown_widget.ids.dropdown_recycle
             data = []
             for index, option in enumerate(self.filtered_options):
                 self._handle_auto_select_highlight(index)
@@ -125,7 +130,9 @@ class AutoSuggestionInputBox(BoxLayout):
                 })
 
             # update RecycleView data
-            self.dropdown_widget.ids.dropdown_recycle.data = data
+            rv_drop.data = data
+            if hasattr(rv_drop, 'scroll_y'):
+                rv_drop.scroll_y = 1.0
 
     def _handle_auto_select_highlight(self, index):
         """ Handle auto select functionality \n

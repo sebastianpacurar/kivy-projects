@@ -31,10 +31,11 @@ class AllCountriesScreen(Screen):
     pinned_countries = ListProperty([])
     is_tabular = BooleanProperty(False)
     is_map_on = BooleanProperty(False)
-    filter_option = DictProperty({'Region': 'All', 'Subregion': 'All', 'Languages': 'All'})  # segmented controller filter
-    subregions = ListProperty([])
-    regions = ListProperty([])
-    languages = DictProperty({})
+    filter_option = DictProperty({'Region': 'All', 'Subregion': 'All', 'Languages': 'All', 'Currencies': 'All'})  # filter listener
+    subregions = ListProperty([])  # filter option for region
+    regions = ListProperty([])  # filter option for subregion
+    languages = DictProperty({})  # filter option for languages
+    currencies = DictProperty({})  # filter option for currencies
 
     def get_vals(self):
         return list(self.languages.values())
@@ -43,9 +44,10 @@ class AllCountriesScreen(Screen):
         super().__init__(**kwargs)
         self.init_seg_controller = False
         self.app = App.get_running_app()
-        self.subregions = ['All'] + countries_data.subregions
-        self.regions = ['All'] + countries_data.regions
-        self.languages = countries_data.languages
+        self.subregions = ['All'] + sorted(countries_data.subregions)
+        self.regions = ['All'] + sorted(countries_data.regions)
+        self.languages = countries_data.sorted_languages
+        self.currencies = countries_data.formatted_currencies
 
     def on_pre_enter(self):
         if len(self.data) == 0:
@@ -72,20 +74,10 @@ class AllCountriesScreen(Screen):
         self.set_filter_options()
 
     def set_filter_options(self):
-        f_region = self.ids.filter_regions
-        f_subregion = self.ids.filter_subregions
-        f_languages = self.ids.filter_languages
-
-        f_region.ids.input_field.focus = True
-        f_region.ids.input_field.focus = False
-        f_subregion.ids.input_field.focus = True
-        f_subregion.ids.input_field.focus = False
-        f_languages.ids.input_field.focus = True
-        f_languages.ids.input_field.focus = False
-
-        f_region.bind(selected_option=self.apply_filters)
-        f_subregion.bind(selected_option=self.apply_filters)
-        f_languages.bind(selected_option=self.apply_filters)
+        self.ids.filter_regions.bind(selected_option=self.apply_filters)
+        self.ids.filter_subregions.bind(selected_option=self.apply_filters)
+        self.ids.filter_languages.bind(selected_option=self.apply_filters)
+        self.ids.filter_currencies.bind(selected_option=self.apply_filters)
 
     def apply_filters(self, instance, value):
         self.filter_option[instance.label_text] = value
@@ -96,34 +88,70 @@ class AllCountriesScreen(Screen):
         # apply each filter
         for dict_item in self.original_data:
             name = list(dict_item.keys())[0]
-            # extract the current item's attributes for filtering
             region = dict_item[name].get('region', 'All')
             subregion = dict_item[name].get('subregion', 'All')
             country_languages = dict_item[name].get('languages', 'All')
+            country_currencies = dict_item[name].get('currencies', 'All')
 
-            # check conditions for each filter
+            # check conditions for region, subregion filters
             region_match = (self.filter_option['Region'] == 'All' or self.filter_option['Region'] == region)
             subregion_match = (self.filter_option['Subregion'] == 'All' or self.filter_option['Subregion'] == subregion)
 
+            # check condition for languages filter
             chosen_lang = value['Languages']
             language_match = chosen_lang == 'All'
-
             if chosen_lang != 'All':
                 if isinstance(country_languages, dict):
                     langs = list(country_languages.values())
                     language_match = chosen_lang in langs
 
-            # if all filters match, add the item to the filtered data
-            if region_match and subregion_match and language_match:
+            # check condition for currencies filter
+            chosen_curr = value['Currencies']
+            currency_match = chosen_curr == 'All'
+            if chosen_curr != 'All':
+                if isinstance(country_currencies, dict):
+                    currencies = list(country_currencies.values())
+                    currency_match = chosen_curr.split('[')[0].strip() in [c['name'] for c in currencies]
+
+            if region_match and subregion_match and language_match and currency_match:
                 self.filtered_data.append(dict_item)
-            # else:
-            # print(f'{name} - {region} - {subregion} - {country_languages}')
+
+        self.update_filter_options()
 
         # Perform the search with the updated filters
         query = self.ids.search_box.ids.search_input.text.strip().lower()
         self.search_data(self.ids.search_box, query)
 
-        print(self.filter_option)
+    def update_filter_options(self):
+        regions = set()
+        subregions = set()
+        languages = set()
+        currencies = set()
+
+        for dict_item in self.filtered_data:
+            name = list(dict_item.keys())[0]
+            region = dict_item[name].get('region', 'All')
+            subregion = dict_item[name].get('subregion', 'All')
+            country_languages = dict_item[name].get('languages', 'All')
+            country_currencies = dict_item[name].get('currencies', 'All')
+
+            # Collect unique values for each filter
+            if region:
+                regions.add(region)
+            if subregion:
+                subregions.add(subregion)
+            if isinstance(country_languages, dict):
+                languages.update(country_languages.values())
+            if isinstance(country_currencies, dict):
+                if name not in ['Antarctica', 'Bouvet Island', 'Heard Island and McDonald Islands']:  # these items do not have currencies on restcountries.com
+                    currencies.add(f"{list(country_currencies.values())[0]['name']} [{list(country_currencies.keys())[0]}]")  # example: "Aruban florin [AWG]"
+
+        # TODO: there still is an issue when options are displayed, typing any letter could display the options which should not be present in a specific combination
+        # Update options for AutoSuggestionInputBox widgets
+        self.ids.filter_regions.options = ['All'] + sorted(regions)
+        self.ids.filter_subregions.options = ['All'] + sorted(subregions)
+        self.ids.filter_languages.options = ['All'] + sorted(languages)
+        self.ids.filter_currencies.options = ['All'] + sorted(currencies)
 
     def add_marker_to_map_and_update_data(self, instance):
         """ Logic to add marker on map, and attach Pill component as pinned """
@@ -224,16 +252,18 @@ class AllCountriesScreen(Screen):
         self.ids.search_box.counter = len(self.data)
 
     def refresh_grid_recycle_view(self, *args):
-        responsive_grid = self.ids.get('responsive_grid', None)
+        rv_grid = self.ids.responsive_grid.ids.rv
         country_and_flag_display = [
             {'common_name': k, 'flag': v['flag'], 'coords': v['latlng'], 'is_pinned': v['is_pinned']}
             for i in self.data for (k, v) in i.items()
             if v['is_pinned'] is False  # only include data where is_pinned is False
         ]
-        responsive_grid.ids.rv.data = country_and_flag_display
+        rv_grid.data = country_and_flag_display
+        if hasattr(rv_grid, 'scroll_y'):
+            rv_grid.scroll_y = 1.0
 
     def refresh_table_recycle_view(self, *args):
-        table_view = self.ids.get('table_view', None)
+        rv_table = self.ids.table_view.ids.rv
         table_data = [
             {'common_name': k, 'region': v['region'], 'subregion': v['subregion'], 'capital': v['capital'],
              'population': v.get('population', 'N/A'), 'coords': v['latlng'], 'is_pinned': v['is_pinned'],
@@ -241,7 +271,9 @@ class AllCountriesScreen(Screen):
             for (i, item) in enumerate(self.data) for (k, v) in item.items()
             if v['is_pinned'] is False  # only include data where is_pinned is False
         ]
-        table_view.ids.rv.data = table_data
+        rv_table.data = table_data
+        if hasattr(rv_table, 'scroll_y'):
+            rv_table.scroll_y = 1.0
 
     def go_to_country_screen(self, instance):
         """ Navigate to CountryScreen and fetch data """
