@@ -31,7 +31,7 @@ class AllCountriesScreen(Screen):
     pinned_countries = ListProperty([])
     is_tabular = BooleanProperty(False)
     is_map_on = BooleanProperty(False)
-    filter_option = DictProperty({'Region': 'All', 'Subregion': 'All', 'Languages': 'All', 'Currencies': 'All'})  # filter listener
+    filter_option = DictProperty({'Region': 'All', 'Subregion': 'All', 'Languages': 'All', 'Currencies': 'All'})
     subregions = ListProperty([])  # filter option for region
     regions = ListProperty([])  # filter option for subregion
     languages = DictProperty({})  # filter option for languages
@@ -70,14 +70,6 @@ class AllCountriesScreen(Screen):
             text='List',
             on_release=self.toggle_layout
         )
-
-        self.set_filter_options()
-
-    def set_filter_options(self):
-        self.ids.filter_regions.bind(selected_option=self.apply_filters)
-        self.ids.filter_subregions.bind(selected_option=self.apply_filters)
-        self.ids.filter_languages.bind(selected_option=self.apply_filters)
-        self.ids.filter_currencies.bind(selected_option=self.apply_filters)
 
     def apply_filters(self, instance, value):
         self.filter_option[instance.label_text] = value
@@ -148,25 +140,25 @@ class AllCountriesScreen(Screen):
         # Update options for AutoSuggestionInputBox widgets
 
         if len(regions) > 1:
-            self.ids.filter_regions.options = ['All'] + sorted(regions)
+            self.ids.filters_container.get_widget_by_id('filter_region').options = ['All'] + sorted(regions)
         else:
-            self.ids.filter_regions.options = regions
-            self.ids.filter_regions.ids.input_field.text = next(iter(regions))
+            self.ids.filters_container.get_widget_by_id('filter_region').options = regions
+            self.ids.filters_container.get_widget_by_id('filter_region').ids.input_field.text = next(iter(regions))
         if len(subregions) > 1:
-            self.ids.filter_subregions.options = ['All'] + sorted(subregions)
+            self.ids.filters_container.get_widget_by_id('filter_subregion').options = ['All'] + sorted(subregions)
         else:
-            self.ids.filter_subregions.options = subregions
-            self.ids.filter_subregions.ids.input_field.text = next(iter(subregions))
+            self.ids.filters_container.get_widget_by_id('filter_subregion').options = subregions
+            self.ids.filters_container.get_widget_by_id('filter_subregion').ids.input_field.text = next(iter(subregions))
         if len(languages) > 1:
-            self.ids.filter_languages.options = ['All'] + sorted(languages)
+            self.ids.filters_container.get_widget_by_id('filter_languages').options = ['All'] + sorted(languages)
         else:
-            self.ids.filter_languages.options = languages
-            self.ids.filter_languages.ids.input_field.text = next(iter(languages))
+            self.ids.filters_container.get_widget_by_id('filter_languages').options = languages
+            self.ids.filters_container.get_widget_by_id('filter_languages').ids.input_field.text = next(iter(languages))
         if len(currencies) > 1:
-            self.ids.filter_currencies.options = ['All'] + sorted(currencies)
+            self.ids.filters_container.get_widget_by_id('filter_currencies').options = ['All'] + sorted(currencies)
         else:
-            self.ids.filter_currencies.options = currencies
-            self.ids.filter_currencies.ids.input_field.text = next(iter(currencies))
+            self.ids.filters_container.get_widget_by_id('filter_currencies').options = currencies
+            self.ids.filters_container.get_widget_by_id('filter_currencies').ids.input_field.text = next(iter(currencies))
 
     def add_marker_to_map_and_update_data(self, instance):
         """ Logic to add marker on map, and attach Pill component as pinned """

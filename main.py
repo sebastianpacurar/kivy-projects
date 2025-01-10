@@ -24,6 +24,7 @@ import custom_components.TableView.table_view
 import custom_components.SearchInputBox.search_input_box
 import custom_components.PillContainer.pill_container
 import custom_components.SegmentedController.segmented_controller
+import custom_components.FilterContainer.filter_container
 
 # projects
 import projects.md_icons_viewer.screen
@@ -78,6 +79,7 @@ class KivyProjectsApp(App):
         Factory.register('SearchInputBox', cls=custom_components.SearchInputBox)
         Factory.register('PillContainer', cls=custom_components.PillContainer)
         Factory.register('SegmentedController', cls=custom_components.SegmentedController.segmented_controller)
+        Factory.register('FilterContainer', cls=custom_components.FilterContainer.filter_container)
 
         # register screen classes (the projects of the app)
         Factory.register('MdIconsViewerScreen', cls=projects.md_icons_viewer.screen.MdIconsViewerScreen)
@@ -101,6 +103,7 @@ class KivyProjectsApp(App):
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'SearchInputBox', 'SearchInputBox.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'PillContainer', 'PillContainer.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'SegmentedController', 'SegmentedController.kv'))
+        Builder.load_file(os.path.join(self.project_root, 'custom_components', 'FilterContainer', 'FilterContainer.kv'))
 
         # load the screens dynamically
         Builder.load_file(os.path.join(self.project_root, 'projects', 'md_icons_viewer', 'MdIconsViewerScreen.kv'))

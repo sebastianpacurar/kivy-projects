@@ -21,8 +21,7 @@ class AutoSuggestionInputBox(BoxLayout):
     filter_widget_index = NumericProperty(0)
     previous_option = StringProperty('')
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def on_kv_post(self, base_widget):
         self.mark_started = False
         self.is_focused = False
         self.is_auto_selected = False
@@ -30,9 +29,7 @@ class AutoSuggestionInputBox(BoxLayout):
         self.is_key_down_bound = False  # prevent multiple bindings at the same time, in case of multiple suggestion boxes
         self.filtered_options = []
         self.preprocessed_options = []  # preprocess options for faster matching
-        self.dropdown_widget = None  # reference to AutoSuggestionInputDropdown
 
-    def on_kv_post(self, base_widget):
         self.format_options_for_filtering()
         self.dropdown_widget = AutoSuggestionInputDropdown()
         self.set_selected_view()
@@ -72,11 +69,6 @@ class AutoSuggestionInputBox(BoxLayout):
 
     def on_options(self, instance, value):
         self.format_options_for_filtering()
-
-    def on_selected_option(self, instance, value):
-        pass
-        # if len(self.options) == 1:
-        #     self.selected_option = self.previous_option
 
     def filter_options(self, text):
         """ Filter the options based on the input text \n
