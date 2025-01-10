@@ -21,6 +21,8 @@
             height: 40
             on_text: root.filter_options(self.text) # filter based on splitted option
             on_focus: root.show_options(self.focus) # add/clear dropdown option buttons
+            disabled_foreground_color: 0, 0, 0, 1
+            disabled: len(root.options) == 1
 
         # cancel button
         RelativeLayout:

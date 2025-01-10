@@ -81,8 +81,6 @@ class AllCountriesScreen(Screen):
 
     def apply_filters(self, instance, value):
         self.filter_option[instance.label_text] = value
-
-    def on_filter_option(self, instance, value):
         self.filtered_data = []
 
         # apply each filter
@@ -98,7 +96,7 @@ class AllCountriesScreen(Screen):
             subregion_match = (self.filter_option['Subregion'] == 'All' or self.filter_option['Subregion'] == subregion)
 
             # check condition for languages filter
-            chosen_lang = value['Languages']
+            chosen_lang = self.filter_option['Languages']
             language_match = chosen_lang == 'All'
             if chosen_lang != 'All':
                 if isinstance(country_languages, dict):
@@ -106,7 +104,7 @@ class AllCountriesScreen(Screen):
                     language_match = chosen_lang in langs
 
             # check condition for currencies filter
-            chosen_curr = value['Currencies']
+            chosen_curr = self.filter_option['Currencies']
             currency_match = chosen_curr == 'All'
             if chosen_curr != 'All':
                 if isinstance(country_currencies, dict):
@@ -148,10 +146,27 @@ class AllCountriesScreen(Screen):
 
         # TODO: there still is an issue when options are displayed, typing any letter could display the options which should not be present in a specific combination
         # Update options for AutoSuggestionInputBox widgets
-        self.ids.filter_regions.options = ['All'] + sorted(regions)
-        self.ids.filter_subregions.options = ['All'] + sorted(subregions)
-        self.ids.filter_languages.options = ['All'] + sorted(languages)
-        self.ids.filter_currencies.options = ['All'] + sorted(currencies)
+
+        if len(regions) > 1:
+            self.ids.filter_regions.options = ['All'] + sorted(regions)
+        else:
+            self.ids.filter_regions.options = regions
+            self.ids.filter_regions.ids.input_field.text = next(iter(regions))
+        if len(subregions) > 1:
+            self.ids.filter_subregions.options = ['All'] + sorted(subregions)
+        else:
+            self.ids.filter_subregions.options = subregions
+            self.ids.filter_subregions.ids.input_field.text = next(iter(subregions))
+        if len(languages) > 1:
+            self.ids.filter_languages.options = ['All'] + sorted(languages)
+        else:
+            self.ids.filter_languages.options = languages
+            self.ids.filter_languages.ids.input_field.text = next(iter(languages))
+        if len(currencies) > 1:
+            self.ids.filter_currencies.options = ['All'] + sorted(currencies)
+        else:
+            self.ids.filter_currencies.options = currencies
+            self.ids.filter_currencies.ids.input_field.text = next(iter(currencies))
 
     def add_marker_to_map_and_update_data(self, instance):
         """ Logic to add marker on map, and attach Pill component as pinned """

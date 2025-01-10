@@ -1,6 +1,6 @@
 from kivy.clock import Clock
 from kivy.core.window import Window
-from kivy.properties import StringProperty, ListProperty, BooleanProperty
+from kivy.properties import StringProperty, ListProperty, BooleanProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
@@ -18,6 +18,8 @@ class AutoSuggestionInputBox(BoxLayout):
     label_text = StringProperty('')
     options = ListProperty([])
     enhanced = BooleanProperty(False)
+    filter_widget_index = NumericProperty(0)
+    previous_option = StringProperty('')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -31,7 +33,7 @@ class AutoSuggestionInputBox(BoxLayout):
         self.dropdown_widget = None  # reference to AutoSuggestionInputDropdown
 
     def on_kv_post(self, base_widget):
-        self.preformat_options_for_filtering()
+        self.format_options_for_filtering()
         self.dropdown_widget = AutoSuggestionInputDropdown()
         self.set_selected_view()
 
@@ -57,7 +59,7 @@ class AutoSuggestionInputBox(BoxLayout):
         else:
             self.dropdown_widget.remove_widget(self.dropdown_widget.ids.dropdown_recycle)
 
-    def preformat_options_for_filtering(self):
+    def format_options_for_filtering(self):
         """ Store options in a tuple form for faster filtering \n
             ex: 'meter [m]' = ('meter [m]', ['meter', 'm']) \n
             ex: 'astronomical unit [au]' = ('astronomical unit [au]', ['astronomical', 'unit', 'au'])
@@ -67,6 +69,14 @@ class AutoSuggestionInputBox(BoxLayout):
             (opt, opt.lower().replace('[', '').replace(']', '').split())
             for opt in self.options
         ]
+
+    def on_options(self, instance, value):
+        self.format_options_for_filtering()
+
+    def on_selected_option(self, instance, value):
+        pass
+        # if len(self.options) == 1:
+        #     self.selected_option = self.previous_option
 
     def filter_options(self, text):
         """ Filter the options based on the input text \n
@@ -89,7 +99,6 @@ class AutoSuggestionInputBox(BoxLayout):
 
     def update_options(self):
         """ Re-render the displayed options. """
-        pass
         if self.enhanced:
             self.update_recycle_view()
         else:
@@ -112,6 +121,7 @@ class AutoSuggestionInputBox(BoxLayout):
                 # set color for highlighted button
                 btn.background_color = (0.3, 0.6, 0.3, 1) if index == self.highlighted_index else (0.05, 0.3, 0.5, 1)
                 self.dropdown_widget.ids.options_layout.add_widget(btn)
+            self.dropdown_widget.ids.dropdown_scroll.scroll_y = 1.0  # set ScrollView scroll to top
 
     def update_recycle_view(self):
         """ Re-render the displayed RecycleView options \n
@@ -176,6 +186,8 @@ class AutoSuggestionInputBox(BoxLayout):
             self.dropdown_widget.pos = (pos_x, pos_y)
         if focus and not self.ids.input_field.text:
             self.filtered_options = self.options
+            if len(self.options) == 1:
+                self.highlighted_index = 0
             self.update_options()
         if focus and not self.is_key_down_bound:
             Window.bind(on_key_down=self.on_key_down)
@@ -206,13 +218,16 @@ class AutoSuggestionInputBox(BoxLayout):
         """
         self.ids.input_field.text = option_value
         self.selected_option = option_value
-        self.highlighted_index = -1
+        if len(self.options) > 1:
+            self.highlighted_index = -1
 
     def reset_to_default(self):
         """ Reset selected option to default option """
         self.ids.input_field.text = self.default_option
+        self.previous_option = self.selected_option
         self.selected_option = self.default_option
-        self.highlighted_index = -1
+        if len(self.options) > 1:
+            self.highlighted_index = -1
 
     def on_key_down(self, window, keycode, scancode, modifiers, is_keyboard):
         """ Handle keyboard events for up, down, enter, escape, and backspace \n
