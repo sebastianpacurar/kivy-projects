@@ -2,47 +2,20 @@
     orientation: 'vertical'
     size_hint_y: None
     height: 40
+    spacing: dp(3)
 
-    BoxLayout:
-        orientation: 'vertical'
-        size_hint: 1, None
-        height: self.minimum_height
-        spacing: dp(3)
+    # input box label
+    TextLabel:
+        id: box_label
+        text: root.label_text
+        font_size: sp(18)
 
-        # input box label
-        TextLabel:
-            id: box_label
-            text: root.label_text
-            font_size: sp(18)
-
-        # input box
-        BaseTextInput:
-            id: input_field
-            height: 40
-            on_text: root.filter_options(self.text) # filter based on splitted option
-            on_focus: root.show_options(self.focus) # add/clear dropdown option buttons
-            disabled_foreground_color: 0, 0, 0, 1
-            disabled: len(root.options) == 1
-
-        # cancel button
-        RelativeLayout:
-            id: cancel_button
-            size_hint_x: 1
-            height: input_field.height
-            canvas.before:
-                Color:
-                    rgba: 1, 0, 0, 1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-
-            IconButton:
-                bg_size_val: dp(25)
-                x: input_field.width - self.width - dp(2)
-                y: input_field.height - input_field.height / 1.25
-                icon: app.get_icon('filter-off')
-                disabled: input_field.text == root.default_option
-                on_release: root.reset_to_default()
+    # input box
+    BaseTextInput:
+        id: input_field
+        height: 40
+        on_text: root.filter_options(self.text) # filter based on splitted option
+        on_focus: root.show_options(self.focus) # add/clear dropdown option buttons
 
 # used as clickable dropdown option
 <AutoSuggestionInputOption>:

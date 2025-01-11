@@ -106,13 +106,10 @@ class AllCountriesScreen(Screen):
             if region_match and subregion_match and language_match and currency_match:
                 self.filtered_data.append(dict_item)
 
-        self.update_filter_options()
 
-        # Perform the search with the updated filters
         query = self.ids.search_box.ids.search_input.text.strip().lower()
         self.search_data(self.ids.search_box, query)
 
-    def update_filter_options(self):
         regions = set()
         subregions = set()
         languages = set()
@@ -125,7 +122,6 @@ class AllCountriesScreen(Screen):
             country_languages = dict_item[name].get('languages', 'All')
             country_currencies = dict_item[name].get('currencies', 'All')
 
-            # Collect unique values for each filter
             if region:
                 regions.add(region)
             if subregion:
@@ -136,29 +132,12 @@ class AllCountriesScreen(Screen):
                 if name not in ['Antarctica', 'Bouvet Island', 'Heard Island and McDonald Islands']:  # these items do not have currencies on restcountries.com
                     currencies.add(f"{list(country_currencies.values())[0]['name']} [{list(country_currencies.keys())[0]}]")  # example: "Aruban florin [AWG]"
 
-        # TODO: there still is an issue when options are displayed, typing any letter could display the options which should not be present in a specific combination
-        # Update options for AutoSuggestionInputBox widgets
-
-        if len(regions) > 1:
-            self.ids.filters_container.get_widget_by_id('filter_region').options = ['All'] + sorted(regions)
-        else:
-            self.ids.filters_container.get_widget_by_id('filter_region').options = regions
-            self.ids.filters_container.get_widget_by_id('filter_region').ids.input_field.text = next(iter(regions))
-        if len(subregions) > 1:
-            self.ids.filters_container.get_widget_by_id('filter_subregion').options = ['All'] + sorted(subregions)
-        else:
-            self.ids.filters_container.get_widget_by_id('filter_subregion').options = subregions
-            self.ids.filters_container.get_widget_by_id('filter_subregion').ids.input_field.text = next(iter(subregions))
-        if len(languages) > 1:
-            self.ids.filters_container.get_widget_by_id('filter_languages').options = ['All'] + sorted(languages)
-        else:
-            self.ids.filters_container.get_widget_by_id('filter_languages').options = languages
-            self.ids.filters_container.get_widget_by_id('filter_languages').ids.input_field.text = next(iter(languages))
-        if len(currencies) > 1:
-            self.ids.filters_container.get_widget_by_id('filter_currencies').options = ['All'] + sorted(currencies)
-        else:
-            self.ids.filters_container.get_widget_by_id('filter_currencies').options = currencies
-            self.ids.filters_container.get_widget_by_id('filter_currencies').ids.input_field.text = next(iter(currencies))
+        return{
+            'Region': regions,
+            'Subregion': subregions,
+            'Languages': languages,
+            'Currencies': currencies
+        }
 
     def add_marker_to_map_and_update_data(self, instance):
         """ Logic to add marker on map, and attach Pill component as pinned """
@@ -392,6 +371,7 @@ class CountryGridCardItem(FloatLayout):
         super().__init__(**kwargs)
         self.app = App.get_running_app()
 
+    # TODO: intended as on_load for AsyncImage. currently not used
     def update_size(self, *args):
         """ Resize logic to scale image based on its aspect ratio to fit proeprly """
         scale_factor = 0.5

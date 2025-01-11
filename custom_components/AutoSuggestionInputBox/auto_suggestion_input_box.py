@@ -18,7 +18,6 @@ class AutoSuggestionInputBox(BoxLayout):
     label_text = StringProperty('')
     options = ListProperty([])
     enhanced = BooleanProperty(False)
-    filter_widget_index = NumericProperty(0)
     previous_option = StringProperty('')
 
     def on_kv_post(self, base_widget):
@@ -37,10 +36,6 @@ class AutoSuggestionInputBox(BoxLayout):
         # remove label widget if label_txt is empty string
         if len(self.label_text) == 0:
             self.remove_widget(self.ids.box_label)
-
-        # remove cancel_button if default_option is empty string
-        if len(self.default_option) == 0:
-            self.ids.cancel_button.clear_widgets()
 
         # used to switch to the selected_option on start
         self.ids.input_field.focus = True
@@ -210,14 +205,6 @@ class AutoSuggestionInputBox(BoxLayout):
         """
         self.ids.input_field.text = option_value
         self.selected_option = option_value
-        if len(self.options) > 1:
-            self.highlighted_index = -1
-
-    def reset_to_default(self):
-        """ Reset selected option to default option """
-        self.ids.input_field.text = self.default_option
-        self.previous_option = self.selected_option
-        self.selected_option = self.default_option
         if len(self.options) > 1:
             self.highlighted_index = -1
 
