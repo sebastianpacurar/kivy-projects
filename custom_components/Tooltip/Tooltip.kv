@@ -9,12 +9,12 @@
         font_size: sp(20)
         text: root.tooltip_text
         size: self.texture_size[0] + 10, self.texture_size[1] + 10
-        bg_color:  .75, .75, .75, 1
+        bg_color: app.rgb_formatter([255, 255, 255, 255], factor=0.25, darken=True)
 
         # border
         canvas.before:
             Color:
-                rgba: .25, .25, .25, 1
+                rgba: app.rgb_formatter([255, 255, 255, 255], factor=0.75, darken=True)
             Line:
                 width: 1.5
                 rectangle: self.x, self.y, self.width, self.height

@@ -8,7 +8,7 @@ from kivy.factory import Factory
 from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 
-from utils import find_project_root
+from utils import find_project_root, rgb_format
 
 # custom components
 from custom_components.BaseComponents.base_components import *
@@ -156,6 +156,9 @@ class KivyProjectsApp(App):
 
     def toggle_app_map(self, value):
         self.map_ui.is_map_displayed = value
+
+    def rgb_formatter(self, rgb_val,  factor=0.0, darken=False, lighten=False):
+        return rgb_format(rgb_val, factor, darken, lighten)
 
     # prevent app from closing when hitting Escape key
     def on_key_down(self, instance, keyboard, keycode, text, modifiers):

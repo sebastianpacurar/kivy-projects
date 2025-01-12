@@ -6,7 +6,7 @@
     spacing: dp(7.5)
     canvas.before:
         Color:
-            rgba: 125/255, 254/255, 227/255, 1
+            rgba: app.rgb_formatter([125, 254, 227, 255])
         Rectangle:
             pos: self.pos
             size: self.size
@@ -42,7 +42,7 @@
         height: self.parent.height
         width: dp(5)
         pos_hint: {'center_y': .5}
-        bg_color: 125/255 * .8, 254/255 * .8, 227/255 * .8, .5
+        bg_color: app.rgb_formatter([2, 153, 139, 255], factor=0.45, lighten=True)
 
     # home button (present on all screens)
     IconButton:

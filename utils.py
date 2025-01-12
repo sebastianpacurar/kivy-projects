@@ -51,14 +51,32 @@ def find_project_root(target="README.md"):
         current_dir = os.path.dirname(current_dir)  # go up one level
 
 
-def clear_cache():
-    # delete contents of root/cache folder
-    cache_folder = os.path.join(find_project_root(), 'cache')
-    if os.path.exists(cache_folder):
-        for file_name in os.listdir(cache_folder):
-            file_path = os.path.join(cache_folder, file_name)
-            if os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-            else:
-                os.remove(file_path)
+def rgb_format(rgb_val, factor=0.0, darken=False, lighten=False):
+    """ Convert RGB from 0-255 range or 0.0-1.0 range and darken/lighten by the factor \n
+        If factor is 0.0, then darken and lighten won't be taken into account \n
+        If factor and both darken and lighten are True then throw value Error \n
+        Does not have any alpha manipulation logic
+    """
+    float_rgb = []
 
+    # check if it's already a float values list, else parse into float values
+    if all(0 <= c <= 1 for c in rgb_val[:-1]):
+        float_rgb = rgb_val[:-1]
+    elif all(0 <= c <= 255 for c in rgb_val[:-1]):
+        float_rgb = [c / 255 for c in rgb_val[:-1]]
+
+    if not factor:
+        # if no factor, return the float values
+        float_rgb.append(rgb_val[-1] if rgb_val[-1] <= 1 else rgb_val[-1] / 255)
+        return float_rgb
+    else:
+        if darken and lighten:
+            raise ValueError(f"Cannot have darken and lighten set to True at the same time for {rgb_val} color")
+        if darken:
+            float_rgb = [max(0, c * (1 - factor)) for c in float_rgb]  # prevent from going under 0
+        if lighten:
+            float_rgb = [min(1, c + (1 - c) * factor) for c in float_rgb]  # prevent from going over 1
+
+        float_rgb.append(rgb_val[-1] if rgb_val[-1] <= 1 else rgb_val[-1] / 255) # add alpha back
+
+    return float_rgb
