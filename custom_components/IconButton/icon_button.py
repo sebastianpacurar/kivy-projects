@@ -6,21 +6,17 @@ from kivy.properties import StringProperty, ListProperty, BooleanProperty, Numer
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 
+from custom_components.BaseComponents.base_components import PropCachedWidget
 from utils import rgb_format
 
 
-class IconButton(ButtonBehavior, BoxLayout):
+class IconButton(ButtonBehavior, BoxLayout, PropCachedWidget):
     icon = StringProperty('')  # icon unicode
-    bg_color = ListProperty(rgb_format([2, 153, 139, 255]))  # listener for color changing events
-    default_bg_color = rgb_format([2, 153, 139, 255])
-    pressed_bg_color = rgb_format(default_bg_color, 0.25, lighten=True)
-    hovered_bg_color = rgb_format(default_bg_color, 0.25, darken=True)
-    red_state_default_bg_color = rgb_format([200, 0, 0, 255])
-    red_state_pressed_bg_color = rgb_format(red_state_default_bg_color, 0.25, lighten=True)
-    red_state_hovered_bg_color = rgb_format(red_state_default_bg_color, 0.25, darken=True)
-    disabled_bg_color = rgb_format([255, 255, 255, 255], factor=0.4, darken=True)
+    primary_state_color = ListProperty(rgb_format([2, 153, 139, 255]))  # defaults to Teal
+    secondary_state_color = ListProperty(rgb_format([200, 0, 0, 255]))  # defaults to Reddish
+    bg_color = ListProperty([])  # listener for color changing events
     is_round = BooleanProperty(True)
-    is_red_state = BooleanProperty(False)  # change color to red if is_red_state is True
+    is_secondary_state = BooleanProperty(False)  # change color to secondary_state_color if is_secondary_state is True
     label_text = StringProperty('')  # button label text. if empty, it's just an icon button, else labeled icon button
     bg_size_val = NumericProperty(dp(36))  # used with font_size_val to get different sized icons
     font_size_val = NumericProperty(sp(28))  # if no text label, this should be of the size of the bg_size_val
@@ -29,10 +25,16 @@ class IconButton(ButtonBehavior, BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.is_hovered = False  # track hover state
-        # make sure no other drawings are made while there is an animation or screen transition
+        self.primary_state_pressed = rgb_format(self.primary_state_color, 0.25, lighten=True)
+        self.primary_state_hovered = rgb_format(self.primary_state_color, 0.25, darken=True)
+        self.secondary_state_pressed = rgb_format(self.secondary_state_color, 0.25, lighten=True)
+        self.secondary_state_hovered = rgb_format(self.secondary_state_color, 0.25, darken=True)
+        self.disabled_state_color = rgb_format([255, 255, 255, 255], factor=0.4, darken=True)
+        self.bg_color = self.primary_state_color  # listener for canvas updates (actual color of the displayed canvas)
+
         self.bind(size=self.update_canvas, pos=self.update_canvas)
-        self.bind(bg_color=self.update_canvas)  # when bg_color changes, trigger canvas redraw
-        self.bind(state=self.on_state, is_red_state=self.on_state)  # bind the state property to the on_state method
+        self.bind(bg_color=self.update_canvas)
+        self.bind(state=self.on_state, is_secondary_state=self.on_state)  # bind the state property to the on_state method
         Window.bind(mouse_pos=self.on_mouse_pos)
         self.setup_initialized = False
 
@@ -53,34 +55,44 @@ class IconButton(ButtonBehavior, BoxLayout):
 
     def delayed_setup(self, value):
         self.ids.icon_label.text = value  # set unicode icon
-        # if empty string, format icon to be placed in the middle
-        if len(self.label_text) == 0 and not self.setup_initialized:
-            # remove all spacing and padding. set font_size_val ref to bg_size_val
-            self.x_padding = 0
-            self.padding = [0, 0, 0, dp(1)]
-            self.ids.icon_label.font_size = self.bg_size_val
-            self.remove_widget(self.ids.space_filler)
-            self.remove_widget(self.ids.text_label)
-            self.setup_initialized = True
+        if not self.setup_initialized:
+            # if empty string, format icon to be placed in the middle
+            if len(self.label_text) == 0:
+                # remove all spacing and padding. set font_size_val ref to bg_size_val
+                self.x_padding = 0
+                self.padding = [0, 0, 0, dp(1)]
+                self.ids.icon_label.font_size = self.bg_size_val
+                self.remove_widget(self.ids.space_filler)
+                self.remove_widget(self.ids.text_label)
+                self.setup_initialized = True
+                self.width = self.bg_size_val
+            else:
+                self.width = self.ids.text_label.width + self.ids.icon_label.font_size + self.x_padding
+
+            self.cached_props = {
+                'bg_size_val': {'displayed': self.bg_size_val, 'hidden': 0},
+                'font_size_val': {'displayed': self.font_size_val, 'hidden': 0},
+                'x_padding': {'displayed': self.x_padding, 'hidden': 0},
+            }
 
     def update_bg_color(self):
         """ Update the background color based on the current state """
         if self.disabled:
-            self.bg_color = self.disabled_bg_color
-        elif self.is_red_state:
+            self.bg_color = self.disabled_state_color
+        elif self.is_secondary_state:
             if self.state == 'down':
-                self.bg_color = self.red_state_pressed_bg_color
+                self.bg_color = self.secondary_state_pressed
             elif self.is_hovered:
-                self.bg_color = self.red_state_hovered_bg_color
+                self.bg_color = self.secondary_state_hovered
             else:
-                self.bg_color = self.red_state_default_bg_color
+                self.bg_color = self.secondary_state_color
         else:
             if self.state == 'down':
-                self.bg_color = self.pressed_bg_color
+                self.bg_color = self.primary_state_pressed
             elif self.is_hovered:
-                self.bg_color = self.hovered_bg_color
+                self.bg_color = self.primary_state_hovered
             else:
-                self.bg_color = self.default_bg_color
+                self.bg_color = self.primary_state_color
 
     def on_mouse_pos(self, window, pos):
         """ Check if mouse hovers over the button """
@@ -106,3 +118,9 @@ class IconButton(ButtonBehavior, BoxLayout):
         with self.canvas.before:  # redraw with bg_color values
             Color(*self.bg_color)
             self.rect = RoundedRectangle(size=self.size, pos=self.pos) if self.is_round else Rectangle(size=self.size, pos=self.pos)
+
+    def hide_widget(self, props=None):
+        super().hide_widget(self.cached_props)
+
+    def reveal_widget(self, props=None):
+        super().reveal_widget()

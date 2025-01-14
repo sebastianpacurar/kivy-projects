@@ -1,15 +1,17 @@
 from kivy.clock import Clock
 from kivy.core.window import Window
-from kivy.properties import StringProperty, ListProperty, BooleanProperty, NumericProperty
+from kivy.properties import StringProperty, ListProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 
+from custom_components.BaseComponents.base_components import PropCachedWidget
 
-class AutoSuggestionInputBox(BoxLayout):
+
+class AutoSuggestionInputBox(BoxLayout, PropCachedWidget):
     """ selected_option = the currently selected option \n
         default_option = the value to which the options should reset. if empty string, then no cancel button \n
-        label_txt = the label of the box. if empty string, then no label widget \n
+        label_text = the label of the box. if empty string, then no label widget \n
         options = list of all dropdown options names as strings \n
         enhanced = uses RecycleView when True, and ScrollView when False
     """
@@ -36,6 +38,10 @@ class AutoSuggestionInputBox(BoxLayout):
         # remove label widget if label_txt is empty string
         if len(self.label_text) == 0:
             self.remove_widget(self.ids.box_label)
+
+        self.cached_props = {**self.cached_props, **{
+            'label_text': {'displayed': self.label_text, 'hidden': ''}
+        }}
 
         # used to switch to the selected_option on start
         self.ids.input_field.focus = True
@@ -235,6 +241,12 @@ class AutoSuggestionInputBox(BoxLayout):
                 self.ids.input_field.focus = False
                 return True
         return False
+
+    def hide_widget(self, props=None):
+        super().hide_widget(self.cached_props)
+
+    def reveal_widget(self):
+        super().reveal_widget()
 
 
 class AutoSuggestionInputOption(Button):

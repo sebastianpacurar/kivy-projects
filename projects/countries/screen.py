@@ -1,10 +1,12 @@
 from kivy.app import App
+from kivy.clock import Clock
 from kivy.properties import ListProperty, NumericProperty, StringProperty, BooleanProperty, DictProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
 from kivy_garden.mapview import MapMarker
 
 from backend.countries_project.rest_countries import CountriesApi
+from custom_components.PillContainer.pill_container import PillWidget
 from custom_components.TableView.table_view import TableViewRow
 from projects.countries import countries_data
 from utils import wait_implicitly
@@ -31,14 +33,13 @@ class AllCountriesScreen(Screen):
     pinned_countries = ListProperty([])
     is_tabular = BooleanProperty(False)
     is_map_on = BooleanProperty(False)
+    is_filter_container_displayed = BooleanProperty(False)
+    is_pills_container_displayed = BooleanProperty(False)
     filter_option = DictProperty({'Region': 'All', 'Subregion': 'All', 'Languages': 'All', 'Currencies': 'All'})
     subregions = ListProperty([])  # filter option for region
     regions = ListProperty([])  # filter option for subregion
     languages = DictProperty({})  # filter option for languages
     currencies = DictProperty({})  # filter option for currencies
-
-    def get_vals(self):
-        return list(self.languages.values())
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -70,6 +71,23 @@ class AllCountriesScreen(Screen):
             text='List',
             on_release=self.toggle_layout
         )
+        top_bar.add_left_button(
+            icon=self.app.get_icon('filter-plus-outline'),
+            text='Show Filters',
+            on_release=self.toggle_filters_layout
+        )
+        top_bar.add_left_button(
+            icon=self.app.get_icon('map-marker-plus-outline'),
+            text='Show Pins',
+            on_release=self.toggle_pins_layout
+        )
+
+        # hide the filters and pills layout when page first inits
+        Clock.schedule_once(self.hide_filters_and_pills, .1)
+
+    def hide_filters_and_pills(self, *args):
+        self.ids.pill_container.hide_widgets()
+        self.ids.filters_container.hide_widgets()
 
     def apply_filters(self, instance, value):
         self.filter_option[instance.label_text] = value
@@ -106,7 +124,6 @@ class AllCountriesScreen(Screen):
             if region_match and subregion_match and language_match and currency_match:
                 self.filtered_data.append(dict_item)
 
-
         query = self.ids.search_box.ids.search_input.text.strip().lower()
         self.search_data(self.ids.search_box, query)
 
@@ -132,15 +149,36 @@ class AllCountriesScreen(Screen):
                 if name not in ['Antarctica', 'Bouvet Island', 'Heard Island and McDonald Islands']:  # these items do not have currencies on restcountries.com
                     currencies.add(f"{list(country_currencies.values())[0]['name']} [{list(country_currencies.keys())[0]}]")  # example: "Aruban florin [AWG]"
 
-        return{
+        return {
             'Region': regions,
             'Subregion': subregions,
             'Languages': languages,
             'Currencies': currencies
         }
 
+    def add_all_markers_to_map_and_update_data(self, instance, value):
+        if not self.is_pills_container_displayed:
+            self.toggle_pins_layout()
+
+        if not self.is_map_on:
+            self.is_map_on = True
+
+        for entry in self.data:
+            container = self.ids.pill_container
+            target = list(entry.keys())[0]
+            country_name = entry[target]['common_name']
+            container.add_pill(icon=self.app.get_icon('map-marker-off-outline'), text=country_name, on_press=lambda pill, name=country_name: self.remove_marker_from_map(pill, name))
+            self.app.map_ui.add_ui_marker(entry[target]['latlng'][0], entry[target]['latlng'][1], entry[target]['common_name'])
+            entry[target]['is_pinned'] = True
+
+        self.refresh_rvs()
+
     def add_marker_to_map_and_update_data(self, instance):
         """ Logic to add marker on map, and attach Pill component as pinned """
+
+        if not self.is_pills_container_displayed:
+            self.toggle_pins_layout()
+
         container = self.ids.pill_container
         country_name = instance.common_name
         container.add_pill(icon=self.app.get_icon('map-marker-off-outline'), text=country_name, on_press=lambda pill, name=country_name: self.remove_marker_from_map(pill, name))
@@ -165,6 +203,17 @@ class AllCountriesScreen(Screen):
         self.app.map_ui.remove_ui_marker(country_name)
         self.refresh_rvs()
 
+    def remove_all_markers_from_map(self, instance, value):
+        for entry in self.data:
+            target = list(entry.keys())[0]
+            if entry[target]['is_pinned']:
+                entry[target]['is_pinned'] = False
+                self.app.map_ui.remove_ui_marker(target)
+                parsed_pills_data = {pill.label_text: pill for pill in self.ids.pill_container.ids.pills_stack.children if isinstance(pill, PillWidget)}
+                if target in list(parsed_pills_data.keys()):
+                    self.ids.pill_container.remove_pill(parsed_pills_data[target])
+        self.refresh_rvs()
+
     def toggle_map_visibility(self, *args):
         self.is_map_on = not self.is_map_on
 
@@ -175,7 +224,7 @@ class AllCountriesScreen(Screen):
     def on_is_map_on(self, instance, value):
         self.app.toggle_app_map(value)
         map_btn = self.ids.top_bar.ids.button_container_right.children[1]
-        map_btn.is_red_state = value
+        map_btn.is_secondary_state = value
         map_btn.icon = self.app.get_icon('map-minus') if value else self.app.get_icon('map-search')
         map_btn.label_text = 'Close Map' if value else 'Open Map'
         self.manager.get_screen('CountryScreen').is_map_on = self.is_map_on
@@ -197,6 +246,30 @@ class AllCountriesScreen(Screen):
         layout_btn = self.ids.top_bar.ids.button_container_right.children[0]
         layout_btn.icon = self.app.get_icon('grid-large') if self.is_tabular else self.app.get_icon('list-box-outline')
         layout_btn.label_text = 'Grid' if self.is_tabular else 'List'
+
+    def toggle_filters_layout(self, *args):
+        self.is_filter_container_displayed = not self.is_filter_container_displayed
+        filters_btn = self.ids.top_bar.ids.button_container_left.children[1]
+        filters_btn.is_secondary_state = self.is_filter_container_displayed
+        filters_btn.icon = self.app.get_icon('filter-minus-outline') if self.is_filter_container_displayed else self.app.get_icon('filter-plus-outline')
+        filters_btn.label_text = 'Hide Filters' if self.is_filter_container_displayed else 'Show Filters'
+
+        if self.is_filter_container_displayed:
+            self.ids.filters_container.reveal_widgets()
+        else:
+            self.ids.filters_container.hide_widgets()
+
+    def toggle_pins_layout(self, *args):
+        self.is_pills_container_displayed = not self.is_pills_container_displayed
+        filters_btn = self.ids.top_bar.ids.button_container_left.children[0]
+        filters_btn.is_secondary_state = self.is_pills_container_displayed
+        filters_btn.icon = self.app.get_icon('map-marker-minus-outline') if self.is_pills_container_displayed else self.app.get_icon('map-marker-plus-outline')
+        filters_btn.label_text = 'Hide Pins' if self.is_pills_container_displayed else 'Show Pins'
+
+        if self.is_pills_container_displayed:
+            self.ids.pill_container.reveal_widgets()
+        else:
+            self.ids.pill_container.hide_widgets()
 
     def search_data(self, instance, value):
         """ Filter data based on query and update RecycleView """
@@ -289,7 +362,7 @@ class CountryScreen(Screen):
             icon=self.app.get_icon('map-minus') if self.is_map_on else self.app.get_icon('map-search'),
             text='Close Map' if self.is_map_on else 'Open Map',
             on_release=self.toggle_map_visibility,
-            is_red_state=not self.is_map_on
+            is_secondary_state=not self.is_map_on
         )
 
     def on_pre_enter(self, *args):
@@ -299,7 +372,7 @@ class CountryScreen(Screen):
 
     def on_enter(self, *args):
         map_btn = self.ids.top_bar.ids.button_container_right.children[0]
-        map_btn.is_red_state = self.is_map_on
+        map_btn.is_secondary_state = self.is_map_on
 
     def on_leave(self, *args):
         self.app.map_ui.target_name = ""
@@ -317,7 +390,7 @@ class CountryScreen(Screen):
     def on_is_map_on(self, instance, value):
         self.app.toggle_app_map(value)
         map_btn = self.ids.top_bar.ids.button_container_right.children[0]
-        map_btn.is_red_state = value
+        map_btn.is_secondary_state = value
         map_btn.icon = self.app.get_icon('map-minus') if value else self.app.get_icon('map-search')
         map_btn.label_text = 'Close Map' if value else 'Open Map'
         self.manager.get_screen('AllCountriesScreen').is_map_on = self.is_map_on

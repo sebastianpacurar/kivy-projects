@@ -1,9 +1,9 @@
 import os
-import shutil
 from functools import wraps
 from threading import Thread
 
 from kivy.clock import Clock
+from kivy.properties import ListProperty
 
 
 def wait_implicitly(callback):
@@ -59,6 +59,9 @@ def rgb_format(rgb_val, factor=0.0, darken=False, lighten=False):
     """
     float_rgb = []
 
+    if isinstance(rgb_val, ListProperty):
+        rgb_val = rgb_val.defaultvalue
+
     # check if it's already a float values list, else parse into float values
     if all(0 <= c <= 1 for c in rgb_val[:-1]):
         float_rgb = rgb_val[:-1]
@@ -77,6 +80,6 @@ def rgb_format(rgb_val, factor=0.0, darken=False, lighten=False):
         if lighten:
             float_rgb = [min(1, c + (1 - c) * factor) for c in float_rgb]  # prevent from going over 1
 
-        float_rgb.append(rgb_val[-1] if rgb_val[-1] <= 1 else rgb_val[-1] / 255) # add alpha back
+        float_rgb.append(rgb_val[-1] if rgb_val[-1] <= 1 else rgb_val[-1] / 255)  # add alpha back
 
     return float_rgb

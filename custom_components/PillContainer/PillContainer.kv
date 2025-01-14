@@ -2,9 +2,18 @@
     size_hint_y: None
     height: self.minimum_height
     orientation: 'horizontal'
+    padding: dp(10)
+    spacing: dp(5)
+
+    canvas.before:
+        Color:
+            rgba: app.rgb_formatter([2, 153, 139, 255], factor=0.45, lighten=True)
+        Line:
+            width: 1.5
+            rounded_rectangle: (self.x, self.y, self.width, self.height, 2.5)
 
     ScrollView:
-        size_hint_y: None
+        size_hint: 1, None
         height: test.height * 2
         do_scroll_x: False
         do_scroll_y: True
@@ -19,3 +28,35 @@
             IconButton:
                 id: test
                 label_text:  "test_dummy, will be deleted during runtime"
+
+    # vertical separator
+    BaseLabel:
+        height: test.height * 2
+        width: dp(5)
+        pos_hint: {'center_y': .5}
+        bg_color: app.rgb_formatter([2, 153, 139, 255], factor=0.45, lighten=True)
+
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: dp(2.5)
+        size_hint: None, 1
+        width: self.minimum_width
+
+        IconButton:
+            id: pin_all_button
+            label_text: 'Pin All'
+            icon: app.get_icon('pin-outline')
+            disabled: root.is_pin_all_disabled
+
+        IconButton:
+            id: unpin_all_button
+            label_text: 'Unpin All'
+            icon: app.get_icon('pin-off-outline')
+            disabled: root.is_unpin_all_disabled
+
+<PillWidget>:
+    primary_state_color: app.rgb_formatter([255, 191, 0, 255], darken=True, factor=0.4)
+    bg_size_val: dp(24)
+    font_size_val: sp(20)
+    x_padding: dp(10)
+    pos_hint: {'center_y': .5}

@@ -65,6 +65,7 @@ class KivyProjectsApp(App):
         Factory.register('BaseButton', cls=BaseButton)
         Factory.register('BaseLabel', cls=BaseLabel)
         Factory.register('TextLabel', cls=TextLabel)
+        Factory.register('BaseTextInput', cls=BaseTextInput)
 
         # register custom components: python modules with corresponding class and .kv file
         Factory.register('AutoSuggestionInputBox', cls=custom_components.AutoSuggestionInputBox)
@@ -157,7 +158,7 @@ class KivyProjectsApp(App):
     def toggle_app_map(self, value):
         self.map_ui.is_map_displayed = value
 
-    def rgb_formatter(self, rgb_val,  factor=0.0, darken=False, lighten=False):
+    def rgb_formatter(self, rgb_val, factor=0.0, darken=False, lighten=False):
         return rgb_format(rgb_val, factor, darken, lighten)
 
     # prevent app from closing when hitting Escape key

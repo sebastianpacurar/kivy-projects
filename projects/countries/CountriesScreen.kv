@@ -18,13 +18,18 @@
 
 <AllCountriesScreen>:
     name: 'AllCountriesScreen'
-    GridLayout:
-        orientation: 'tb-lr'
-        cols: 1
+    BoxLayout:
+        orientation: 'vertical'
         spacing: 10
         TopBar:
             id: top_bar
             project_name: 'Countries'
+
+        SearchInputBox:
+            id: search_box
+            search_func: lambda i, v: root.search_data(i, v)
+            search_hint_text: 'Search for a country'
+            counter: len(root.data)
 
         FilterContainer:
             id: filters_container
@@ -33,16 +38,12 @@
             filters_selected_option: ['All', 'All', 'All', 'All']
             filters_default_option: ['All', 'All', 'All', 'All']
             filters_options: [root.regions, root.subregions, list(root.languages.values()), list(root.currencies.values())]
-            filters_widths: [dp(150), dp(200), dp(200), dp(200)]
-
-        SearchInputBox:
-            id: search_box
-            search_func: lambda i, v: root.search_data(i, v)
-            search_hint_text: 'Search for a country'
-            counter: len(root.data)
+            filters_widths: [dp(225), dp(225), dp(225), dp(225)]
 
         PillContainer:
             id: pill_container
+            pin_all_func: lambda i, v: root.add_all_markers_to_map_and_update_data(i, v)
+            unpin_all_func: lambda i, v: root.remove_all_markers_from_map(i, v)
 
         ResponsiveGridView:
             id: responsive_grid
