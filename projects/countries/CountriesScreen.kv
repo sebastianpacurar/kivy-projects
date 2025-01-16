@@ -44,6 +44,8 @@
             id: pill_container
             pin_all_func: lambda i, v: root.add_all_markers_to_map_and_update_data(i, v)
             unpin_all_func: lambda i, v: root.remove_all_markers_from_map(i, v)
+            is_pin_all_disabled: root.unpinned_count == 0
+            is_unpin_all_disabled: root.pinned_count == 0
 
         ResponsiveGridView:
             id: responsive_grid

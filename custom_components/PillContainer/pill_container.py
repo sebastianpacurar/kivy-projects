@@ -21,7 +21,9 @@ class PillContainer(BoxLayout, PropCachedWidget):
             Bind callback to on_press and remove logic to on_release
         """
         button = PillWidget(icon=icon, label_text=text, on_press=on_press, on_release=lambda i: self.remove_pill(i))
-        self.ids.pills_stack.add_widget(button)
+        pill_names = [pill.label_text for pill in self.ids.pills_stack.children if isinstance(pill, PillWidget)]
+        if not button.label_text in pill_names:
+            self.ids.pills_stack.add_widget(button)
 
     def on_pin_all_func(self, *args):
         self.ids.pin_all_button.bind(on_release=lambda i, v=None: self.pin_all_func(i, v))

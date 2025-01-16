@@ -38,7 +38,7 @@
             IconButton:
                 id: resize_btn
                 pos_hint: {'center_y': .5}
-                is_round: False
+                is_round: [0, 0, 0, 0]
                 icon: app.get_icon('window-minimize') if root.is_fullscreen else app.get_icon('window-maximize')
                 on_release: root.toggle_full_screen()
 

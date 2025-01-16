@@ -15,7 +15,7 @@ class IconButton(ButtonBehavior, BoxLayout, PropCachedWidget):
     primary_state_color = ListProperty(rgb_format([2, 153, 139, 255]))  # defaults to Teal
     secondary_state_color = ListProperty(rgb_format([200, 0, 0, 255]))  # defaults to Reddish
     bg_color = ListProperty([])  # listener for color changing events
-    is_round = BooleanProperty(True)
+    is_round = ListProperty([1, 1, 1, 1])  # using explicit rounded borders
     is_secondary_state = BooleanProperty(False)  # change color to secondary_state_color if is_secondary_state is True
     label_text = StringProperty('')  # button label text. if empty, it's just an icon button, else labeled icon button
     bg_size_val = NumericProperty(dp(36))  # used with font_size_val to get different sized icons
@@ -114,10 +114,18 @@ class IconButton(ButtonBehavior, BoxLayout, PropCachedWidget):
 
     def update_canvas(self, *args):
         """ Update the background color and rectangle to match a button's behavior """
-        self.canvas.before.clear()  # clear existent drawing
+        self.canvas.before.clear()
         with self.canvas.before:  # redraw with bg_color values
             Color(*self.bg_color)
-            self.rect = RoundedRectangle(size=self.size, pos=self.pos) if self.is_round else Rectangle(size=self.size, pos=self.pos)
+            if any(self.is_round):
+                self.rect = RoundedRectangle(size=self.size, pos=self.pos, radius=[
+                    self.is_round[0] * self.height / 4,  # top-left
+                    self.is_round[1] * self.height / 4,  # top-right
+                    self.is_round[2] * self.height / 4,  # bottom-left
+                    self.is_round[3] * self.height / 4,  # bottom-right
+                ])
+            else:  # use Rectangle for no rounding
+                self.rect = Rectangle(size=self.size, pos=self.pos)
 
     def hide_widget(self, props=None):
         super().hide_widget(self.cached_props)

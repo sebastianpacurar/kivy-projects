@@ -40,6 +40,8 @@ class AllCountriesScreen(Screen):
     regions = ListProperty([])  # filter option for subregion
     languages = DictProperty({})  # filter option for languages
     currencies = DictProperty({})  # filter option for currencies
+    pinned_count = NumericProperty(0)  # handles disabled status for pin_all btn
+    unpinned_count = NumericProperty(0)  # handles disabled status for unpin_all btn
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -163,13 +165,15 @@ class AllCountriesScreen(Screen):
         if not self.is_map_on:
             self.is_map_on = True
 
+        container = self.ids.pill_container
+
         for entry in self.data:
-            container = self.ids.pill_container
             target = list(entry.keys())[0]
-            country_name = entry[target]['common_name']
-            container.add_pill(icon=self.app.get_icon('map-marker-off-outline'), text=country_name, on_press=lambda pill, name=country_name: self.remove_marker_from_map(pill, name))
-            self.app.map_ui.add_ui_marker(entry[target]['latlng'][0], entry[target]['latlng'][1], entry[target]['common_name'])
-            entry[target]['is_pinned'] = True
+            if not entry[target]['is_pinned']:
+                country_name = entry[target]['common_name']
+                container.add_pill(icon=self.app.get_icon('map-marker-off-outline'), text=country_name, on_press=lambda pill, name=country_name: self.remove_marker_from_map(pill, name))
+                self.app.map_ui.add_ui_marker(entry[target]['latlng'][0], entry[target]['latlng'][1], entry[target]['common_name'])
+                entry[target]['is_pinned'] = True
 
         self.refresh_rvs()
 
@@ -309,6 +313,14 @@ class AllCountriesScreen(Screen):
         self.refresh_grid_recycle_view()
         self.refresh_table_recycle_view()
         self.ids.search_box.counter = len(self.data)
+        self.pinned_count = 0
+        self.unpinned_count = 0
+        for i in self.data:
+            for v in i.values():
+                if v['is_pinned']:
+                    self.pinned_count += 1
+                else:
+                    self.unpinned_count += 1
 
     def refresh_grid_recycle_view(self, *args):
         rv_grid = self.ids.responsive_grid.ids.rv
