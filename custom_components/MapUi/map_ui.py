@@ -10,7 +10,7 @@ from custom_components.BaseComponents.base_components import TextLabel
 
 class MapUi(FloatLayout):
     lat_long = ListProperty([0, 0])  # [latitude, longitude]
-    target_name = StringProperty('')  # map marker name
+    target_name = StringProperty(' ')  # map marker name
     markers = DictProperty({})  # store markers in a list
     min_zoom = NumericProperty(3)  # scroll out limit
     max_zoom = NumericProperty(6)  # scroll in limit

@@ -58,7 +58,6 @@ class TableViewText(BoxLayout, TableData):
 # table button data cell
 class TableViewButton(BoxLayout, TableData):
     text_val = StringProperty('')
-    btn_width = NumericProperty(dp(150))
     btn_action = ObjectProperty(None)
 
     def on_kv_post(self, base_widget):

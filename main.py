@@ -3,18 +3,18 @@ import os
 from kivy import Config
 from kivy.app import App
 from kivy.core.text import LabelBase
-from kivy.core.window import Window
 from kivy.factory import Factory
 from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 
-from utils import find_project_root, rgb_format
+from utils import find_project_root
 
 # custom components
 from custom_components.BaseComponents.base_components import *
 import custom_components.AutoSuggestionInputBox.auto_suggestion_input_box
 import custom_components.NumericInputBox.numeric_input_box
 import custom_components.IconButton.icon_button
+import custom_components.SimpleButton.simple_button
 import custom_components.ResponsiveGridView.responsive_grid_view
 import custom_components.LoadingSpinner.loading_spinner
 import custom_components.TopBar.top_bar
@@ -62,7 +62,6 @@ class KivyProjectsApp(App):
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'BaseComponents', 'BaseComponents.kv'))
 
         # register python-defined components: present in BaseComponents.kv but without a specific python module
-        Factory.register('BaseButton', cls=BaseButton)
         Factory.register('BaseLabel', cls=BaseLabel)
         Factory.register('TextLabel', cls=TextLabel)
         Factory.register('BaseTextInput', cls=BaseTextInput)
@@ -71,6 +70,7 @@ class KivyProjectsApp(App):
         Factory.register('AutoSuggestionInputBox', cls=custom_components.AutoSuggestionInputBox)
         Factory.register('NumericInputBox', cls=custom_components.NumericInputBox)
         Factory.register('IconButton', cls=custom_components.IconButton)
+        Factory.register('SimpleButton', cls=custom_components.SimpleButton)
         Factory.register('ResponsiveGridView', cls=custom_components.ResponsiveGridView)
         Factory.register('LoadingSpinner', cls=custom_components.LoadingSpinner)
         Factory.register('TopBar', cls=custom_components.TopBar)
@@ -95,6 +95,7 @@ class KivyProjectsApp(App):
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'AutoSuggestionInputBox', 'AutoSuggestionInputBox.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'NumericInputBox', 'NumericInputBox.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'IconButton', 'IconButton.kv'))
+        Builder.load_file(os.path.join(self.project_root, 'custom_components', 'SimpleButton', 'SimpleButton.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'ResponsiveGridView', 'ResponsiveGridView.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'LoadingSpinner', 'LoadingSpinner.kv'))
         Builder.load_file(os.path.join(self.project_root, 'custom_components', 'TopBar', 'TopBar.kv'))

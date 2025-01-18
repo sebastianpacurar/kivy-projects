@@ -1,24 +1,13 @@
-from kivy.metrics import dp
-from kivy.properties import ListProperty, NumericProperty
-from kivy.uix.button import Button
+from kivy.core.window import Window
+from kivy.graphics import Color, RoundedRectangle, Rectangle
+from kivy.properties import ListProperty, BooleanProperty
+from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.widget import Widget
 
-
-class BaseButton(Button):
-    min_width = NumericProperty(dp(100))
-
-    def on_kv_post(self, base_widget):
-        if self.parent and self.parent.width > self.min_width:
-            self.min_width = self.parent.width - dp(20)
-
-    def on_touch_down(self, touch):
-        if self.collide_point(*touch.pos):
-            if touch.button == 'left':
-                return super(Button, self).on_touch_down(touch)
-            if touch.button == 'right':
-                return False
+from utils import rgb_format
 
 
 class PropCachedWidget(Widget):
@@ -96,3 +85,92 @@ class BaseTextInput(TextInput, PropCachedWidget):
 class TextLabel(BaseLabel):
     # TextLabel is based on BaseLabel which is already a PropCachedWidget
     pass
+
+
+# currently used by SimpleButton and IconButton
+class BaseButtonBehavior(ButtonBehavior, BoxLayout):
+    primary_state_color = ListProperty(rgb_format([2, 153, 139, 255]))  # defaults to Teal
+    secondary_state_color = ListProperty(rgb_format([200, 0, 0, 255]))  # defaults to Reddish
+    bg_color = ListProperty([])  # listener for color changing events
+    roundness = ListProperty([1, 1, 1, 1])  # using explicit rounded borders
+    is_secondary_state = BooleanProperty(False)  # change color to secondary_state_color if is_secondary_state is True
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.is_hovered = False
+        self.primary_state_pressed = rgb_format(self.primary_state_color, 0.25, lighten=True)
+        self.primary_state_hovered = rgb_format(self.primary_state_color, 0.25, darken=True)
+        self.secondary_state_pressed = rgb_format(self.secondary_state_color, 0.25, lighten=True)
+        self.secondary_state_hovered = rgb_format(self.secondary_state_color, 0.25, darken=True)
+        self.disabled_state_color = rgb_format([255, 255, 255, 255], factor=0.4, darken=True)
+
+        self.bg_color = self.primary_state_color
+        self.bind(size=self.update_canvas, pos=self.update_canvas, bg_color=self.update_canvas)
+        self.bind(state=self.on_state, is_secondary_state=self.on_state)
+        Window.bind(mouse_pos=self.on_mouse_pos)
+
+    def on_primary_state_color(self, instance, value):
+        self.primary_state_pressed = rgb_format(value, 0.25, lighten=True)
+        self.primary_state_hovered = rgb_format(value, 0.25, darken=True)
+        self.bg_color = self.primary_state_color
+
+    def on_secondary_state_color(self, instance, value):
+        self.secondary_state_pressed = rgb_format(value, 0.25, lighten=True)
+        self.secondary_state_hovered = rgb_format(value, 0.25, darken=True)
+        self.bg_color = self.secondary_state_color
+
+    def on_touch_down(self, touch):
+        """Trigger ripple on touch."""
+        if self.collide_point(*touch.pos):
+            if touch.button == 'left':
+                return super().on_touch_down(touch)
+            return False
+
+    def update_bg_color(self):
+        if self.disabled:
+            self.bg_color = self.disabled_state_color
+        elif self.is_secondary_state:
+            if self.state == 'down':
+                self.bg_color = self.secondary_state_pressed
+            elif self.is_hovered:
+                self.bg_color = self.secondary_state_hovered
+            else:
+                self.bg_color = self.secondary_state_color
+        else:
+            if self.state == 'down':
+                self.bg_color = self.primary_state_pressed
+            elif self.is_hovered:
+                self.bg_color = self.primary_state_hovered
+            else:
+                self.bg_color = self.primary_state_color
+
+    def update_canvas(self, *args):
+        self.canvas.before.clear()
+        with self.canvas.before:
+            Color(*self.bg_color)
+            if any(self.roundness):
+                self.rect = RoundedRectangle(
+                    size=self.size,
+                    pos=self.pos,
+                    radius=[self.roundness[0] * self.height / 4,
+                            self.roundness[1] * self.height / 4,
+                            self.roundness[2] * self.height / 4,
+                            self.roundness[3] * self.height / 4]
+                )
+            else:
+                self.rect = Rectangle(size=self.size, pos=self.pos)
+
+    def on_mouse_pos(self, window, pos):
+        is_now_hovered = self.collide_point(*self.to_widget(*pos))
+        if is_now_hovered != self.is_hovered:
+            self.is_hovered = is_now_hovered
+            self.update_bg_color()
+            self.update_canvas()
+
+    def on_state(self, instance, value):
+        self.update_bg_color()
+        self.update_canvas()
+
+    def on_disabled(self, instance, value):
+        self.update_bg_color()
+        self.update_canvas()

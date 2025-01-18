@@ -56,7 +56,7 @@
         TableView:
             id: table_view
             view_class: 'CountryTableRowItem'
-            column_widths: [dp(150), dp(30), 0, 0, 0, 0]
+            column_widths: [dp(175), dp(30), 0, 0, 0, 0]
             column_names: ['Name', '', 'Region', 'Subregion', 'Capital', 'Population']
 
 <CountryScreen>:
@@ -101,13 +101,16 @@
         bg_size_val: dp(24)
         pos_hint: {'top': 1, 'right': 1}
         icon: app.get_icon('map-marker')
+        roundness: [0, 1, 0, 1]
         on_release: root.add_marker_to_map()
 
-    BaseButton:
+    SimpleButton:
         id: country_btn
-        text: root.common_name
-        font_size: sp(13)
+        min_width: dp(125)
         pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+        font_size: sp(12)
+        label_text: root.common_name
+        roundness: [0, 0, 0, 0]
         on_release: root.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen').go_to_country_screen(self)
 
     AsyncImage:

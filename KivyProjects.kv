@@ -28,27 +28,27 @@ AppContainer:
         size_hint: 1, 1
         orientation: 'vertical'
         Filler:
-        BaseButton:
-            min_width: dp(200)
+        SimpleButton:
+            primary_state_color: app.rgb_formatter([2, 153, 139, 255], factor=0.35, darken=True)
             pos_hint: {'center_x': .5}
-            text: 'MD Icons Viewer'
+            label_text: 'MD Icons Viewer'
             on_release: app.nav_to_project('MdIconsViewerScreen')
         Filler:
-        BaseButton:
-            min_width: dp(200)
+        SimpleButton:
+            primary_state_color: app.rgb_formatter([2, 153, 139, 255], 0.35, darken=True)
             pos_hint: {'center_x': .5}
-            text: 'Time Calculator'
+            label_text: 'Time Calculator'
             on_release: app.nav_to_project('TimeCalculatorScreen')
         Filler:
-        BaseButton:
-            min_width: dp(200)
+        SimpleButton:
+            primary_state_color: app.rgb_formatter([2, 153, 139, 255], 0.35, darken=True)
             pos_hint: {'center_x': .5}
-            text: 'Unit Converter'
+            label_text: 'Unit Converter'
             on_release: app.nav_to_project('UnitConverterScreen')
         Filler:
-        BaseButton:
-            min_width: dp(200)
+        SimpleButton:
+            primary_state_color: app.rgb_formatter([2, 153, 139, 255], 0.35, darken=True)
             pos_hint: {'center_x': .5}
-            text: 'Countries'
+            label_text: 'Countries'
             on_release: app.nav_to_project('CountriesMainScreen')
         Filler:

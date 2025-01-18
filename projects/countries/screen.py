@@ -353,7 +353,7 @@ class AllCountriesScreen(Screen):
 
         # once the transition starts, fetch the country data
         country_screen = self.manager.get_screen('CountryScreen')
-        country_screen.fetch_country_data(instance.text)
+        country_screen.fetch_country_data(instance.label_text)
 
 
 class CountryScreen(Screen):
@@ -387,7 +387,7 @@ class CountryScreen(Screen):
         map_btn.is_secondary_state = self.is_map_on
 
     def on_leave(self, *args):
-        self.app.map_ui.target_name = ""
+        self.app.map_ui.target_name = ' '
 
     def on_pre_leave(self, *args):
         self.app.map_ui.toggle_displayed_markers(self.map_marker, switch_to_target_marker=False)

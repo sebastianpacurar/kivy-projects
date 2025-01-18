@@ -26,20 +26,22 @@
                     pos: self.pos
                     size: self.size
 
-            BaseButton:
-                disabled: len(root.target_name) <= 0
+            SimpleButton:
                 id: reset_loc_btn
-                text: root.target_name
-                size_hint: 1, None
-                height: resize_btn.height if self.disabled else self.height
+                size_hint: 1, 1
+                min_width: self.parent.width - resize_btn.bg_size_val
+                label_text: root.target_name
+                roundness: [0, 0, 0, 0]
+                disabled: root.target_name == ' '
                 on_release: root.center_map(*root.lat_long)
-
 
             IconButton:
                 id: resize_btn
+                size_hint_y: 1
                 pos_hint: {'center_y': .5}
-                is_round: [0, 0, 0, 0]
                 icon: app.get_icon('window-minimize') if root.is_fullscreen else app.get_icon('window-maximize')
+                roundness: [0, 0, 0, 0]
+                primary_state_color: app.rgb_formatter([2, 153, 139, 255], factor=0.35, darken=True)
                 on_release: root.toggle_full_screen()
 
 

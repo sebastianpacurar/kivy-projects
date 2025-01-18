@@ -44,15 +44,16 @@
 
 
 <TableViewButton>:
-    size_hint: None, None
+    size_hint: None, 1
     width: base_btn.width
-    BaseButton:
+    SimpleButton:
         id: base_btn
-        min_width: root.btn_width
-        font_size: sp(14)
-        text: root.text_val
+        min_width: dp(175)
+        size_hint_y: .99
         pos_hint: {'center_y': .5}
-
+        font_size: sp(14)
+        label_text: root.text_val
+        roundness: [0, 0, 0, 0]
 
 <TableViewIconButton>:
     size_hint: None, 1
@@ -60,9 +61,11 @@
     pos_hint: {'center_x': .5, 'center_y': .5}
     IconButton:
         id: icon_btn
-        pos_hint: {'center_y': .5}
         bg_size_val: dp(30)
+        height: self.parent.height - dp(1)
+        pos_hint: {'center_y': .5}
         icon: root.icon
+        roundness: [0, 0, 0, 0]
 
 
 <TableViewRow>:
