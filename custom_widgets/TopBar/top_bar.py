@@ -1,7 +1,7 @@
 from kivy.properties import StringProperty
 from kivy.uix.boxlayout import BoxLayout
 
-from custom_components.IconButton.icon_button import IconButton
+from custom_widgets.IconButton.icon_button import IconButton
 
 
 class TopBar(BoxLayout):

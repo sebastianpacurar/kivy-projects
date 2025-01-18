@@ -2,7 +2,7 @@ from kivy.clock import Clock
 from kivy.metrics import dp, sp
 from kivy.properties import StringProperty, NumericProperty
 
-from custom_components.BaseComponents.base_components import PropCachedWidget, BaseButtonBehavior
+from custom_widgets.base_widgets import PropCachedWidget, BaseButtonBehavior
 
 
 class IconButton(BaseButtonBehavior, PropCachedWidget):

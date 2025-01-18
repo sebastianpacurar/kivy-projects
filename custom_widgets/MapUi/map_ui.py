@@ -5,7 +5,7 @@ from kivy.properties import ListProperty, StringProperty, NumericProperty, Boole
 from kivy.uix.floatlayout import FloatLayout
 from kivy_garden.mapview import MapMarkerPopup
 
-from custom_components.BaseComponents.base_components import TextLabel
+from custom_widgets.base_widgets import TextLabel
 
 
 class MapUi(FloatLayout):

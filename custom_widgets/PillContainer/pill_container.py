@@ -1,8 +1,8 @@
 from kivy.properties import ObjectProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 
-from custom_components.BaseComponents.base_components import PropCachedWidget
-from custom_components.IconButton.icon_button import IconButton
+from custom_widgets.base_widgets import PropCachedWidget
+from custom_widgets.IconButton.icon_button import IconButton
 
 
 class PillContainer(BoxLayout, PropCachedWidget):

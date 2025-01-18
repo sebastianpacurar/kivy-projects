@@ -5,7 +5,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 
-from custom_components.BaseComponents.base_components import PropCachedWidget
+from custom_widgets.base_widgets import PropCachedWidget
 
 
 class AutoSuggestionInputBox(BoxLayout, PropCachedWidget):

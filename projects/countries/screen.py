@@ -6,8 +6,8 @@ from kivy.uix.screenmanager import Screen
 from kivy_garden.mapview import MapMarker
 
 from backend.countries_project.rest_countries import CountriesApi
-from custom_components.PillContainer.pill_container import PillWidget
-from custom_components.TableView.table_view import TableViewRow
+from custom_widgets.PillContainer.pill_container import PillWidget
+from custom_widgets.TableView.table_view import TableViewRow
 from projects.countries import countries_data
 from utils import wait_implicitly
 

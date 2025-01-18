@@ -5,7 +5,7 @@ from kivy.properties import StringProperty, ListProperty, NumericProperty, Boole
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
 from assets.fonts.material_design.webfont_unicodes import icons
-from custom_components.Tooltip.tooltip import Tooltip
+from custom_widgets.Tooltip.tooltip import Tooltip
 
 
 class MdIconsViewerScreen(Screen):

@@ -1,8 +1,8 @@
 from kivy.properties import DictProperty, ListProperty, ObjectProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.relativelayout import RelativeLayout
-from custom_components.AutoSuggestionInputBox.auto_suggestion_input_box import AutoSuggestionInputBox
-from custom_components.BaseComponents.base_components import PropCachedWidget
+from custom_widgets.AutoSuggestionInputBox.auto_suggestion_input_box import AutoSuggestionInputBox
+from custom_widgets.base_widgets import PropCachedWidget
 
 
 class FilterContainer(BoxLayout, PropCachedWidget):

@@ -29,7 +29,7 @@
             SimpleButton:
                 id: reset_loc_btn
                 size_hint: 1, 1
-                min_width: self.parent.width - resize_btn.bg_size_val
+                wrap_width_val: self.parent.width - resize_btn.bg_size_val
                 label_text: root.target_name
                 roundness: [0, 0, 0, 0]
                 disabled: root.target_name == ' '

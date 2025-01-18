@@ -3,7 +3,7 @@ from kivy.properties import StringProperty, NumericProperty, ObjectProperty, Lis
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
 
-from custom_components.BaseComponents.base_components import BaseLabel
+from custom_widgets.base_widgets import BaseLabel
 
 
 class TableView(BoxLayout):
