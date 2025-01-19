@@ -21,7 +21,7 @@ class CountriesApi:
     def get_country_data(self, country_name):
         url = f'{self.BASE_URL}/name/{country_name}'
         try:
-            response = requests.get(url, timeout=30, verify=False)
+            response = requests.get(url, timeout=30, headers={"User-Agent": "KivyProjectsCountries/1.0"}, verify=False)
             response.raise_for_status()
             data = response.json()
 
@@ -68,7 +68,7 @@ class CountriesApi:
 
 def get_multiple_countries_data(url, params=None, debug=False):
     try:
-        response = requests.get(url, params=params, timeout=30, verify=False)
+        response = requests.get(url, params=params, headers={"User-Agent": "KivyProjectsCountries/1.0"}, timeout=30, verify=False)
         response.raise_for_status()
         countries = response.json()
 

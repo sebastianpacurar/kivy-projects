@@ -1,10 +1,14 @@
+import os
+
 from kivy.animation import Animation
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.properties import ListProperty, StringProperty, NumericProperty, BooleanProperty, DictProperty
 from kivy.uix.floatlayout import FloatLayout
-from kivy_garden.mapview import MapMarkerPopup
+from kivy_garden.mapview import MapMarkerPopup, MapView
+from kivy_garden.mapview.mbtsource import MBTilesMapSource
 
+import utils
 from custom_widgets.base_widgets import TextLabel
 
 
@@ -12,8 +16,6 @@ class MapUi(FloatLayout):
     lat_long = ListProperty([0, 0])  # [latitude, longitude]
     target_name = StringProperty(' ')  # map marker name
     markers = DictProperty({})  # store markers in a list
-    min_zoom = NumericProperty(3)  # scroll out limit
-    max_zoom = NumericProperty(6)  # scroll in limit
     is_fullscreen = BooleanProperty(False)
     is_map_displayed = BooleanProperty(False)
     map_size = NumericProperty(0)  # is rectangular, size = (map_size, map_size)
@@ -80,11 +82,6 @@ class MapUi(FloatLayout):
 
     def on_is_map_displayed(self, instance, value):
         """ Open or close map through fade animation """
-        if not self.is_zoom_set:
-            self.ids.map_view.map_source.min_zoom = self.min_zoom
-            self.ids.map_view.map_source.max_zoom = self.max_zoom
-            self.is_zoom_set = True
-
         if value:
             # fade-in animation
             self.disabled = False
@@ -130,3 +127,15 @@ class MapUi(FloatLayout):
 
 class MarkerPopupLabel(TextLabel):
     label_text = StringProperty('blank')
+
+
+class MapUiView(MapView):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        mbtiles_path = os.path.join(utils.find_project_root(), 'backend', 'countries_project', 'dbs', 'osm_offline.mbtiles')
+        db_source = MBTilesMapSource(mbtiles_path)
+        db_source.bounds = (-180.0, -85.0, 180.0, 85.0)  # min_long, min_lat, max_long, max_lat
+        db_source.min_zoom = 3
+        db_source.max_zoom = 7
+
+        self.map_source = db_source

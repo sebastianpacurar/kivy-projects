@@ -45,18 +45,18 @@ class KivyProjectsApp(App):
         self.project_root = find_project_root()
 
         LabelBase.register(
-            name="roboto-medium",
-            fn_regular=os.path.join(self.project_root, "assets/fonts/roboto/Roboto-Medium.ttf"),
+            name='roboto-medium',
+            fn_regular=os.path.join(self.project_root, 'assets', 'fonts', 'roboto', 'Roboto-Medium.ttf'),
         )
 
         LabelBase.register(
-            name="md-icon",
-            fn_regular=os.path.join(self.project_root, "assets/fonts/material_design/materialdesignicons-webfont.ttf"),
+            name='md-icon',
+            fn_regular=os.path.join(self.project_root, 'assets', 'fonts', 'material_design', 'materialdesignicons-webfont.ttf'),
         )
 
         LabelBase.register(
-            name="digital",
-            fn_regular=os.path.join(self.project_root, "assets/fonts/digital_numbers/DigitalNumbers-Regular.ttf"),
+            name='digital',
+            fn_regular=os.path.join(self.project_root, 'assets', 'fonts', 'digital_numbers', 'DigitalNumbers-Regular.ttf',),
         )
 
         # load the base widgets components
