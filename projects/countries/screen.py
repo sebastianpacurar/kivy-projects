@@ -6,7 +6,7 @@ from kivy.uix.screenmanager import Screen
 from kivy_garden.mapview import MapMarker
 
 from backend.countries_project.rest_countries import CountriesApi
-from custom_widgets.PillContainer.pill_container import PillWidget
+from custom_widgets.PillContainer.pill_container import DoublePillWidget
 from custom_widgets.TableView.table_view import TableViewRow
 from projects.countries import countries_data
 from utils import wait_implicitly
@@ -171,7 +171,14 @@ class AllCountriesScreen(Screen):
             target = list(entry.keys())[0]
             if not entry[target]['is_pinned']:
                 country_name = entry[target]['common_name']
-                container.add_pill(icon=self.app.get_icon('map-marker-off-outline'), text=country_name, on_press=lambda pill, name=country_name: self.remove_marker_from_map(pill, name))
+                # container.add_single_pill(icon=self.app.get_icon('map-marker-off-outline'), text=country_name, on_press=lambda pill, name=country_name: self.remove_marker_from_map(pill, name))
+
+                container.add_double_pill(
+                    icon=self.app.get_icon('map-marker-off-outline'),
+                    text=country_name,
+                    on_label_press= lambda pill, coords=entry[target]['latlng']: self.app.map_ui.smooth_center_map(*coords),
+                    on_icon_press=lambda pill, name=country_name: self.remove_marker_from_map(pill, name)
+                )
                 self.app.map_ui.add_ui_marker(entry[target]['latlng'][0], entry[target]['latlng'][1], entry[target]['common_name'])
                 entry[target]['is_pinned'] = True
 
@@ -185,7 +192,14 @@ class AllCountriesScreen(Screen):
 
         container = self.ids.pill_container
         country_name = instance.common_name
-        container.add_pill(icon=self.app.get_icon('map-marker-off-outline'), text=country_name, on_press=lambda pill, name=country_name: self.remove_marker_from_map(pill, name))
+        # container.add_single_pill(icon=self.app.get_icon('map-marker-off-outline'), text=country_name, on_press=lambda pill, name=country_name: self.remove_marker_from_map(pill, name))
+
+        container.add_double_pill(
+            icon=self.app.get_icon('map-marker-off-outline'),
+            text=country_name,
+            on_label_press=lambda pill, coords=instance.coords: self.app.map_ui.smooth_center_map(*coords),
+            on_icon_press=lambda pill, name=country_name: self.remove_marker_from_map(pill, name)
+        )
         self.app.map_ui.add_ui_marker(instance.coords[0], instance.coords[1], instance.common_name)
         self.app.map_ui.smooth_center_map(*instance.coords)
 
@@ -213,7 +227,7 @@ class AllCountriesScreen(Screen):
             if entry[target]['is_pinned']:
                 entry[target]['is_pinned'] = False
                 self.app.map_ui.remove_ui_marker(target)
-                parsed_pills_data = {pill.label_text: pill for pill in self.ids.pill_container.ids.pills_stack.children if isinstance(pill, PillWidget)}
+                parsed_pills_data = {pill.pill_label: pill for pill in self.ids.pill_container.ids.pills_stack.children if isinstance(pill, DoublePillWidget)}
                 if target in list(parsed_pills_data.keys()):
                     self.ids.pill_container.remove_pill(parsed_pills_data[target])
         self.refresh_rvs()

@@ -54,25 +54,35 @@
             icon: app.get_icon('pin-off-outline')
             disabled: root.is_unpin_all_disabled
 
-<PillWidget>:
+
+<SinglePillWidget>:
     primary_state_color: app.rgb_formatter([255, 191, 0, 255], darken=True, factor=0.4)
     bg_size_val: dp(24)
     font_size_val: sp(20)
     x_padding: dp(10)
     pos_hint: {'center_y': .5}
 
-# TODO: change PillWidget to be a combination of 2 IconButtons with different on_release events (1 for text, and 1 for icon)
-#<PillWidget>:
-#    orientation: 'horizontal'
-#    size_hint: None, None
-#    width: self.minimum_width
-#    height: self.minimum_height
-#
-#    IconButton:
-#
-#
-#    primary_state_color: app.rgb_formatter([255, 191, 0, 255], darken=True, factor=0.4)
-#    bg_size_val: dp(24)
-#    font_size_val: sp(20)
-#    x_padding: dp(10)
-#    pos_hint: {'center_y': .5}
+
+<DoublePillWidget>:
+    orientation: 'horizontal'
+    size_hint: None, None
+    height: label_button.height
+    width: label_button.width + icon_button.width
+
+    SimpleButton:
+        id: label_button
+        primary_state_color: app.rgb_formatter([255, 191, 0, 255], darken=True, factor=0.2)
+        label_text: root.pill_label
+        font_size: sp(14)
+        roundness: [2, 0, 0, 2]
+        disabled: root.pill_label == ' '
+
+    IconButton:
+        id: icon_button
+        is_secondary_state: True
+        bg_size_val: dp(26)
+        font_size_val: sp(20)
+        pos_hint: {'center_y': .5}
+        icon: root.pill_icon
+        roundness: [0, 2, 2, 0]
+

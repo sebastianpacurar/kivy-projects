@@ -22,7 +22,7 @@ def create_mbtiles_db():
         )
     """)
 
-    # insert sample metadata (adjust as needed)
+    # insert sample metadata (minzoom and maxzoom must refer to min_zoom and max_zoom from MBTilesMapSource)
     metadata = [
         ('name', 'Offline map from downloaded tiles'),
         ('type', 'baselayer'),
@@ -83,7 +83,7 @@ def add_tiles_to_mbtiles(batch):
                     VALUES (?, ?, ?, ?)
                 """, (zoom, tile_column, tms_tile_row, tile_data))
 
-            conn.commit() 
+            conn.commit()
             print(f'Batch of {len(batch)} tiles inserted successfully')
     except Exception as e:
         print(f'Error in adding tiles: {e}')

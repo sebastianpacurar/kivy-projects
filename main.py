@@ -38,29 +38,22 @@ from assets.fonts.material_design.webfont_unicodes import icons
 
 Config.set('input', 'mouse', 'mouse,disable_multitouch')  # get rid of the red circle upon right-click on mouse
 
+fonts_path = os.path.join(find_project_root(), 'assets', 'fonts')
+custom_widgets_path = os.path.join(find_project_root(), 'custom_widgets')
+projects_path = os.path.join(find_project_root(), 'projects')
+
 
 class KivyProjectsApp(App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.project_root = find_project_root()
 
-        LabelBase.register(
-            name='roboto-medium',
-            fn_regular=os.path.join(self.project_root, 'assets', 'fonts', 'roboto', 'Roboto-Medium.ttf'),
-        )
-
-        LabelBase.register(
-            name='md-icon',
-            fn_regular=os.path.join(self.project_root, 'assets', 'fonts', 'material_design', 'materialdesignicons-webfont.ttf'),
-        )
-
-        LabelBase.register(
-            name='digital',
-            fn_regular=os.path.join(self.project_root, 'assets', 'fonts', 'digital_numbers', 'DigitalNumbers-Regular.ttf',),
-        )
+        LabelBase.register(name='roboto-medium', fn_regular=os.path.join(fonts_path, 'roboto', 'Roboto-Medium.ttf'))
+        LabelBase.register(name='roboto-bold', fn_regular=os.path.join(fonts_path, 'roboto', 'Roboto-Bold.ttf'))
+        LabelBase.register(name='md-icon', fn_regular=os.path.join(fonts_path, 'material_design', 'materialdesignicons-webfont.ttf'))
+        LabelBase.register(name='digital', fn_regular=os.path.join(fonts_path, 'digital_numbers', 'DigitalNumbers-Regular.ttf'))
 
         # load the base widgets components
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'BaseWidgets.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'BaseWidgets.kv'))
 
         # register custom widgets: python modules with corresponding class and .kv file
         Factory.register('AutoSuggestionInputBox', cls=custom_widgets.AutoSuggestionInputBox)
@@ -89,26 +82,26 @@ class KivyProjectsApp(App):
 
     def build(self):
         # load custom widgets kv files
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'AutoSuggestionInputBox', 'AutoSuggestionInputBox.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'NumericInputBox', 'NumericInputBox.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'IconButton', 'IconButton.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'SimpleButton', 'SimpleButton.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'ResponsiveGridView', 'ResponsiveGridView.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'LoadingSpinner', 'LoadingSpinner.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'TopBar', 'TopBar.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'Tooltip', 'Tooltip.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'MapUi', 'MapUi.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'TableView', 'TableView.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'SearchInputBox', 'SearchInputBox.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'PillContainer', 'PillContainer.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'SegmentedController', 'SegmentedController.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'custom_widgets', 'FilterContainer', 'FilterContainer.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'AutoSuggestionInputBox', 'AutoSuggestionInputBox.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'NumericInputBox', 'NumericInputBox.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'IconButton', 'IconButton.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'SimpleButton', 'SimpleButton.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'ResponsiveGridView', 'ResponsiveGridView.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'LoadingSpinner', 'LoadingSpinner.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'TopBar', 'TopBar.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'Tooltip', 'Tooltip.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'MapUi', 'MapUi.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'TableView', 'TableView.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'SearchInputBox', 'SearchInputBox.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'PillContainer', 'PillContainer.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'SegmentedController', 'SegmentedController.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'FilterContainer', 'FilterContainer.kv'))
 
         # load the projects kv files
-        Builder.load_file(os.path.join(self.project_root, 'projects', 'md_icons_viewer', 'MdIconsViewerScreen.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'projects', 'countries', 'CountriesScreen.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'projects', 'time_calculator', 'TimeCalculatorScreen.kv'))
-        Builder.load_file(os.path.join(self.project_root, 'projects', 'unit_converter', 'UnitConverterScreen.kv'))
+        Builder.load_file(os.path.join(projects_path, 'md_icons_viewer', 'MdIconsViewerScreen.kv'))
+        Builder.load_file(os.path.join(projects_path, 'countries', 'CountriesScreen.kv'))
+        Builder.load_file(os.path.join(projects_path, 'time_calculator', 'TimeCalculatorScreen.kv'))
+        Builder.load_file(os.path.join(projects_path, 'unit_converter', 'UnitConverterScreen.kv'))
 
         # attach AppContainer() to root explicitly, to make sure pytests instantiate the app and widget tree properly
         self.root = AppContainer()

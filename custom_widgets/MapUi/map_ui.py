@@ -148,7 +148,6 @@ class MapUi(FloatLayout):
         animate_step(0)
 
 
-
 class MarkerPopupLabel(TextLabel):
     label_text = StringProperty('blank')
 
@@ -163,3 +162,14 @@ class MapUiView(MapView):
         db_source.max_zoom = 7
 
         self.map_source = db_source
+
+    def on_touch_up(self, touch):
+        """ Override to get rid of animated_diff_scale() from parent which causes zooms when releasing mouse button \n
+            Prevents from pinch-like zooming
+        """
+        if touch.grab_current == self:
+            touch.ungrab(self)
+            self._touch_count -= 1
+            if self._touch_count == 0:
+                self._pause = False
+            return True
