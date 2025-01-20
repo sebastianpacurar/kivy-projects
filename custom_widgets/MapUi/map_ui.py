@@ -30,7 +30,7 @@ class MapUi(FloatLayout):
 
     def on_lat_long(self, instance, value):
         """ Update the map's position and markers when lat_long changes"""
-        self.center_map(*self.lat_long)
+        self.smooth_center_map(*self.lat_long)
 
     def add_ui_marker(self, lat, lon, name):
         """Add a new marker with popup"""
@@ -38,7 +38,7 @@ class MapUi(FloatLayout):
             marker = MapMarkerPopup(lat=lat, lon=lon)
             marker.add_widget(MarkerPopupLabel(label_text=name))
             self.markers[name] = marker
-            self.ids.map_view.add_marker(self.markers[name])
+            self.map_view.add_marker(self.markers[name])
 
     def handle_marker_popup_display(self, *args):
         """ Open MapMarkerPopup when mouse is hovering, close otherwise """
@@ -55,7 +55,7 @@ class MapUi(FloatLayout):
         if name in self.markers:
             marker = self.markers[name]
             del self.markers[name]
-            self.ids.map_view.remove_marker(marker)
+            self.map_view.remove_marker(marker)
 
     def toggle_displayed_markers(self, target_marker, switch_to_target_marker):
         """ Switch between 2 displayed marker containers \n
@@ -65,14 +65,14 @@ class MapUi(FloatLayout):
             # if True then remove all markers which are in self.markers, and add the selected target marker
             for name in self.markers:
                 marker = self.markers[name]
-                self.ids.map_view.remove_marker(marker)
-            self.ids.map_view.add_marker(target_marker)
+                self.map_view.remove_marker(marker)
+            self.map_view.add_marker(target_marker)
         else:
             # if False then remove the selected target marker, and readd all markers from self.markers
-            self.ids.map_view.remove_marker(target_marker)
+            self.map_view.remove_marker(target_marker)
             for name in self.markers:
                 marker = self.markers[name]
-                self.ids.map_view.add_marker(marker)
+                self.map_view.add_marker(marker)
 
     def on_kv_post(self, base_widget):
         self.cached_size = self.map_size, self.map_size
@@ -120,9 +120,33 @@ class MapUi(FloatLayout):
         fade_out.bind(on_complete=on_fade_out_complete)
         fade_out.start(self)
 
+    # currently unused in favor to smooth_center_map
     def center_map(self, lat, lon):
         """ Manually center the map on given lat/lon """
-        self.ids.map_view.center_on(lat, lon)
+        self.map_view.center_on(lat, lon)
+
+    def smooth_center_map(self, lat, lon):
+        """ Animate the map to smoothly scroll to the latest added marker """
+        # define animation steps
+        start_lat = self.map_view.lat
+        start_lon = self.map_view.lon
+        step_count = 100
+        duration = .05
+        step_time = duration / step_count
+        # calculate lat/lon deltas for each step
+        delta_lat = (lat - start_lat) / step_count
+        delta_lon = (lon - start_lon) / step_count
+
+        def animate_step(step=0):
+            # move the map one step closer to the target
+            if step < step_count:
+                new_lat = start_lat + delta_lat * step
+                new_lon = start_lon + delta_lon * step
+                self.map_view.center_on(new_lat, new_lon)
+                Clock.schedule_once(lambda dt: animate_step(step + 1), step_time)
+
+        animate_step(0)
+
 
 
 class MarkerPopupLabel(TextLabel):

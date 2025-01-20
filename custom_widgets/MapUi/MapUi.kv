@@ -34,7 +34,7 @@
                 label_text: root.target_name
                 roundness: [0, 0, 0, 0]
                 disabled: root.target_name == ' '
-                on_release: root.center_map(*root.lat_long)
+                on_release: root.smooth_center_map(*root.lat_long)
 
             IconButton:
                 id: resize_btn

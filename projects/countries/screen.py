@@ -187,7 +187,7 @@ class AllCountriesScreen(Screen):
         country_name = instance.common_name
         container.add_pill(icon=self.app.get_icon('map-marker-off-outline'), text=country_name, on_press=lambda pill, name=country_name: self.remove_marker_from_map(pill, name))
         self.app.map_ui.add_ui_marker(instance.coords[0], instance.coords[1], instance.common_name)
-        self.app.map_ui.center_map(*instance.coords)
+        self.app.map_ui.smooth_center_map(*instance.coords)
 
         if not self.is_map_on:
             self.is_map_on = True
@@ -434,7 +434,7 @@ class CountryScreen(Screen):
         self.map_marker.name = country_data['name']['common']
 
         self.app.map_ui.toggle_displayed_markers(self.map_marker, switch_to_target_marker=True)
-        self.app.map_ui.center_map(lat, lon)
+        self.app.map_ui.smooth_center_map(lat, lon)
 
     def add_marker_to_map(self, lat, lon):
         """ Add a marker to the map at a specific location """
