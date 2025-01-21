@@ -130,7 +130,7 @@ class IconItem(FloatLayout):
     def on_mouse_pos_tooltip(self, *args):
         """ Toggle tooltip when mouse hovers over icon_label"""
         try:
-            data = self.parent.parent.parent.parent.parent.data  # if this is null then do not continue logic
+            data = self.parent.parent.parent.parent.parent.parent.data  # if this is null then do not continue logic
             pos = args[1]
             # add tooltip widget when mouse hovers over IconItem
             if self.collide_point(*self.to_widget(*pos)):

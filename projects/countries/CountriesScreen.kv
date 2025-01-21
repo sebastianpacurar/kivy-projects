@@ -2,8 +2,6 @@
     name: 'CountriesMainScreen'
     BoxLayout:
         orientation: 'vertical'
-        padding: 10
-        spacing: 10
         canvas.before:
             Color:
                 rgba:  app.rgb_formatter([250, 235, 215, 255])
@@ -20,44 +18,54 @@
     name: 'AllCountriesScreen'
     BoxLayout:
         orientation: 'vertical'
-        spacing: 10
         TopBar:
             id: top_bar
             project_name: 'Countries'
 
-        SearchInputBox:
-            id: search_box
-            search_func: lambda i, v: root.search_data(i, v)
-            search_hint_text: 'Search for a country'
-            counter: len(root.data)
+        BoxLayout:
+            orientation: 'vertical'
+            padding: 10
+            spacing: 20
+            canvas.before:
+                Color:
+                    rgba: app.rgb_formatter([250, 235, 215, 255])
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
 
-        FilterContainer:
-            id: filters_container
-            filters_func: lambda i, v: root.apply_filters(i, v)
-            filters_labels: ['Region', 'Subregion', 'Languages', 'Currencies']
-            filters_selected_option: ['All', 'All', 'All', 'All']
-            filters_default_option: ['All', 'All', 'All', 'All']
-            filters_options: [root.regions, root.subregions, list(root.languages.values()), list(root.currencies.values())]
-            filters_widths: [dp(225), dp(225), dp(225), dp(225)]
+            SearchInputBox:
+                id: search_box
+                search_func: lambda i, v: root.search_data(i, v)
+                search_hint_text: 'Search for a country'
+                counter: len(root.data)
 
-        PillContainer:
-            id: pill_container
-            pin_all_func: lambda i, v: root.add_all_markers_to_map_and_update_data(i, v)
-            unpin_all_func: lambda i, v: root.remove_all_markers_from_map(i, v)
-            is_pin_all_disabled: root.unpinned_count == 0
-            is_unpin_all_disabled: root.pinned_count == 0
+            FilterContainer:
+                id: filters_container
+                filters_func: lambda i, v: root.apply_filters(i, v)
+                filters_labels: ['Region', 'Subregion', 'Languages', 'Currencies']
+                filters_selected_option: ['All', 'All', 'All', 'All']
+                filters_default_option: ['All', 'All', 'All', 'All']
+                filters_options: [root.regions, root.subregions, list(root.languages.values()), list(root.currencies.values())]
+                filters_widths: [dp(225), dp(225), dp(225), dp(225)]
 
-        ResponsiveGridView:
-            id: responsive_grid
-            view_class: 'CountryGridCardItem'
-            item_width: dp(180)
-            item_spacing: dp(10)
+            PillContainer:
+                id: pill_container
+                pin_all_func: lambda i, v: root.add_all_markers_to_map_and_update_data(i, v)
+                unpin_all_func: lambda i, v: root.remove_all_markers_from_map(i, v)
+                is_pin_all_disabled: root.unpinned_count == 0
+                is_unpin_all_disabled: root.pinned_count == 0
 
-        TableView:
-            id: table_view
-            view_class: 'CountryTableRowItem'
-            column_widths: [dp(175), dp(30), 0, 0, 0, 0]
-            column_names: ['Name', '', 'Region', 'Subregion', 'Capital', 'Population']
+            ResponsiveGridView:
+                id: responsive_grid
+                view_class: 'CountryGridCardItem'
+                item_width: dp(180)
+                item_spacing: dp(10)
+
+            TableView:
+                id: table_view
+                view_class: 'CountryTableRowItem'
+                column_widths: [dp(175), dp(30), 0, 0, 0, 0]
+                column_names: ['Name', '', 'Region', 'Subregion', 'Capital', 'Population']
 
 <CountryScreen>:
     name: 'CountryScreen'
@@ -111,7 +119,7 @@
         font_size: sp(12)
         label_text: root.common_name
         roundness: [0, 0, 0, 0]
-        on_release: root.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen').go_to_country_screen(self)
+        on_release: root.parent.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen').go_to_country_screen(self)
 
     AsyncImage:
         id: flag
@@ -127,7 +135,7 @@
         size_hint_x: None
         id: table_btn
         text_val: root.common_name
-        btn_action: lambda i: root.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen').go_to_country_screen(i)
+        btn_action: lambda i: root.parent.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen').go_to_country_screen(i)
 
     TableViewIconButton:
         size_hint_x: None

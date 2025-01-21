@@ -1,0 +1,38 @@
+<ColorPickerScreen>:
+    name: 'ColorPickerScreen'
+    BoxLayout:
+        orientation: 'vertical'
+
+        # Top Bar
+        TopBar:
+            id: top_bar
+            project_name: 'Color Picker'
+
+        BoxLayout:
+            orientation: 'vertical'
+            padding: 10
+            spacing: 10
+            canvas.before:
+                Color:
+                    rgba: app.rgb_formatter([250, 235, 215, 255])
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            CustomColorPicker:
+                id: color_picker
+                color_label: color_label
+
+            BaseLabel:
+                id: color_label
+                text: "RGB: (0, 0, 0)"
+                size_hint: (1, 0.1)
+                font_size: 20
+                halign: 'center'
+                valign: 'middle'
+                text_size: self.size
+
+
+
+<CustomColorPicker>:
+    size_hint: (1, 0.8)

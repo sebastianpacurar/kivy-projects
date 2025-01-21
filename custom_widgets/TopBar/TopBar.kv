@@ -2,11 +2,11 @@
     orientation: 'horizontal'
     size_hint_y: None
     height: dp(50)
-    padding: dp(10)
+    padding: [dp(10), 0, dp(10), 0]
     spacing: dp(7.5)
     canvas.before:
         Color:
-            rgba: app.rgb_formatter([125, 254, 227, 255])
+            rgba: app.rgb_formatter([80, 200, 120, 255], lighten=True, factor=0.6)
         Rectangle:
             pos: self.pos
             size: self.size
@@ -39,9 +39,8 @@
 
     # vertical separator
     BaseLabel:
-        height: self.parent.height
+        height: self.parent.height + dp(10)
         width: dp(5)
-        pos_hint: {'center_y': .5}
         bg_color: app.rgb_formatter([2, 153, 139, 255], factor=0.45, lighten=True)
 
     # home button (present on all screens)

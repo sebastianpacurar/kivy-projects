@@ -2,52 +2,53 @@
     name: 'TimeCalculatorScreen'
     BoxLayout:
         orientation: 'vertical'
-        padding: 10
-        spacing: 10
-        canvas.before:
-            Color:
-                rgba: app.rgb_formatter([250, 235, 215, 255])
-            Rectangle:
-                pos: self.pos
-                size: self.size
-
         TopBar:
             id: top_bar
             project_name: 'Time Calculator'
 
         BoxLayout:
-            size_hint: 1, None
-            height: root.ids.minutes_input_field.ids.text_input.height * 2
-            orientation: 'horizontal'
+            orientation: 'vertical'
+            padding: 10
             spacing: 20
+            canvas.before:
+                Color:
+                    rgba: app.rgb_formatter([250, 235, 215, 255])
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            BoxLayout:
+                size_hint: 1, None
+                height: root.ids.minutes_input_field.ids.text_input.height * 2
+                orientation: 'horizontal'
+                spacing: 20
+                Filler:
+                NumericInputBox:
+                    id: minutes_input_field
+                    label_text: 'Minutes'
+                    container_width: 150
+
+                NumericInputBox:
+                    id: seconds_input_field
+                    label_text: 'Seconds'
+                    container_width: 150
+
+                IconButton:
+                    icon: app.get_icon('plus')
+                    on_release: root.reset_inputs()
+                    on_press: root.add_minutes_and_seconds(int(minutes_input_field.ids.text_input.text), int(seconds_input_field.ids.text_input.text))
+
+                IconButton:
+                    icon: app.get_icon('minus')
+                    on_release: root.reset_inputs()
+                    on_press: root.subtract_minutes_and_seconds(int(minutes_input_field.ids.text_input.text), int(seconds_input_field.ids.text_input.text))
+
+                Filler:
+            BaseLabel:
+                markup: True
+                text: f"{root.timer['hours']}:{root.timer['minutes']:02}:{root.timer['seconds']:02}"
+                font_size: sp(24)
+                pos_hint: {'center_x': .5}
+                font_name: 'digital'
             Filler:
-            NumericInputBox:
-                id: minutes_input_field
-                label_text: 'Minutes'
-                container_width: 150
-
-            NumericInputBox:
-                id: seconds_input_field
-                label_text: 'Seconds'
-                container_width: 150
-
-            IconButton:
-                icon: app.get_icon('plus')
-                on_release: root.reset_inputs()
-                on_press: root.add_minutes_and_seconds(int(minutes_input_field.ids.text_input.text), int(seconds_input_field.ids.text_input.text))
-
-            IconButton:
-                icon: app.get_icon('minus')
-                on_release: root.reset_inputs()
-                on_press: root.subtract_minutes_and_seconds(int(minutes_input_field.ids.text_input.text), int(seconds_input_field.ids.text_input.text))
-
-            Filler:
-        BaseLabel:
-            markup: True
-            text: f"{root.timer['hours']}:{root.timer['minutes']:02}:{root.timer['seconds']:02}"
-            font_size: sp(24)
-            pos_hint: {'center_x': .5}
-            font_name: 'digital'
-        Filler:
 
 

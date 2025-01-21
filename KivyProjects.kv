@@ -52,3 +52,9 @@ AppContainer:
             label_text: 'Countries'
             on_release: app.nav_to_project('CountriesMainScreen')
         Filler:
+        SimpleButton:
+            primary_state_color: app.rgb_formatter([2, 153, 139, 255], 0.35, darken=True)
+            pos_hint: {'center_x': .5}
+            label_text: 'Color Picker'
+            on_release: app.nav_to_project('ColorPickerScreen')
+        Filler:

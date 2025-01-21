@@ -32,6 +32,7 @@ import projects.md_icons_viewer.screen
 import projects.time_calculator.screen
 import projects.unit_converter.screen
 import projects.countries.screen
+import projects.color_picker.screen
 
 # material design icons
 from assets.fonts.material_design.webfont_unicodes import icons
@@ -76,6 +77,7 @@ class KivyProjectsApp(App):
         Factory.register('CountriesMainScreen', cls=projects.countries.screen.CountriesMainScreen)
         Factory.register('TimeCalculatorScreen', cls=projects.time_calculator.screen.TimeCalculatorScreen)
         Factory.register('UnitConverterScreen', cls=projects.unit_converter.screen.UnitConverterScreen)
+        Factory.register('ColorPickerScreen', cls=projects.color_picker.screen.ColorPickerScreen)
 
         self.pm, self.spinner, self.map_ui = None, None, None  # initialize project manager and global spinner
         self.icons = icons  # material design icons dictionary
@@ -102,6 +104,7 @@ class KivyProjectsApp(App):
         Builder.load_file(os.path.join(projects_path, 'countries', 'CountriesScreen.kv'))
         Builder.load_file(os.path.join(projects_path, 'time_calculator', 'TimeCalculatorScreen.kv'))
         Builder.load_file(os.path.join(projects_path, 'unit_converter', 'UnitConverterScreen.kv'))
+        Builder.load_file(os.path.join(projects_path, 'color_picker', 'ColorPickerScreen.kv'))
 
         # attach AppContainer() to root explicitly, to make sure pytests instantiate the app and widget tree properly
         self.root = AppContainer()
@@ -164,4 +167,5 @@ class AppContainer(FloatLayout):
 
 
 if __name__ == '__main__':
+    Window.size = (1000, 600)
     KivyProjectsApp().run()

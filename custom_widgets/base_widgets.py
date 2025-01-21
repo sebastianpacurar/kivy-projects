@@ -98,10 +98,10 @@ class BaseButtonBehavior(ButtonBehavior, BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.is_hovered = False
-        self.primary_state_pressed = rgb_format(self.primary_state_color, 0.25, lighten=True)
-        self.primary_state_hovered = rgb_format(self.primary_state_color, 0.25, darken=True)
-        self.secondary_state_pressed = rgb_format(self.secondary_state_color, 0.25, lighten=True)
-        self.secondary_state_hovered = rgb_format(self.secondary_state_color, 0.25, darken=True)
+        self.primary_state_pressed = rgb_format(self.primary_state_color, 0.3, darken=True)
+        self.primary_state_hovered = rgb_format(self.primary_state_color, 0.2, lighten=True)
+        self.secondary_state_pressed = rgb_format(self.secondary_state_color, 0.3, darken=True)
+        self.secondary_state_hovered = rgb_format(self.secondary_state_color, 0.2, lighten=True)
         self.disabled_state_color = rgb_format([255, 255, 255, 255], factor=0.4, darken=True)
 
         self.bg_color = self.primary_state_color

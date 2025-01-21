@@ -492,7 +492,7 @@ class CountryGridCardItem(FloatLayout):
 
     def add_marker_to_map(self):
         """ Adds a marker to the map with the given coordinates and country name """
-        all_countries_screen = self.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen')
+        all_countries_screen = self.parent.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen')
         all_countries_screen.add_marker_to_map_and_update_data(self)
 
 
@@ -509,5 +509,5 @@ class CountryTableRowItem(TableViewRow):
 
     def add_marker_to_map(self):
         """ Adds a marker to the map with the given coordinates and country name """
-        all_countries_screen = self.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen')
+        all_countries_screen = self.parent.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen')
         all_countries_screen.add_marker_to_map_and_update_data(self)

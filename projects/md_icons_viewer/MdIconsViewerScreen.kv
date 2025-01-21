@@ -1,33 +1,37 @@
 <MdIconsViewerScreen>:
     name: 'MdIconsViewerScreen'
+
     BoxLayout:
         orientation: 'vertical'
-        padding: 10
-        spacing: 20
-        canvas.before:
-            Color:
-                rgba: app.rgb_formatter([250, 235, 215, 255])
-            Rectangle:
-                pos: self.pos
-                size: self.size
         TopBar:
             id: top_bar
             project_name: 'Material Design Icons'
-        SegmentedController:
-            id: segmented_controller
-            toggle_func: lambda i, v: root.set_filter_selection(i, v)
-            button_labels: ['All', 'Filled', 'Outlined']
-            seg_group: 'md-icon-types'
-        SearchInputBox:
-            id: search_box
-            search_func: lambda i, v: root.filter_data(i, v)
-            search_hint_text: 'Search for icons'
-            counter: len(root.data)
-        ResponsiveGridView:
-            id: responsive_grid
-            view_class: 'IconItem'
-            item_width: dp(200)
-            item_spacing: dp(10)
+
+        BoxLayout:
+            orientation: 'vertical'
+            padding: 10
+            spacing: 20
+            canvas.before:
+                Color:
+                    rgba: app.rgb_formatter([250, 235, 215, 255])
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            SegmentedController:
+                id: segmented_controller
+                toggle_func: lambda i, v: root.set_filter_selection(i, v)
+                button_labels: ['All', 'Filled', 'Outlined']
+                seg_group: 'md-icon-types'
+            SearchInputBox:
+                id: search_box
+                search_func: lambda i, v: root.filter_data(i, v)
+                search_hint_text: 'Search for icons'
+                counter: len(root.data)
+            ResponsiveGridView:
+                id: responsive_grid
+                view_class: 'IconItem'
+                item_width: dp(200)
+                item_spacing: dp(10)
 
 <IconItem>:
     canvas.before:
