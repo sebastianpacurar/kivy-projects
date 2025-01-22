@@ -19,8 +19,27 @@
                     size: self.size
 
             ColorPickerWidget:
-            Filler:
+                id: color_picker
 
+            ResponsiveGridView:
+                id: responsive_grid
+                view_class: 'ColorCardItem'
+                item_width: dp(60)
+                item_spacing: dp(20)
+
+
+<ColorCardItem>:
+    canvas.before:
+        Color:
+            rgba: app.rgb_formatter(root.rgb)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+        Color:
+            rgba: app.rgb_formatter([0, 0, 0, 255], factor=0.5, darken=True)
+        Line:
+            width: 1.5
+            rectangle: (self.x, self.y, self.width, self.height)
 
 <ColorPickerWidget>:
     orientation: 'vertical'
@@ -31,7 +50,7 @@
     BoxLayout:
         orientation: 'vertical'
         size_hint: 1, None
-        height: dp(400)
+        height: dp(350)
 
         BoxLayout:
             orientation: 'horizontal'
@@ -40,7 +59,7 @@
                 orientation: 'horizontal'
                 size_hint: None, None
                 height: dp(400)
-                width: dp(440)
+                width: dp(390)
                 BoxLayout:
                     orientation: 'vertical'
                     size_hint_x: None
@@ -60,8 +79,8 @@
                 ColorWheelWidget:
                     id: color_wheel
                     size_hint: None, None
-                    height: dp(400)
-                    width: dp(400)
+                    height: dp(350)
+                    width: dp(350)
 
             BoxLayout:
                 orientation: 'vertical'

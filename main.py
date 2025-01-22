@@ -167,5 +167,5 @@ class AppContainer(FloatLayout):
 
 
 if __name__ == '__main__':
-    Window.size = (1000, 600)
+    Window.size = (1000, 650)
     KivyProjectsApp().run()

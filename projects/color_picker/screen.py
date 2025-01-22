@@ -1,11 +1,27 @@
-from kivy.properties import BoundedNumericProperty, BooleanProperty
+from kivy.properties import BoundedNumericProperty, BooleanProperty, ListProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.colorpicker import ColorWheel
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
+
+from named_rgb_hex import css_4_colors
 
 
 class ColorPickerScreen(Screen):
-    pass
+    data = ListProperty([])
+
+    def on_kv_post(self, base_widget):
+        self.set_data()
+        self.ids.responsive_grid.ids.rv.data = self.data
+
+    def set_data(self):
+        self.data = [{'name': c['name'], 'rgb': c['rgb'], 'hex': c['hex']} for c in css_4_colors]
+
+
+class ColorCardItem(FloatLayout):
+    name = StringProperty('')
+    rgb = ListProperty([0, 0, 0, 255])
+    hex = StringProperty('')
 
 
 class ColorPickerWidget(BoxLayout):
