@@ -1,9 +1,8 @@
 <FilterContainer>:
     orientation: 'horizontal'
     size_hint: 1, None
-    height: dp(60)
-    spacing: 10
-
+    height: self.minimum_height
+    spacing: dp(5)
 
 <FilterBox>:
     size_hint_x: None
@@ -13,18 +12,12 @@
 <ResetFilters>:
     size_hint_x: 1
     height: root.text_field.height
-    canvas.before:
-        Color:
-            rgba: 1, 0, 0, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
 
     IconButton:
         id: reset_button
-        bg_size_val: dp(25)
+        bg_size_val: dp(22)
         x: root.text_field.width - self.width - dp(2)
-        y: root.text_field.height - root.text_field.height / 1.25
+        y: root.text_field.height - self.bg_size_val * 0.825
         icon: app.get_icon('filter-off')
         disabled: root.text_field.text == root.default_option
         on_release: root.reset_to_default()

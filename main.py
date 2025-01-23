@@ -80,6 +80,7 @@ class KivyProjectsApp(App):
         Factory.register('ColorPickerScreen', cls=projects.color_picker.screen.ColorPickerScreen)
 
         self.pm, self.spinner, self.map_ui = None, None, None  # initialize project manager and global spinner
+        self.default_dpi = 120
         self.icons = icons  # material design icons dictionary
 
     def build(self):
@@ -120,6 +121,22 @@ class KivyProjectsApp(App):
         self.map_ui = self.root.ids.map
         self.pm = self.root.ids.projectManager
         Window.bind(on_key_down=self.on_key_down)
+        Window.bind(dpi=self.reset_dpi_to_default)
+
+    def reset_dpi_to_default(self, instance, value):
+        """ Maintain consistency between different displays (laptop vs monitor) when moving app to another display with different dpi values \n
+            Instead of recalculating all widgets to a new value, use the initial value \n
+            Reason: starting on a 96 dpi and moving to a display with 120, drastically changes ui
+        """
+        if Window.dpi != self.default_dpi:
+            Window.dpi = self.default_dpi  # TODO: this causes WM_Pen to throw an error (Exception ignored on calling ctypes callback function)
+
+            # reset canvas and layouts for all widgets based on the new display scale
+            for widget in self.root.walk():
+                if hasattr(widget, 'canvas'):
+                    widget.canvas.set_dpi(self.default_dpi)
+                if hasattr(widget, 'do_layout'):
+                    widget.do_layout()
 
     def nav_to_project(self, project_screen_name):
         """ Navigate to a screen, loading it dynamically if needed """

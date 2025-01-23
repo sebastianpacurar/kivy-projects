@@ -1,6 +1,6 @@
 from kivy.app import App
 from kivy.core.window import Window
-from kivy.metrics import dp, sp
+from kivy.metrics import dp, sp, Metrics
 from kivy.properties import StringProperty, ListProperty, NumericProperty, BooleanProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
@@ -128,7 +128,7 @@ class IconItem(FloatLayout):
             Window.bind(mouse_pos=self.on_mouse_pos_tooltip)  # bind hover tooltip logic
 
     def on_mouse_pos_tooltip(self, *args):
-        """ Toggle tooltip when mouse hovers over icon_label"""
+        """Toggle tooltip when mouse hovers over icon_label, accounting for DPI scaling."""
         try:
             data = self.parent.parent.parent.parent.parent.parent.data  # if this is null then do not continue logic
             pos = args[1]

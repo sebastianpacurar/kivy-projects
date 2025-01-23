@@ -9,7 +9,7 @@
         Color:
             rgba: app.rgb_formatter([2, 153, 139, 255], factor=0.45, lighten=True)
         Line:
-            width: 1.5
+            width: dp(1.5)
             rounded_rectangle: (self.x, self.y, self.width, self.height, 2.5)
 
     ScrollView:
@@ -58,7 +58,7 @@
 <SinglePillWidget>:
     primary_state_color: app.rgb_formatter([255, 191, 0, 255], darken=True, factor=0.4)
     bg_size_val: dp(24)
-    font_size_val: sp(20)
+    icon_font_size_sp: sp(20)
     x_padding: dp(10)
     pos_hint: {'center_y': .5}
 
@@ -81,7 +81,7 @@
         id: icon_button
         is_secondary_state: True
         bg_size_val: dp(26)
-        font_size_val: sp(20)
+        icon_font_size_sp: sp(20)
         pos_hint: {'center_y': .5}
         icon: root.pill_icon
         roundness: [0, 2, 2, 0]

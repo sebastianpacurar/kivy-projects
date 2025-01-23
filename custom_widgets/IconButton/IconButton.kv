@@ -6,7 +6,7 @@
 
     TextLabel:
         id: text_label
-        font_size: sp(16)
+        font_size: sp(14)
         height: self.texture_size[1]
         text: root.label_text
         pos_hint: {'center_y': .5}
@@ -20,9 +20,7 @@
         id: icon_label
         size_hint: 1, 1
         pos_hint: {'center_y': .5}
-        halign: 'center'
-        valign: 'middle'
         font_name: 'md-icon'
-        font_size: root.font_size_val
+        font_size: root.icon_font_size_sp
         disabled_color: 1, 1, 1, 1
         color: 1, 1, 1, 1

@@ -1,11 +1,10 @@
 <MapUi>:
     map_view: map_view
     canvas.before:
-        # draw the border here
         Color:
-            rgba: 0, 0, 0, 1  # black color for the border
+            rgba: 0, 0, 0, 1
         Line:
-            width: 2  # border thickness
+            width: dp(2)
             rectangle: (self.x, self.y, self.width, self.height)
     BoxLayout:
         orientation: 'vertical'
@@ -61,7 +60,7 @@
         Color:
             rgba: .5, .5, .5, 1
         Line:
-            width: 1.5
+            width: dp(1.5)
             rounded_rectangle: (self.x, self.y, self.width, self.height, 10)
 
 

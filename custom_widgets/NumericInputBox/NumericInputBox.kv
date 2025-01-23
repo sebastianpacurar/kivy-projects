@@ -1,22 +1,18 @@
 <NumericInputBox>:
+    orientation: 'vertical'
     size_hint: None, None
     width: root.container_width
-    height: 80
+    spacing: dp(5)
+    height: box_label.texture_size[1] + text_input.height + dp(5)
 
-    BoxLayout:
-        orientation: 'vertical'
-        size_hint: 1, None
-        height: self.minimum_height
-        spacing: dp(3)
+    TextLabel:
+        id: box_label
+        text: root.label_text
+        font_size: sp(15)
+        font_name: 'roboto-bold'
 
-        TextLabel:
-            id: box_label
-            text: root.label_text
-            font_size: sp(18)
-
-        BaseTextInput:
-            id: text_input
-            height: 40
-            readonly: root.is_readonly
-            disabled: root.is_readonly
-            on_focus: self.text = "0" if not self.focus and len(self.text) == 0 else self.text
+    BaseTextInput:
+        id: text_input
+        readonly: root.is_readonly
+        disabled: root.is_readonly
+        on_focus: self.text = "0" if not self.focus and len(self.text) == 0 else self.text

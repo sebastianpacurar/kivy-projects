@@ -1,33 +1,32 @@
 <SearchInputBox>:
     orientation: 'horizontal'
-    size_hint: 1, None
-    height: dp(35)
+    size_hint: .8, None
+    height: self.minimum_height
+    pos_hint: {'center_x': .5}
+    spacing: dp(5)
 
-    RelativeLayout:
-        size_hint_x: 1
-        height: dp(35)
+    BaseTextInput:
+        id: search_input
+        size_hint: 1, None
+        pos_hint: {'center_y': .5}
+        hint_text: root.search_hint_text
+        on_focus: root.bind_escape_key(self.focus)
 
-        BaseTextInput:
-            id: search_input
-            size_hint: 1, None
-            font_size: sp(18)
-            padding: dp(25), dp(7.5), dp(10), 0
-            height: dp(35)
-            hint_text: root.search_hint_text
-            on_focus: root.bind_escape_key(self.focus)
-
-        IconButton:
-            bg_size_val: dp(30)
-            disabled: len(search_input.text) == 0
-            x: search_input.width - self.width - dp(10)
-            y: search_input.height - search_input.height / 1.1
-            icon: app.get_icon('close-circle-outline')
-            on_release: root.clear_text()
+    IconButton:
+        bg_size_val: dp(28)
+        disabled: len(search_input.text) == 0
+        icon: app.get_icon('close-circle-outline')
+        on_release: root.clear_text()
 
     BaseLabel:
         text: f'({str(root.counter)})'
         width: dp(100)
-        height: dp(55)
-        halign: 'center'
-        font_size: sp(24)
+        height: root.height
+        font_size: sp(20)
         pos_hint: {'center_y': .5}
+        canvas.before:
+            Color:
+                rgba: [.8, .8, .8, 1]
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size

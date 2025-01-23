@@ -38,7 +38,7 @@
         Color:
             rgba: app.rgb_formatter([0, 0, 0, 255], factor=0.5, darken=True)
         Line:
-            width: 1.5
+            width: dp(1.5)
             rectangle: (self.x, self.y, self.width, self.height)
 
 <ColorPickerWidget>:
@@ -156,7 +156,7 @@
                         Color:
                             rgba: app.rgb_formatter([2, 153, 139, 255], factor=0.45, darken=True)
                         Line:
-                            width: 2
+                            width: dp(2)
                             rectangle: (self.x, self.y, self.width, self.height)
 
                     TextLabel:

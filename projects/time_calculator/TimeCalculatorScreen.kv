@@ -8,8 +8,8 @@
 
         BoxLayout:
             orientation: 'vertical'
-            padding: 10
-            spacing: 20
+            padding: dp(10)
+            spacing: dp(20)
             canvas.before:
                 Color:
                     rgba: app.rgb_formatter([250, 235, 215, 255])
@@ -20,17 +20,17 @@
                 size_hint: 1, None
                 height: root.ids.minutes_input_field.ids.text_input.height * 2
                 orientation: 'horizontal'
-                spacing: 20
+                spacing: dp(20)
                 Filler:
                 NumericInputBox:
                     id: minutes_input_field
                     label_text: 'Minutes'
-                    container_width: 150
+                    container_width: dp(100)
 
                 NumericInputBox:
                     id: seconds_input_field
                     label_text: 'Seconds'
-                    container_width: 150
+                    container_width: dp(100)
 
                 IconButton:
                     icon: app.get_icon('plus')

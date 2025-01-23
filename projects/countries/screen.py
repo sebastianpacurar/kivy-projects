@@ -1,5 +1,7 @@
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.core.window import Window
+from kivy.metrics import Metrics
 from kivy.properties import ListProperty, NumericProperty, StringProperty, BooleanProperty, DictProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen

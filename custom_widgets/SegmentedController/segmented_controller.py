@@ -9,7 +9,7 @@ class SegmentedController(BoxLayout):
     toggle_func = ObjectProperty(None)  # callback to execute on SegmentedButton on_state change
     seg_group = StringProperty('')  # toggle group
     button_labels = ListProperty([])  # toggle buttons text
-    controller_height = NumericProperty(dp(45))
+    controller_height = NumericProperty(dp(35))
 
     def on_button_labels(self, *args):
         for i, text in enumerate(self.button_labels):

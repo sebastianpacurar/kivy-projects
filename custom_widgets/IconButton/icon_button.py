@@ -8,9 +8,9 @@ from custom_widgets.base_widgets import PropCachedWidget, BaseButtonBehavior
 class IconButton(BaseButtonBehavior, PropCachedWidget):
     icon = StringProperty('')  # icon unicode
     label_text = StringProperty('')  # button label text. if empty, it's just an icon button, else labeled icon button
-    bg_size_val = NumericProperty(dp(34))  # used with font_size_val to get different sized icons
-    font_size_val = NumericProperty(sp(28))  # if no text label, this should be of the size of the bg_size_val
-    x_padding = NumericProperty(dp(24))  # if no text, this should be 0
+    bg_size_val = NumericProperty(dp(26))  # used with icon_font_size_sp to get different sized icons
+    icon_font_size_sp = NumericProperty(sp(24))  # if no text label, this should be of the size of the bg_size_val, IF bg_size_val is bigger or equal to dp(20)
+    x_padding = NumericProperty(dp(20))  # if no text, this should be 0
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -27,7 +27,7 @@ class IconButton(BaseButtonBehavior, PropCachedWidget):
         if not self.setup_initialized:
             # if empty string, format icon to be placed in the middle
             if len(self.label_text) == 0:
-                # remove all spacing and padding. set font_size_val ref to bg_size_val
+                # remove all spacing and padding. set icon_font_size_sp ref to bg_size_val
                 self.x_padding = 0
                 self.padding = [0, 0, 0, dp(1)]
                 self.ids.icon_label.font_size = self.bg_size_val
@@ -40,7 +40,7 @@ class IconButton(BaseButtonBehavior, PropCachedWidget):
 
             self.cached_props = {
                 'bg_size_val': {'displayed': self.bg_size_val, 'hidden': 0},
-                'font_size_val': {'displayed': self.font_size_val, 'hidden': 0},
+                'icon_font_size_sp': {'displayed': self.icon_font_size_sp, 'hidden': 0},
                 'x_padding': {'displayed': self.x_padding, 'hidden': 0},
             }
 
