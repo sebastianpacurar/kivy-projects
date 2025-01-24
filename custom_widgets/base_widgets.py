@@ -161,7 +161,8 @@ class BaseButtonBehavior(ButtonBehavior, BoxLayout):
                 self.rect = Rectangle(size=self.size, pos=self.pos)
 
     def on_mouse_pos(self, window, pos):
-        is_now_hovered = self.collide_point(*pos)
+        local_pos = self.to_widget(*pos)
+        is_now_hovered = self.collide_point(*local_pos)
         if is_now_hovered != self.is_hovered:
             self.is_hovered = is_now_hovered
             self.update_bg_color()

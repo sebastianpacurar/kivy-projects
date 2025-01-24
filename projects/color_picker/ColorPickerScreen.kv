@@ -23,12 +23,12 @@
 
             ResponsiveGridView:
                 id: responsive_grid
-                view_class: 'ColorCardItem'
+                view_class: 'ColorCard'
                 item_width: dp(60)
                 item_spacing: dp(20)
 
 
-<ColorCardItem>:
+<ColorCard>:
     canvas.before:
         Color:
             rgba: app.rgb_formatter(root.rgb)

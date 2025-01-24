@@ -29,11 +29,11 @@
                 counter: len(root.data)
             ResponsiveGridView:
                 id: responsive_grid
-                view_class: 'IconItem'
+                view_class: 'IconCard'
                 item_width: dp(200)
                 item_spacing: dp(10)
 
-<IconItem>:
+<IconCard>:
     canvas.before:
         Color:
             rgba: 1, 1, 1, 1
@@ -41,6 +41,15 @@
             pos: self.pos
             size: self.size
     size: root.size
+
+    IconButton:
+        id: copy_button
+        bg_size_val: dp(28)
+        pos_hint: {'top': 1, 'right': 1}
+        icon: app.get_icon('content-copy')
+        roundness: [0, 1, 0, 1]
+        on_release: root.copy_name_to_clipboard()
+
     BaseLabel:
         id: icon_label
         font_name: 'md-icon'

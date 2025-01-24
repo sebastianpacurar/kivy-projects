@@ -1,9 +1,11 @@
+from kivy.core.clipboard import Clipboard
 from kivy.properties import BoundedNumericProperty, BooleanProperty, ListProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.colorpicker import ColorWheel
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
 
+from custom_widgets.Tooltip.tooltip import Tooltip
 from named_rgb_hex import css_4_colors
 
 
@@ -14,14 +16,40 @@ class ColorPickerScreen(Screen):
         self.set_data()
         self.ids.responsive_grid.ids.rv.data = self.data
 
+    def on_leave(self, *args):
+        self.clear_tooltips()
+
     def set_data(self):
         self.data = [{'name': c['name'], 'rgb': c['rgb'], 'hex': c['hex']} for c in css_4_colors]
 
+    def clear_tooltips(self, *args):
+        for widget in self.ids.responsive_grid.ids.rv.children[0].children:
+            if isinstance(widget, ColorCard):
+                widget.tooltip.hide_tooltip()
 
-class ColorCardItem(FloatLayout):
+
+class ColorCard(FloatLayout):
     name = StringProperty('')
     rgb = ListProperty([0, 0, 0, 255])
     hex = StringProperty('')
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.tooltip = Tooltip()
+
+    def on_name(self, instance, value):
+        self.tooltip.tooltip_text = value
+        self.tooltip.start_tracking(self)  # start tracking mouse position
+
+    def on_touch_down(self, touch):
+        """ Only trigger the event for this specific IconCard """
+        if self.collide_point(*touch.pos):
+            self.copy_name_to_clipboard()
+            return True
+        return super().on_touch_up(touch)
+
+    def copy_name_to_clipboard(self, *args):
+        Clipboard.copy(str(self.rgb))
 
 
 class ColorPickerWidget(BoxLayout):
@@ -50,6 +78,7 @@ class ColorWheelWidget(ColorWheel):
     def on_color(self, instance, value):
         self.parent.parent.parent.parent.set_color_from_wheel(value)
 
+    # TODO: when moving on a different screen, the sv_idx resets to 0. fix this by listening to Windows.dpi
     def update_lighten_darken_states(self, *args):
         self.can_lighten = self.sv_idx > 0
         self.can_darken = self.sv_idx < len(self.sv_s) - self._piece_divisions

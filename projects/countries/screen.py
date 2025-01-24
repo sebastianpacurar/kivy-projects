@@ -178,7 +178,7 @@ class AllCountriesScreen(Screen):
                 container.add_double_pill(
                     icon=self.app.get_icon('map-marker-off-outline'),
                     text=country_name,
-                    on_label_press= lambda pill, coords=entry[target]['latlng']: self.app.map_ui.smooth_center_map(*coords),
+                    on_label_press=lambda pill, coords=entry[target]['latlng']: self.app.map_ui.smooth_center_map(*coords),
                     on_icon_press=lambda pill, name=country_name: self.remove_marker_from_map(pill, name)
                 )
                 self.app.map_ui.add_ui_marker(entry[target]['latlng'][0], entry[target]['latlng'][1], entry[target]['common_name'])
@@ -353,8 +353,7 @@ class AllCountriesScreen(Screen):
         rv_table = self.ids.table_view.ids.rv
         table_data = [
             {'common_name': k, 'region': v['region'], 'subregion': v['subregion'], 'capital': v['capital'],
-             'population': v.get('population', 'N/A'), 'coords': v['latlng'], 'is_pinned': v['is_pinned'],
-             'row_color': (95, .95, .95, 1) if i % 2 == 0 else (1, 1, 1, 1)}
+             'population': v.get('population', 'N/A'), 'coords': v['latlng'], 'is_pinned': v['is_pinned']}
             for (i, item) in enumerate(self.data) for (k, v) in item.items()
             if v['is_pinned'] is False  # only include data where is_pinned is False
         ]

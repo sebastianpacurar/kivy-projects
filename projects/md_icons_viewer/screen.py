@@ -1,4 +1,5 @@
 from kivy.app import App
+from kivy.core.clipboard import Clipboard
 from kivy.metrics import dp, sp
 from kivy.properties import StringProperty, ListProperty, NumericProperty, BooleanProperty
 from kivy.uix.floatlayout import FloatLayout
@@ -20,6 +21,7 @@ class MdIconsViewerScreen(Screen):
         if self.is_compact:
             # toggle grid to extended to prevent tooltip from being displayed on other screens
             self.toggle_grid_display_size()
+        self.clear_tooltips()
 
     def set_data(self):
         self.original_data = [{'icon': v, 'icon_name': k, 'is_name_displayed': not self.is_compact} for k, v in icons.items()]
@@ -37,7 +39,7 @@ class MdIconsViewerScreen(Screen):
 
     def clear_tooltips(self, *args):
         for widget in self.ids.responsive_grid.ids.rv.children[0].children:
-            if isinstance(widget, IconItem):
+            if isinstance(widget, IconCard):
                 widget.tooltip.hide_tooltip()
 
     def set_filter_selection(self, instance, value):
@@ -68,9 +70,9 @@ class MdIconsViewerScreen(Screen):
         self.refresh_recycle_view()
 
     def toggle_grid_display_size(self, *args):
-        """ Change layout for IconItem \n
-            When is compact, then display small IconItems with tooltip
-            When not compact, display large IconItems
+        """ Change layout for IconCard \n
+            When is compact, then display small IconCards with tooltip
+            When not compact, display large IconCards
             Update all data lists and refresh RV
         """
         self.is_compact = not self.is_compact  # toggle compact
@@ -99,7 +101,7 @@ class MdIconsViewerScreen(Screen):
             grid_rv.scroll_y = 1.0
 
 
-class IconItem(FloatLayout):
+class IconCard(FloatLayout):
     icon = StringProperty('')  # icon unicode
     icon_name = StringProperty('')  # icon name
     is_name_displayed = BooleanProperty(True)  # start with large grid
@@ -123,10 +125,21 @@ class IconItem(FloatLayout):
             self.ids.icon_label.pos_hint = {'center_x': 0.5, 'center_y': 0.7}
             self.ids.icon_label.font_size = sp(52)
             self.ids.icon_name.opacity = 1
+            self.ids.copy_button.opacity = 1
             self.tooltip.stop_tracking()  # stop tracking mouse position
         else:
             # if False, compact view enabled, tooltip needed
             self.ids.icon_name.opacity = 0
+            self.ids.copy_button.opacity = 0
             self.ids.icon_label.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
             self.ids.icon_label.font_size = sp(34)
             self.tooltip.start_tracking(self)  # start tracking mouse position
+
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            self.copy_name_to_clipboard()
+            return True
+        return super().on_touch_up(touch)
+
+    def copy_name_to_clipboard(self, *args):
+        Clipboard.copy(self.icon_name)
