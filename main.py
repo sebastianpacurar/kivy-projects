@@ -26,6 +26,7 @@ import custom_widgets.SearchInputBox.search_input_box
 import custom_widgets.PillContainer.pill_container
 import custom_widgets.SegmentedController.segmented_controller
 import custom_widgets.FilterContainer.filter_container
+import custom_widgets.ColorPickerWidget.color_picker_widget
 
 # projects
 import projects.md_icons_viewer.screen
@@ -71,6 +72,7 @@ class KivyProjectsApp(App):
         Factory.register('PillContainer', cls=custom_widgets.PillContainer)
         Factory.register('SegmentedController', cls=custom_widgets.SegmentedController.segmented_controller)
         Factory.register('FilterContainer', cls=custom_widgets.FilterContainer.filter_container)
+        Factory.register('ColorPickerWidget', cls=custom_widgets.ColorPickerWidget.color_picker_widget)
 
         # register screen classes (the projects of the app)
         Factory.register('MdIconsViewerScreen', cls=projects.md_icons_viewer.screen.MdIconsViewerScreen)
@@ -99,6 +101,7 @@ class KivyProjectsApp(App):
         Builder.load_file(os.path.join(custom_widgets_path, 'PillContainer', 'PillContainer.kv'))
         Builder.load_file(os.path.join(custom_widgets_path, 'SegmentedController', 'SegmentedController.kv'))
         Builder.load_file(os.path.join(custom_widgets_path, 'FilterContainer', 'FilterContainer.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'ColorPickerWidget', 'ColorPickerWidget.kv'))
 
         # load the projects kv files
         Builder.load_file(os.path.join(projects_path, 'md_icons_viewer', 'MdIconsViewerScreen.kv'))
@@ -185,4 +188,5 @@ class AppContainer(FloatLayout):
 
 if __name__ == '__main__':
     Window.size = (1000, 650)
+    Window.maximize()
     KivyProjectsApp().run()

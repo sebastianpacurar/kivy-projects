@@ -73,3 +73,11 @@ class TableViewIconButton(BoxLayout, TableData):
     def on_kv_post(self, base_widget):
         if self.btn_action:
             self.ids.icon_btn.bind(on_release=self.btn_action)
+
+
+# exceptional case to use a colored box - used for ColorPickerWidget
+class TableViewColor(BoxLayout, TableData):
+    color_val = ListProperty([0, 0, 0, 1])
+
+    def on_color_val(self, instance, value):
+        self.canvas.ask_update()

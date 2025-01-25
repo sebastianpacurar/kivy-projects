@@ -45,7 +45,7 @@ class Tooltip(FloatLayout):
         if self in Window.children:
             Window.remove_widget(self)
 
-    def start_tracking(self, target_widget, parent=None):
+    def start_tracking(self, target_widget):
         """ Start tracking a target widget for tooltip display \n
             This should be used as a trigger for when the tooltip should be tracked under certain conditions
         """

@@ -467,30 +467,6 @@ class CountryGridCardItem(FloatLayout):
     coords = ListProperty([])
     is_pinned = BooleanProperty(False)
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.app = App.get_running_app()
-
-    # TODO: intended as on_load for AsyncImage. currently not used
-    def update_size(self, *args):
-        """ Resize logic to scale image based on its aspect ratio to fit proeprly """
-        scale_factor = 0.5
-        container_width = args[0][0]
-        container_height = args[0][1]
-        texture_width, texture_height = args[1].texture_size
-
-        image_aspect = texture_width / texture_height
-        container_aspect = container_width / container_height
-
-        if container_aspect > image_aspect:
-            scaled_height = container_height * scale_factor
-            scaled_width = scaled_height * image_aspect
-        else:
-            scaled_width = container_width * scale_factor
-            scaled_height = scaled_width / image_aspect
-
-        args[1].size = (scaled_width, scaled_height)
-
     def add_marker_to_map(self):
         """ Adds a marker to the map with the given coordinates and country name """
         all_countries_screen = self.parent.parent.parent.parent.parent.parent.manager.get_screen('AllCountriesScreen')
@@ -503,10 +479,6 @@ class CountryTableRowItem(TableViewRow):
     subregion = StringProperty('')
     capital = StringProperty('')
     population = NumericProperty(0)
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.app = App.get_running_app()
 
     def add_marker_to_map(self):
         """ Adds a marker to the map with the given coordinates and country name """

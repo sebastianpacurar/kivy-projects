@@ -21,11 +21,40 @@
             ColorPickerWidget:
                 id: color_picker
 
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: 1, None
+                height: self.minimum_height + dp(5)
+                canvas.before:
+                    Color:
+                        rgba: app.rgb_formatter([80, 200, 120, 255], lighten=True, factor=0.6)
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+
+                BaseLabel:
+                    size_hint: 1, None
+                    height: toggle_layout_btn.height
+                    text: 'CSS 4 colors, commonly known as the X11 color set'
+
+                IconButton:
+                    id: toggle_layout_btn
+                    pos_hint: {'center_y': .5}
+                    icon: app.get_icon('grid-large')
+                    label_text: 'Grid'
+                    on_release: root.toggle_layout()
+
             ResponsiveGridView:
                 id: responsive_grid
                 view_class: 'ColorCard'
                 item_width: dp(60)
                 item_spacing: dp(20)
+
+            TableView:
+                id: table_view
+                view_class: 'ColorRowItem'
+                column_widths: [0, 0, 0, 0]
+                column_names: ['Name', 'Color', 'Rgb', 'Hex']
 
 
 <ColorCard>:
@@ -38,130 +67,20 @@
         Color:
             rgba: app.rgb_formatter([0, 0, 0, 255], factor=0.5, darken=True)
         Line:
-            width: dp(1.5)
+            width: dp(1)
             rectangle: (self.x, self.y, self.width, self.height)
 
-<ColorPickerWidget>:
-    orientation: 'vertical'
-    size_hint: 1, None
-    height: self.minimum_height
-    color_wheel: color_wheel
 
-    BoxLayout:
-        orientation: 'vertical'
-        size_hint: 1, None
-        height: dp(350)
+<ColorRowItem>:
+    TableViewText:
+        text_val: root.name
 
-        BoxLayout:
-            orientation: 'horizontal'
+    TableViewColor:
+        color_val: app.rgb_formatter(root.rgb)
 
-            BoxLayout:
-                orientation: 'horizontal'
-                size_hint: None, None
-                height: dp(400)
-                width: dp(390)
-                BoxLayout:
-                    orientation: 'vertical'
-                    size_hint_x: None
-                    width: dp(40)
-                    Filler:
-                    IconButton:
-                        icon: app.get_icon('plus')
-                        on_release: color_wheel.lighten()
-                        disabled: not color_wheel.can_lighten
-                    Filler:
-                    IconButton:
-                        icon: app.get_icon('minus')
-                        on_release: color_wheel.darken()
-                        disabled: not color_wheel.can_darken
-                    Filler:
+    TableViewText:
+        text_val: str(root.rgb)
 
-                ColorWheelWidget:
-                    id: color_wheel
-                    size_hint: None, None
-                    height: dp(350)
-                    width: dp(350)
+    TableViewText:
+        text_val: root.hex
 
-            BoxLayout:
-                orientation: 'vertical'
-                BoxLayout:
-                    size_hint_y: None
-                    height: red_slider.height
-                    BaseLabel:
-                        text: f'R'
-                        size_hint_x: .1
-                        height: red_slider.height
-                    Slider:
-                        id: red_slider
-                        min: 0
-                        max: 255
-                        value: 0
-                        step: 1
-                        value_track: True
-                        value_track_color: app.rgb_formatter([255, 0, 0, 255], darken=True, factor=0.1)
-                        on_value: root.on_slider_value_change('red', self.value)
-                    BaseLabel:
-                        text: f'({root.red})'
-                        size_hint_x: .1
-                        height: red_slider.height
-
-                BoxLayout:
-                    BaseLabel:
-                        text: f'G'
-                        size_hint_x: .1
-                        height: green_slider.height
-                    Slider:
-                        id: green_slider
-                        min: 0
-                        max: 255
-                        value: 0
-                        step: 1
-                        value_track: True
-                        value_track_color: app.rgb_formatter([0, 255, 0, 255], darken=True, factor=0.1)
-                        on_value: root.on_slider_value_change('green', self.value)
-                    BaseLabel:
-                        text: f'({root.green})'
-                        size_hint_x: .1
-                        height: green_slider.height
-
-                BoxLayout:
-                    BaseLabel:
-                        text: f'B'
-                        size_hint_x: .1
-                        height: blue_slider.height
-                    Slider:
-                        id: blue_slider
-                        min: 0
-                        max: 255
-                        value: 0
-                        step: 1
-                        value_track: True
-                        value_track_color: app.rgb_formatter([0, 0, 255, 255], darken=True, factor=0.1)
-                        on_value: root.on_slider_value_change('blue', self.value)
-                    BaseLabel:
-                        text: f'({root.blue})'
-                        size_hint_x: .1
-                        height: blue_slider.height
-
-                FloatLayout:
-                    id: color_display
-                    size_hint: .7, .5
-                    pos_hint: {'center_x': .5}
-                    canvas.before:
-                        Color:
-                            rgba: app.rgb_formatter([root.red, root.green, root.blue, 255])
-                        Rectangle:
-                            pos: self.pos
-                            size: self.size
-                        Color:
-                            rgba: app.rgb_formatter([2, 153, 139, 255], factor=0.45, darken=True)
-                        Line:
-                            width: dp(2)
-                            rectangle: (self.x, self.y, self.width, self.height)
-
-                    TextLabel:
-                        pos_hint: {'center_x': .5, 'center_y': .5}
-                        text: f' RGB ({root.red}, {root.green}, {root.blue}) '
-                        bg_color: [1, 1, 1, 1]
-
-                Filler:

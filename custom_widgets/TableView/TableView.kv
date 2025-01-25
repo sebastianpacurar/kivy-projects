@@ -1,4 +1,3 @@
-
 <TableView>:
     orientation: 'vertical'
 
@@ -8,7 +7,7 @@
         orientation: 'horizontal'
         size_hint: 1, None
         height: height_dummy.height
-        padding: 0, dp(5), 0, dp(5)
+        padding: 0, dp(2.5), 0, dp(5)
 
         # used only to be referenced by parent to set height of columns
         TextLabel:
@@ -71,6 +70,16 @@
 <TableViewRow>:
     orientation: 'horizontal'
     size_hint: 1, None
+
+
+<TableViewColor>:
+    size_hint: 1, 1
+    canvas.after:
+        Color:
+            rgba: app.rgb_formatter(root.color_val)
+        Rectangle:
+            pos: self.pos
+            size: self.width - dp(1.5), self.height - dp(1.5)
 
 
 <TableData>:

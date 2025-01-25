@@ -1,48 +1,105 @@
+from kivy.app import App
 from kivy.core.clipboard import Clipboard
-from kivy.properties import BoundedNumericProperty, BooleanProperty, ListProperty, StringProperty
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.colorpicker import ColorWheel
+from kivy.properties import ListProperty, StringProperty, BooleanProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
 
+from custom_widgets.TableView.table_view import TableViewRow
 from custom_widgets.Tooltip.tooltip import Tooltip
 from named_rgb_hex import css_4_colors
 
 
 class ColorPickerScreen(Screen):
     data = ListProperty([])
+    is_tabular = BooleanProperty(True)
+
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        self.app = App.get_running_app()
 
     def on_kv_post(self, base_widget):
         self.set_data()
         self.ids.responsive_grid.ids.rv.data = self.data
+        self.ids.table_view.ids.rv.data = self.data
+
+        # start with table
+        self.ids.responsive_grid.opacity = 0
+        self.ids.responsive_grid.size_hint_y = None
+        self.ids.responsive_grid.height = 0
 
     def on_leave(self, *args):
-        self.clear_tooltips()
+        if not self.is_tabular:
+            self.toggle_layout()
 
     def set_data(self):
-        self.data = [{'name': c['name'], 'rgb': c['rgb'], 'hex': c['hex']} for c in css_4_colors]
+        self.data = [{'name': c['name'], 'rgb': c['rgb'], 'hex': c['hex'], 'is_tabular': self.is_tabular} for c in css_4_colors]
 
     def clear_tooltips(self, *args):
         for widget in self.ids.responsive_grid.ids.rv.children[0].children:
             if isinstance(widget, ColorCard):
                 widget.tooltip.hide_tooltip()
 
+    def toggle_layout(self, *args):
+        self.is_tabular = not self.is_tabular
+
+        def update_view(view, show):
+            view.opacity = 1 if show else 0
+            view.size_hint_y = 1 if show else None
+            view.height = self.ids.responsive_grid.height if show else 0
+
+        # update views based on the current layout
+        update_view(self.ids.table_view, self.is_tabular)
+        update_view(self.ids.responsive_grid, not self.is_tabular)
+
+        # change the toggle button icon
+        layout_btn = self.ids.toggle_layout_btn
+        layout_btn.icon = self.app.get_icon('grid-large') if self.is_tabular else self.app.get_icon('list-box-outline')
+        layout_btn.label_text = 'Grid' if self.is_tabular else 'List'
+
+        for item in self.data:
+            item['is_tabular'] = self.is_tabular
+
+        self.refresh_recycle_view()
+
+    def refresh_recycle_view(self):
+        grid_rv = self.ids.responsive_grid
+        table_rv = self.ids.table_view
+
+        grid_rv.ids.rv.data = self.data
+        grid_rv.ids.rv.refresh_from_data()
+        grid_rv.do_layout()
+
+        table_rv.ids.rv.data = self.data
+        table_rv.ids.rv.refresh_from_data()
+        table_rv.do_layout()
+
+        if hasattr(grid_rv, 'scroll_y'):
+            grid_rv.scroll_y = 1.0
+        if hasattr(table_rv, 'scroll_y'):
+            table_rv.scroll_y = 1.0
+
 
 class ColorCard(FloatLayout):
     name = StringProperty('')
     rgb = ListProperty([0, 0, 0, 255])
     hex = StringProperty('')
+    is_tabular = BooleanProperty(True)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.tooltip = Tooltip()
 
+    def on_is_tabular(self, instance, value):
+        if value:
+            self.tooltip.stop_tracking()
+        else:
+            self.tooltip.start_tracking(self)
+
     def on_name(self, instance, value):
         self.tooltip.tooltip_text = value
-        self.tooltip.start_tracking(self)  # start tracking mouse position
 
     def on_touch_down(self, touch):
-        """ Only trigger the event for this specific IconCard """
+        """ Only trigger the event for this specific ColorCard """
         if self.collide_point(*touch.pos):
             self.copy_name_to_clipboard()
             return True
@@ -52,55 +109,7 @@ class ColorCard(FloatLayout):
         Clipboard.copy(str(self.rgb))
 
 
-class ColorPickerWidget(BoxLayout):
-    red = BoundedNumericProperty(0, min=0, max=255)
-    green = BoundedNumericProperty(0, min=0, max=255)
-    blue = BoundedNumericProperty(0, min=0, max=255)
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    def on_kv_post(self, base_widget):
-        self.ids.color_wheel.bind(on_color=self.set_color_from_wheel)
-
-    def on_slider_value_change(self, color, value):
-        setattr(self, color, int(value))
-
-    def set_color_from_wheel(self, value):
-        for i, color in enumerate([self.ids.red_slider, self.ids.green_slider, self.ids.blue_slider]):
-            color.value = int(value[i] * 255)
-
-
-class ColorWheelWidget(ColorWheel):
-    can_lighten = BooleanProperty(False)  # start from max light
-    can_darken = BooleanProperty(True)
-
-    def on_color(self, instance, value):
-        self.parent.parent.parent.parent.set_color_from_wheel(value)
-
-    # TODO: when moving on a different screen, the sv_idx resets to 0. fix this by listening to Windows.dpi
-    def update_lighten_darken_states(self, *args):
-        self.can_lighten = self.sv_idx > 0
-        self.can_darken = self.sv_idx < len(self.sv_s) - self._piece_divisions
-
-    def lighten(self):
-        """ Increase the brightness by decreasing  \n
-            Same functionality as on_touch_move outwards the center
-        """
-        if self.can_lighten:
-            self.sv_idx -= 1
-            self.recolor_wheel()
-            self.update_lighten_darken_states()
-
-    def darken(self):
-        """ Decrease the brightness by moving sv_idx to a darker value \n
-            Same functionality as on_touch_move towards the center
-        """
-        if self.can_darken:
-            self.sv_idx += 1
-            self.recolor_wheel()
-            self.update_lighten_darken_states()
-
-    # cancel on_touch_move, since lighten and darken already take care of that
-    def on_touch_move(self, touch):
-        return False
+class ColorRowItem(TableViewRow):
+    name = StringProperty('')
+    rgb = ListProperty([0, 0, 0, 255])
+    hex = StringProperty('')
