@@ -2,12 +2,14 @@ import os
 
 from kivy import Config
 from kivy.app import App
+from kivy.core.clipboard import Clipboard
 from kivy.core.text import LabelBase
 from kivy.core.window import Window
 from kivy.factory import Factory
 from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 
+from custom_widgets.SnackbarWidget.snackbar_widget import SnackbarWidget
 from utils import find_project_root, rgb_format
 
 # custom widgets
@@ -27,6 +29,8 @@ import custom_widgets.PillContainer.pill_container
 import custom_widgets.SegmentedController.segmented_controller
 import custom_widgets.FilterContainer.filter_container
 import custom_widgets.ColorPickerWidget.color_picker_widget
+import custom_widgets.SnackbarWidget.snackbar_widget
+import custom_widgets.ProgressBarWidget.progress_bar_widget
 
 # projects
 import projects.md_icons_viewer.screen
@@ -73,6 +77,7 @@ class KivyProjectsApp(App):
         Factory.register('SegmentedController', cls=custom_widgets.SegmentedController.segmented_controller)
         Factory.register('FilterContainer', cls=custom_widgets.FilterContainer.filter_container)
         Factory.register('ColorPickerWidget', cls=custom_widgets.ColorPickerWidget.color_picker_widget)
+        Factory.register('SnackbarWidget', cls=custom_widgets.SnackbarWidget.snackbar_widget)
 
         # register screen classes (the projects of the app)
         Factory.register('MdIconsViewerScreen', cls=projects.md_icons_viewer.screen.MdIconsViewerScreen)
@@ -102,6 +107,8 @@ class KivyProjectsApp(App):
         Builder.load_file(os.path.join(custom_widgets_path, 'SegmentedController', 'SegmentedController.kv'))
         Builder.load_file(os.path.join(custom_widgets_path, 'FilterContainer', 'FilterContainer.kv'))
         Builder.load_file(os.path.join(custom_widgets_path, 'ColorPickerWidget', 'ColorPickerWidget.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'SnackbarWidget', 'SnackbarWidget.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'ProgressBarWidget', 'ProgressBarWidget.kv'))
 
         # load the projects kv files
         Builder.load_file(os.path.join(projects_path, 'md_icons_viewer', 'MdIconsViewerScreen.kv'))
@@ -168,6 +175,13 @@ class KivyProjectsApp(App):
         """ Enable projectManager and hide spinner """
         self.spinner.opacity = 0
         self.pm.disabled = False
+
+    def copy_to_clipboard(self, text):
+        """ Copy text to clipboard"""
+        Clipboard.copy(text)
+        snackbar = SnackbarWidget(text=f'"{text}" copied to clipboard')
+        self.root.add_widget(snackbar)
+        snackbar.show()
 
     def toggle_app_map(self, value):
         self.map_ui.is_map_displayed = value

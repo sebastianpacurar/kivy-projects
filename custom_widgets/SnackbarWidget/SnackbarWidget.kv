@@ -1,0 +1,38 @@
+<SnackbarWidget>:
+    orientation: 'vertical'
+    size_hint: None, None
+    width: bar_text.width + dp(20)
+    height: bar_text.height + dp(15)
+    pos: dp(10), 0
+
+    canvas.before:
+        Color:
+            rgba: app.rgb_formatter([150, 150, 150, 255], factor=.7, lighten=True)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+        Color:
+            rgba: app.rgb_formatter([150, 150, 150, 255], factor=.3, darken=True)
+        Line:
+            width: dp(1)
+            rectangle: self.x, self.y, self.width, self.height
+
+    ProgressBarWidget:
+        id: progress_bar
+        size_hint: None, None
+        width: root.width + dp(2)
+        height: dp(5)
+        x: root.x - dp(1)
+        y: root.y + root.height - dp(1)
+        value: 0
+        max: 100
+
+    TextLabel:
+        id: bar_text
+        size_hint: None, None
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        halign: 'center'
+        valign: 'middle'
+        padding: [dp(5), dp(5)]
+        font_size: sp(20)
+        text: root.text

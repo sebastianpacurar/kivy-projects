@@ -42,14 +42,6 @@
             size: self.size
     size: root.size
 
-    IconButton:
-        id: copy_button
-        bg_size_val: dp(28)
-        pos_hint: {'top': 1, 'right': 1}
-        icon: app.get_icon('content-copy')
-        roundness: [0, 1, 0, 1]
-        on_release: root.copy_name_to_clipboard()
-
     BaseLabel:
         id: icon_label
         font_name: 'md-icon'
@@ -59,6 +51,7 @@
         pos_hint: {'center_x': 0.5, 'center_y': 0.7}
         halign: 'center'
         valign: 'middle'
+
     BaseLabel:
         id: icon_name
         text: root.icon_name

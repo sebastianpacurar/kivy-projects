@@ -1,6 +1,5 @@
 from kivy.app import App
-from kivy.core.clipboard import Clipboard
-from kivy.properties import ListProperty, StringProperty, BooleanProperty
+from kivy.properties import ListProperty, StringProperty, BooleanProperty, ColorProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
 
@@ -81,7 +80,7 @@ class ColorPickerScreen(Screen):
 
 class ColorCard(FloatLayout):
     name = StringProperty('')
-    rgb = ListProperty([0, 0, 0, 255])
+    rgb = ColorProperty([0, 0, 0, 255])
     hex = StringProperty('')
     is_tabular = BooleanProperty(True)
 
@@ -101,15 +100,11 @@ class ColorCard(FloatLayout):
     def on_touch_down(self, touch):
         """ Only trigger the event for this specific ColorCard """
         if self.collide_point(*touch.pos):
-            self.copy_name_to_clipboard()
-            return True
+            App.get_running_app().copy_to_clipboard(str(self.rgb))
         return super().on_touch_up(touch)
-
-    def copy_name_to_clipboard(self, *args):
-        Clipboard.copy(str(self.rgb))
 
 
 class ColorRowItem(TableViewRow):
     name = StringProperty('')
-    rgb = ListProperty([0, 0, 0, 255])
+    rgb = ColorProperty([0, 0, 0, 255])
     hex = StringProperty('')

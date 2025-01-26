@@ -1,0 +1,15 @@
+<ProgressBarWidget>:
+    canvas:
+        # bg bar
+        Color:
+            rgba:  app.rgb_formatter(root.bars_color, lighten=True, factor=.75)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+        # progress bar
+        Color:
+            rgba: app.rgb_formatter(root.bars_color, darken=True, factor=.25)
+        Rectangle:
+            size: (self.width * (self.value / self.max), self.height)
+            pos: self.pos

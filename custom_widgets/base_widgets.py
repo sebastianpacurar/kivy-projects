@@ -1,6 +1,6 @@
 from kivy.core.window import Window
 from kivy.graphics import Color, RoundedRectangle, Rectangle
-from kivy.properties import ListProperty, BooleanProperty
+from kivy.properties import ListProperty, BooleanProperty, ColorProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
@@ -52,7 +52,7 @@ class PropCachedWidget(Widget):
 
 
 class BaseLabel(Label, PropCachedWidget):
-    bg_color = ListProperty([1, 1, 1, 0])  # default to transparent
+    bg_color = ColorProperty([1, 1, 1, 0])  # default to transparent
 
     def on_kv_post(self, base_widget):
         super().on_kv_post(base_widget)
@@ -89,9 +89,9 @@ class TextLabel(BaseLabel):
 
 # currently used by SimpleButton and IconButton
 class BaseButtonBehavior(ButtonBehavior, BoxLayout):
-    primary_state_color = ListProperty(rgb_format([2, 153, 139, 255]))  # defaults to Teal
-    secondary_state_color = ListProperty(rgb_format([200, 0, 0, 255]))  # defaults to Reddish
-    bg_color = ListProperty([])  # listener for color changing events
+    primary_state_color = ColorProperty(rgb_format([2, 153, 139, 255]))  # defaults to Teal
+    secondary_state_color = ColorProperty(rgb_format([200, 0, 0, 255]))  # defaults to Reddish
+    bg_color = ColorProperty([0, 0, 0, 1])  # listener for color changing events
     roundness = ListProperty([1, 1, 1, 1])  # using explicit rounded borders
     is_secondary_state = BooleanProperty(False)  # change color to secondary_state_color if is_secondary_state is True
 

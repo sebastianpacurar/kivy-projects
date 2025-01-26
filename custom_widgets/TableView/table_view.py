@@ -1,5 +1,5 @@
 from kivy.metrics import sp, dp
-from kivy.properties import StringProperty, NumericProperty, ObjectProperty, ListProperty
+from kivy.properties import StringProperty, NumericProperty, ObjectProperty, ListProperty, ColorProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
 
@@ -77,7 +77,7 @@ class TableViewIconButton(BoxLayout, TableData):
 
 # exceptional case to use a colored box - used for ColorPickerWidget
 class TableViewColor(BoxLayout, TableData):
-    color_val = ListProperty([0, 0, 0, 1])
+    color_val = ColorProperty([0, 0, 0, 1])
 
     def on_color_val(self, instance, value):
         self.canvas.ask_update()

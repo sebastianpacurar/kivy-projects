@@ -3,7 +3,7 @@ from functools import wraps
 from threading import Thread
 
 from kivy.clock import Clock
-from kivy.properties import ListProperty
+from kivy.properties import ColorProperty
 
 
 def wait_implicitly(callback):
@@ -59,7 +59,7 @@ def rgb_format(rgb_val, factor=0.0, darken=False, lighten=False):
     """
     float_rgb = []
 
-    if isinstance(rgb_val, ListProperty):
+    if isinstance(rgb_val, ColorProperty):
         rgb_val = rgb_val.defaultvalue
 
     # check if it's already a float values list, else parse into float values
