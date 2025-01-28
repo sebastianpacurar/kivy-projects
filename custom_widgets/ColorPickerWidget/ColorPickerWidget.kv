@@ -2,42 +2,19 @@
     orientation: 'vertical'
     size_hint: 1, None
     height: self.minimum_height
-    color_wheel: color_wheel
 
     BoxLayout:
         orientation: 'vertical'
         size_hint: 1, None
-        height: dp(350)
+        height: self.minimum_height
 
         BoxLayout:
             orientation: 'horizontal'
+            size_hint: 1, None
+            height: self.minimum_height
 
-            BoxLayout:
-                orientation: 'horizontal'
-                size_hint: None, None
-                height: dp(400)
-                width: dp(390)
-                BoxLayout:
-                    orientation: 'vertical'
-                    size_hint_x: None
-                    width: dp(40)
-                    Filler:
-                    IconButton:
-                        icon: app.get_icon('plus')
-                        on_release: color_wheel.lighten()
-                        disabled: not color_wheel.can_lighten
-                    Filler:
-                    IconButton:
-                        icon: app.get_icon('minus')
-                        on_release: color_wheel.darken()
-                        disabled: not color_wheel.can_darken
-                    Filler:
-
-                ColorWheelWidget:
-                    id: color_wheel
-                    size_hint: None, None
-                    height: dp(350)
-                    width: dp(350)
+            ColorTable:
+                id: color_table
 
             BoxLayout:
                 orientation: 'vertical'
@@ -121,4 +98,8 @@
                         text: f' RGB ({root.red}, {root.green}, {root.blue}) '
                         bg_color: [1, 1, 1, 1]
 
-                Filler:
+
+<ColorTable>:
+    size_hint_y: None
+    orientation: 'horizontal'
+    spacing: -dp(15)

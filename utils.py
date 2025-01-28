@@ -1,3 +1,4 @@
+import math
 import os
 from functools import wraps
 from threading import Thread
@@ -83,3 +84,17 @@ def rgb_format(rgb_val, factor=0.0, darken=False, lighten=False):
         float_rgb.append(rgb_val[-1] if rgb_val[-1] <= 1 else rgb_val[-1] / 255)  # add alpha back
 
     return float_rgb
+
+
+def generate_color(hue_fraction):
+    """ Generate a smooth color based on a given float as hue_fraction \n
+        Used for making gradients
+    """
+    hue = hue_fraction * 360
+
+    # transition through hues usuing sin function
+    r = 0.5 * (1 + math.sin(math.radians(hue)))  # red
+    g = 0.5 * (1 + math.sin(math.radians(hue + 120)))  # green offset by 120 degrees
+    b = 0.5 * (1 + math.sin(math.radians(hue + 240)))  # blue offset by 240 degrees
+
+    return r, g, b
