@@ -1,5 +1,5 @@
 from kivy.metrics import dp
-from kivy.properties import BoundedNumericProperty, NumericProperty
+from kivy.properties import BoundedNumericProperty, NumericProperty, StringProperty, ReferenceListProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 
@@ -11,9 +11,14 @@ class ColorPickerWidget(BoxLayout):
     red = BoundedNumericProperty(0, min=0, max=255)
     green = BoundedNumericProperty(0, min=0, max=255)
     blue = BoundedNumericProperty(0, min=0, max=255)
+    rgb_colors = ReferenceListProperty(red, green, blue)
+    hex_val = StringProperty('#000000')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+    def on_kv_post(self, base_widget):
+        self.bind(rgb_colors=self.rgb_to_hex)
 
     def on_slider_value_change(self, color, value):
         setattr(self, color, int(value))
@@ -21,6 +26,9 @@ class ColorPickerWidget(BoxLayout):
     def set_color_from_table(self, value):
         for i, color in enumerate([self.ids.red_slider, self.ids.green_slider, self.ids.blue_slider]):
             color.value = int(value[i] * 255)
+
+    def rgb_to_hex(self, instance, value):
+        self.hex_val = '#{:02X}{:02X}{:02X}'.format(self.red, self.green, self.blue)
 
 
 class ColorTable(BoxLayout):
