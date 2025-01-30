@@ -9,7 +9,7 @@
 
         BoxLayout:
             orientation: 'vertical'
-            padding: 10
+            padding: dp(10)
             spacing: 10
             canvas.before:
                 Color:
@@ -18,8 +18,18 @@
                     pos: self.pos
                     size: self.size
 
-            ColorPickerWidget:
-                id: color_picker
+            BoxLayout:
+                size_hint_y: None
+                height: self.minimum_height
+                pos_hint: {'center_x': .5, 'center_y': .5}
+                canvas.before:
+                    Color:
+                        rgba: app.rgb_formatter([180, 180, 180, 255])
+                    Rectangle:
+                        pos: self.x - dp(10), self.y - dp(10)
+                        size: self.width + dp(20), self.height + dp(20)
+                ColorPickerWidget:
+                    id: color_picker
 
             BoxLayout:
                 orientation: 'horizontal'
@@ -29,8 +39,8 @@
                     Color:
                         rgba: app.rgb_formatter([80, 200, 120, 255], lighten=True, factor=0.6)
                     Rectangle:
-                        pos: self.pos
-                        size: self.size
+                        pos: self.x - dp(10), self.y
+                        size: self.width + dp(20), self.height
 
                 BaseLabel:
                     size_hint: 1, None

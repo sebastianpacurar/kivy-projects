@@ -60,80 +60,38 @@
 
             BoxLayout:
                 orientation: 'vertical'
-                BoxLayout:
-                    size_hint_y: None
-                    height: red_slider.height
 
-                    BaseLabel:
-                        text: 'R'
-                        size_hint_x: .1
-                        height: red_slider.height
-                    Slider:
-                        id: red_slider
-                        height: dp(20)
-                        min: 0
-                        max: 255
-                        value: 0
-                        step: 1
-                        value_track: True
-                        value_track_color: app.rgb_formatter([255, 0, 0, 255], darken=True, factor=0.1)
-                        cursor_size: sp(18), sp(18)
-                        on_value: root.on_slider_value_change('red', self.value)
-                    BaseLabel:
-                        text: f'({root.red})'
-                        size_hint_x: .1
-                        height: red_slider.height
+                SliderWidget:
+                    id: red_slider
+                    label_text: 'R'
+                    target_prop_attribute: 'red'
+                    max_val: 255
+                    current_value: root.red
+                    track_color: app.rgb_formatter([255, 0, 0, 255], darken=True, factor=0.3)
+                    slider_value_func: lambda i, v: root.update_color_channel(i, v)
 
-                BoxLayout:
-                    size_hint_y: None
-                    height: green_slider.height
-                    BaseLabel:
-                        text: 'G'
-                        size_hint_x: .1
-                        height: green_slider.height
-                    Slider:
-                        id: green_slider
-                        height: dp(20)
-                        min: 0
-                        max: 255
-                        value: 0
-                        step: 1
-                        value_track: True
-                        value_track_color: app.rgb_formatter([0, 255, 0, 255], darken=True, factor=0.1)
-                        cursor_size: sp(18), sp(18)
-                        on_value: root.on_slider_value_change('green', self.value)
-                    BaseLabel:
-                        text: f'({root.green})'
-                        size_hint_x: .1
-                        height: green_slider.height
+                SliderWidget:
+                    id: green_slider
+                    label_text: 'G'
+                    target_prop_attribute: 'green'
+                    max_val: 255
+                    current_value: root.green
+                    track_color: app.rgb_formatter([0, 255, 0, 255], darken=True, factor=0.3)
+                    slider_value_func: lambda i, v: root.update_color_channel(i, v)
 
-                BoxLayout:
-                    size_hint_y: None
-                    height: blue_slider.height
-                    BaseLabel:
-                        text: 'B'
-                        size_hint_x: .1
-                        height: blue_slider.height
-                    Slider:
-                        id: blue_slider
-                        height: dp(20)
-                        min: 0
-                        max: 255
-                        value: 0
-                        step: 1
-                        value_track: True
-                        value_track_color: app.rgb_formatter([0, 0, 255, 255], darken=True, factor=0.1)
-                        cursor_size: sp(18), sp(18)
-                        on_value: root.on_slider_value_change('blue', self.value)
-                    BaseLabel:
-                        text: f'({root.blue})'
-                        size_hint_x: .1
-                        height: blue_slider.height
+                SliderWidget:
+                    id: blue_slider
+                    label_text: 'B'
+                    target_prop_attribute: 'blue'
+                    max_val: 255
+                    current_value: root.blue
+                    track_color: app.rgb_formatter([0, 0, 255, 255], darken=True, factor=0.3)
+                    slider_value_func: lambda i, v: root.update_color_channel(i, v)
 
                 Filler:
 
 
 <ColorTable>:
-    size_hint_y: None
+    size_hint: None, None
     orientation: 'horizontal'
-    spacing: -dp(15)
+    spacing: -dp(10)

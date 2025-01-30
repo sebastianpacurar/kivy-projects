@@ -31,6 +31,7 @@ import custom_widgets.FilterContainer.filter_container
 import custom_widgets.ColorPickerWidget.color_picker_widget
 import custom_widgets.SnackbarWidget.snackbar_widget
 import custom_widgets.ProgressBarWidget.progress_bar_widget
+import custom_widgets.SliderWidget.slider_widget
 
 # projects
 import projects.md_icons_viewer.screen
@@ -78,6 +79,8 @@ class KivyProjectsApp(App):
         Factory.register('FilterContainer', cls=custom_widgets.FilterContainer.filter_container)
         Factory.register('ColorPickerWidget', cls=custom_widgets.ColorPickerWidget.color_picker_widget)
         Factory.register('SnackbarWidget', cls=custom_widgets.SnackbarWidget.snackbar_widget)
+        Factory.register('ProgressBarWidget', cls=custom_widgets.ProgressBarWidget.progress_bar_widget)
+        Factory.register('SliderWidget', cls=custom_widgets.SliderWidget.slider_widget)
 
         # register screen classes (the projects of the app)
         Factory.register('MdIconsViewerScreen', cls=projects.md_icons_viewer.screen.MdIconsViewerScreen)
@@ -109,6 +112,7 @@ class KivyProjectsApp(App):
         Builder.load_file(os.path.join(custom_widgets_path, 'ColorPickerWidget', 'ColorPickerWidget.kv'))
         Builder.load_file(os.path.join(custom_widgets_path, 'SnackbarWidget', 'SnackbarWidget.kv'))
         Builder.load_file(os.path.join(custom_widgets_path, 'ProgressBarWidget', 'ProgressBarWidget.kv'))
+        Builder.load_file(os.path.join(custom_widgets_path, 'SliderWidget', 'SliderWidget.kv'))
 
         # load the projects kv files
         Builder.load_file(os.path.join(projects_path, 'md_icons_viewer', 'MdIconsViewerScreen.kv'))

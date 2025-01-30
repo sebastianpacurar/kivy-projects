@@ -1,0 +1,22 @@
+<SliderWidget>:
+    size_hint_y: None
+    height: root.slider_height
+    BaseLabel:
+        text: root.label_text
+        size_hint_x: .1
+        height: root.slider_height
+    Slider:
+        id: slider_w
+        height: root.slider_height
+        min: root.min_val
+        max: root.max_val
+        value: 0
+        step: 1
+        value_track: True
+        value_track_width: dp(5)
+        value_track_color: root.track_color
+        cursor_size: sp(18), sp(18)
+    BaseLabel:
+        text: str(root.current_value)
+        size_hint_x: .1
+        height: root.slider_height

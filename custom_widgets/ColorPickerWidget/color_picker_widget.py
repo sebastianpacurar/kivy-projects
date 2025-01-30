@@ -20,15 +20,20 @@ class ColorPickerWidget(BoxLayout):
     def on_kv_post(self, base_widget):
         self.bind(rgb_colors=self.rgb_to_hex)
 
-    def on_slider_value_change(self, color, value):
-        setattr(self, color, int(value))
+    def update_color_channel(self, instance, value):
+        setattr(self, instance.parent.target_prop_attribute, int(value))
 
     def set_color_from_table(self, value):
-        for i, color in enumerate([self.ids.red_slider, self.ids.green_slider, self.ids.blue_slider]):
-            color.value = int(value[i] * 255)
+        for i, s in enumerate([self.ids.red_slider, self.ids.green_slider, self.ids.blue_slider]):
+            s.ids.slider_w.value = int(value[i] * 255)
 
     def rgb_to_hex(self, instance, value):
         self.hex_val = '#{:02X}{:02X}{:02X}'.format(self.red, self.green, self.blue)
+
+    def hex_to_rgb(self, instance, value):
+        hex_stripped = value[1:]
+        # convert every 2 characters of hex in int base 16
+        return [int(hex_stripped[i:i + 2], 16) for i in (0, 2, 4)]
 
 
 class ColorTable(BoxLayout):
@@ -44,7 +49,7 @@ class ColorTable(BoxLayout):
 class ColorGrid(GridLayout):
     cols = NumericProperty(15)
     rows = NumericProperty(15)
-    cell_size = NumericProperty(dp(15))
+    cell_size = NumericProperty(dp(10))
     min_b = NumericProperty(0.1)
     max_b = NumericProperty(1.0)
 
