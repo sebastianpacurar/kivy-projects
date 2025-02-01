@@ -2,6 +2,7 @@
     orientation: 'vertical'
     size_hint: 1, None
     height: self.minimum_height
+    color_table: color_table
 
     BoxLayout:
         orientation: 'vertical'
@@ -22,7 +23,7 @@
                 pos_hint: {'center_x': .5}
                 canvas.before:
                     Color:
-                        rgba: app.rgb_formatter([root.red, root.green, root.blue, 255])
+                        rgba: app.rgb_formatter([root.red, root.green, root.blue, 255]) # TODO: issue here when having [1, 0, 0, 255] or [0, 1, 0, 255] or [0, 0, 1, 255]. displayed value is either full red, green or blue
                     Rectangle:
                         pos: self.pos
                         size: self.size
@@ -65,8 +66,8 @@
                     id: red_slider
                     label_text: 'R'
                     target_prop_attribute: 'red'
-                    max_val: 255
-                    current_value: root.red
+                    min_max: [0, 255]
+                    default_value: root.red
                     track_color: app.rgb_formatter([255, 0, 0, 255], darken=True, factor=0.3)
                     slider_value_func: lambda i, v: root.update_color_channel(i, v)
 
@@ -74,8 +75,8 @@
                     id: green_slider
                     label_text: 'G'
                     target_prop_attribute: 'green'
-                    max_val: 255
-                    current_value: root.green
+                    min_max: [0, 255]
+                    default_value: root.green
                     track_color: app.rgb_formatter([0, 255, 0, 255], darken=True, factor=0.3)
                     slider_value_func: lambda i, v: root.update_color_channel(i, v)
 
@@ -83,8 +84,8 @@
                     id: blue_slider
                     label_text: 'B'
                     target_prop_attribute: 'blue'
-                    max_val: 255
-                    current_value: root.blue
+                    min_max: [0, 255]
+                    default_value: root.blue
                     track_color: app.rgb_formatter([0, 0, 255, 255], darken=True, factor=0.3)
                     slider_value_func: lambda i, v: root.update_color_channel(i, v)
 
