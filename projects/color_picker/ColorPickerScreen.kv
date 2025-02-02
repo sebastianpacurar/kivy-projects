@@ -1,5 +1,8 @@
 <ColorPickerScreen>:
     name: 'ColorPickerScreen'
+    color_picker: color_picker
+    saved_colors_count: len(color_picker.saved_colors) # listener to trigger db_table rv.data
+
     BoxLayout:
         orientation: 'vertical'
 
@@ -31,41 +34,92 @@
                 ColorPickerWidget:
                     id: color_picker
 
-            BoxLayout:
-                orientation: 'horizontal'
-                size_hint: 1, None
-                height: self.minimum_height + dp(5)
-                canvas.before:
-                    Color:
-                        rgba: app.rgb_formatter([80, 200, 120, 255], lighten=True, factor=0.6)
-                    Rectangle:
-                        pos: self.x - dp(10), self.y
-                        size: self.width + dp(20), self.height
+            GridLayout:
+                cols: 2
 
-                BaseLabel:
-                    size_hint: 1, None
-                    height: toggle_layout_btn.height
-                    text: 'CSS 4 colors, commonly known as the X11 color set'
+                # table/grid of CSS4 colors
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(10)
+                    padding: [0, 0, dp(7.5), 0]
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint: 1, None
+                        height: self.minimum_height + dp(7.5)
+                        padding: [dp(10), 0]
+                        canvas.before:
+                            Color:
+                                rgba: app.rgb_formatter([80, 200, 120, 255], lighten=True, factor=0.6)
+                            Rectangle:
+                                pos: self.x - dp(10), self.y
+                                size: self.width + dp(20), self.height
 
-                IconButton:
-                    id: toggle_layout_btn
-                    pos_hint: {'center_y': .5}
-                    icon: app.get_icon('grid-large')
-                    label_text: 'Grid'
-                    on_release: root.toggle_layout()
+                        BaseLabel:
+                            size_hint: 1, None
+                            height: toggle_layout_btn.height
+                            pos_hint: {'center_y': .5}
+                            text: 'CSS 4 colors, commonly known as the X11 color set'
+                            text_size: self.width - dp(20), None
+                            halign: 'center'
+                            valign: 'middle'
 
-            ResponsiveGridView:
-                id: responsive_grid
-                view_class: 'ColorCard'
-                item_width: dp(60)
-                item_spacing: dp(20)
+                        IconButton:
+                            id: toggle_layout_btn
+                            pos_hint: {'center_y': .5}
+                            icon: app.get_icon('grid-large')
+                            label_text: 'Grid'
+                            on_release: root.toggle_layout()
 
-            TableView:
-                id: table_view
-                view_class: 'ColorRowItem'
-                column_widths: [0, 0, 0, 0]
-                column_names: ['Name', 'Color', 'Rgb', 'Hex']
+                    ResponsiveGridView:
+                        id: responsive_grid
+                        view_class: 'ColorCard'
+                        item_width: dp(60)
+                        item_spacing: dp(20)
 
+                    TableView:
+                        id: table_view
+                        view_class: 'ColorRowItem'
+                        column_widths: [0, 0, 0, 0]
+                        column_names: ['Name', 'Color', 'Rgb', 'Hex']
+
+                Splitter:
+                    id: splitter
+                    sizable_from: 'left'
+                    min_size: root.width * .25
+                    max_size: root.width * .75
+
+                    # Saved colors content
+                    BoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(20)
+                        padding: [dp(7.5), 0, 0, 0]
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint: None, None
+                            width: splitter.width
+                            height: self.minimum_height + dp(7.5)
+                            padding: [dp(10), 0]
+                            canvas.before:
+                                Color:
+                                    rgba: app.rgb_formatter([80, 200, 120, 255], lighten=True, factor=0.6)
+                                Rectangle:
+                                    pos: self.x - dp(8), self.y
+                                    size: self.width + dp(20), self.height
+
+                            BaseLabel:
+                                size_hint: 1, None
+                                height: toggle_layout_btn.height
+                                pos_hint: {'center_y': .5}
+                                text: 'Saved colors'
+                                text_size: self.width - dp(20), None
+                                halign: 'center'
+                                valign: 'middle'
+
+                        TableView:
+                            id: db_table_view
+                            view_class: 'SavedColorRowItem'
+                            column_widths: [0, 0, 0, 0]
+                            column_names: ['Color', 'Rgb', 'Hex']
 
 <ColorCard>:
     canvas.before:
@@ -94,3 +148,12 @@
     TableViewText:
         text_val: root.hex
 
+<SavedColorRowItem>:
+    TableViewColor:
+        color_val: app.rgb_formatter(root.rgb)
+
+    TableViewText:
+        text_val: str(root.rgb)
+
+    TableViewText:
+        text_val: root.hex

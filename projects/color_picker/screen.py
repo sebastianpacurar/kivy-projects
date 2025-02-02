@@ -1,23 +1,29 @@
 from kivy.app import App
-from kivy.properties import ListProperty, StringProperty, BooleanProperty, ColorProperty
+from kivy.properties import ListProperty, StringProperty, BooleanProperty, ColorProperty, NumericProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
 
+from backend.color_picker_project.saved_colors_db_ops import select_all_colors, create_db
 from custom_widgets.TableView.table_view import TableViewRow
 from custom_widgets.Tooltip.tooltip import Tooltip
 from named_rgb_hex import css_4_colors
+from utils import convert_str_to_rgb
 
 
 class ColorPickerScreen(Screen):
     data = ListProperty([])
+    db_data = ListProperty([])
     is_tabular = BooleanProperty(True)
+    saved_colors_count = NumericProperty(0)
 
     def __init__(self, **kw):
         super().__init__(**kw)
         self.app = App.get_running_app()
 
     def on_kv_post(self, base_widget):
+        create_db()
         self.set_data()
+        self.set_saved_data()
         self.ids.responsive_grid.ids.rv.data = self.data
         self.ids.table_view.ids.rv.data = self.data
 
@@ -32,6 +38,13 @@ class ColorPickerScreen(Screen):
 
     def set_data(self):
         self.data = [{'name': c['name'], 'rgb': c['rgb'], 'hex': c['hex'], 'is_tabular': self.is_tabular} for c in css_4_colors]
+
+    def set_saved_data(self):
+        self.db_data = [{'rgb': convert_str_to_rgb(c[1][1:-1]), 'hex': c[2]} for c in select_all_colors()]
+        self.ids.db_table_view.ids.rv.data = self.db_data
+
+    def on_saved_colors_count(self, instance, value):
+        self.set_saved_data()
 
     def clear_tooltips(self, *args):
         for widget in self.ids.responsive_grid.ids.rv.children[0].children:
@@ -107,4 +120,9 @@ class ColorCard(FloatLayout):
 class ColorRowItem(TableViewRow):
     name = StringProperty('')
     rgb = ColorProperty([0, 0, 0, 255])
+    hex = StringProperty('')
+
+
+class SavedColorRowItem(TableViewRow):
+    rgb = ColorProperty([255, 255, 255, 255])
     hex = StringProperty('')

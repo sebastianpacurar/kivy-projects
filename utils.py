@@ -4,7 +4,7 @@ from functools import wraps
 from threading import Thread
 
 from kivy.clock import Clock
-from kivy.properties import ColorProperty
+from kivy.properties import ColorProperty, ListProperty
 
 
 def wait_implicitly(callback):
@@ -84,6 +84,13 @@ def rgb_format(rgb_val, factor=0.0, darken=False, lighten=False):
         float_rgb.append(rgb_val[-1] if rgb_val[-1] <= 1 else rgb_val[-1] / 255)  # add alpha back
 
     return float_rgb
+
+
+def convert_str_to_rgb(rgb_str):
+    rgb_list = list(map(int, rgb_str.split(',')))  # convert "255, 0, 0" -> [255, 0, 0]
+    if len(rgb_list) == 3:
+        rgb_list.append(255)
+    return rgb_list
 
 
 def generate_color(hue_fraction):

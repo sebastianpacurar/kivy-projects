@@ -89,7 +89,25 @@
                     track_color: app.rgb_formatter([0, 0, 255, 255], darken=True, factor=0.3)
                     slider_value_func: lambda i, v: root.update_color_channel(i, v)
 
-                Filler:
+                BoxLayout:
+                    orientation: 'horizontal'
+                    spacing: dp(20)
+                    size_hint_x: .5
+                    pos_hint: {'center_x': .5}
+                    SimpleButton:
+                        primary_state_color: app.rgb_formatter([2, 153, 139, 255], factor=0.35, darken=True)
+                        label_text: 'Save Color'
+                        on_release: root.save_color()
+
+                    SimpleButton:
+                        primary_state_color: app.rgb_formatter([2, 153, 139, 255], factor=0.35, darken=True)
+                        label_text: 'Copy RGB'
+                        on_release: app.copy_to_clipboard(str(root.rgb_colors + [255]))
+
+                    SimpleButton:
+                        primary_state_color: app.rgb_formatter([2, 153, 139, 255], factor=0.35, darken=True)
+                        label_text: 'Copy HEX'
+                        on_release: app.copy_to_clipboard(str(root.hex_val))
 
 
 <ColorTable>:

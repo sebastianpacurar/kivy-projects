@@ -4,6 +4,7 @@ from kivy.properties import BoundedNumericProperty, NumericProperty, StringPrope
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 
+from backend.color_picker_project.saved_colors_db_ops import insert_color, select_all_colors
 from utils import generate_color
 from custom_widgets.base_widgets import BaseLabel
 
@@ -14,6 +15,7 @@ class ColorPickerWidget(BoxLayout):
     blue = BoundedNumericProperty(0, min=0, max=255)
     rgb_colors = ReferenceListProperty(red, green, blue)
     hex_val = StringProperty('#000000')
+    saved_colors = ListProperty([])
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -53,6 +55,10 @@ class ColorPickerWidget(BoxLayout):
         hex_stripped = value[1:]
         # convert every 2 characters of hex in int base 16
         return [int(hex_stripped[i:i + 2], 16) for i in (0, 2, 4)]
+
+    def save_color(self):
+        insert_color(str(self.rgb_colors + [255]), self.hex_val)
+        self.saved_colors = select_all_colors()
 
 
 class ColorTable(BoxLayout):
