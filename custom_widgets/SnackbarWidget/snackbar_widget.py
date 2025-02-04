@@ -8,9 +8,19 @@ from kivy.uix.floatlayout import FloatLayout
 class SnackbarWidget(FloatLayout):
     text = StringProperty('')
     duration = NumericProperty(1.5)
+    status = StringProperty('success')  # this can be 'success' (green) or 'warning' (yellow) or 'fail' (red)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+    def get_color(self):
+        """ Returns the color based on the snackbar status"""
+        colors = {
+            'success': [24, 184, 75, 255],
+            'fail': [172, 35, 51, 255],
+            'warning': [226, 166, 38, 255]
+        }
+        return colors[self.status]
 
     def show(self):
         """ Bring the snackbar up from bottom left side of the screen """

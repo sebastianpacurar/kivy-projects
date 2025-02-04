@@ -1,9 +1,9 @@
 from kivy.app import App
-from kivy.properties import ListProperty, StringProperty, BooleanProperty, ColorProperty, NumericProperty
+from kivy.properties import ListProperty, StringProperty, BooleanProperty, ColorProperty, NumericProperty, ObjectProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
 
-from backend.color_picker_project.saved_colors_db_ops import select_all_colors, create_db
+from backend.color_picker_project.saved_colors_db_ops import select_all_colors, create_db, delete_color
 from custom_widgets.TableView.table_view import TableViewRow
 from custom_widgets.Tooltip.tooltip import Tooltip
 from named_rgb_hex import css_4_colors
@@ -40,7 +40,14 @@ class ColorPickerScreen(Screen):
         self.data = [{'name': c['name'], 'rgb': c['rgb'], 'hex': c['hex'], 'is_tabular': self.is_tabular} for c in css_4_colors]
 
     def set_saved_data(self):
-        self.db_data = [{'rgb': convert_str_to_rgb(c[1][1:-1]), 'hex': c[2]} for c in select_all_colors()]
+        self.db_data = [
+            {
+                'rgb': convert_str_to_rgb(c[1][1:-1]),
+                'hex': c[2],
+                'color_picker_widget': self.color_picker
+            }
+            for c in select_all_colors()
+        ]
         self.ids.db_table_view.ids.rv.data = self.db_data
 
     def on_saved_colors_count(self, instance, value):
@@ -113,7 +120,7 @@ class ColorCard(FloatLayout):
     def on_touch_down(self, touch):
         """ Only trigger the event for this specific ColorCard """
         if self.collide_point(*touch.pos):
-            App.get_running_app().copy_to_clipboard(str(self.rgb))
+            self.app.copy_to_clipboard(str(self.rgb))
         return super().on_touch_up(touch)
 
 
@@ -126,3 +133,12 @@ class ColorRowItem(TableViewRow):
 class SavedColorRowItem(TableViewRow):
     rgb = ColorProperty([255, 255, 255, 255])
     hex = StringProperty('')
+    color_picker_widget = ObjectProperty(None)
+
+    def delete_color_from_db(self):
+        delete_color(str(self.rgb))
+        App.get_running_app().db_action_snackbar(message=f'{str(self.rgb)} deleted from saved colors successfully', status='success')
+
+        # TODO: issue here when there is only one entry in db when app starts
+        # TODO: change the saved_colors_count - saved_colors handling
+        self.color_picker_widget.saved_colors = select_all_colors()

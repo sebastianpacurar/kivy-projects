@@ -7,18 +7,19 @@
 
     canvas.before:
         Color:
-            rgba: app.rgb_formatter([150, 150, 150, 255], factor=.7, lighten=True)
+            rgba: app.rgb_formatter(root.get_color(), factor=.7, lighten=True)
         Rectangle:
             size: self.size
             pos: self.pos
         Color:
-            rgba: app.rgb_formatter([150, 150, 150, 255], factor=.3, darken=True)
+            rgba: app.rgb_formatter(root.get_color(), factor=.3, darken=True)
         Line:
             width: dp(1)
             rectangle: self.x, self.y, self.width, self.height
 
     ProgressBarWidget:
         id: progress_bar
+        bars_color: root.get_color()
         size_hint: None, None
         width: root.width + dp(2)
         height: dp(5)

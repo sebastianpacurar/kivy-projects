@@ -1,3 +1,4 @@
+from kivy.app import App
 from kivy.graphics import Color, Line
 from kivy.metrics import dp
 from kivy.properties import BoundedNumericProperty, NumericProperty, StringProperty, ReferenceListProperty, ColorProperty, ListProperty, DictProperty
@@ -57,7 +58,15 @@ class ColorPickerWidget(BoxLayout):
         return [int(hex_stripped[i:i + 2], 16) for i in (0, 2, 4)]
 
     def save_color(self):
-        insert_color(str(self.rgb_colors + [255]), self.hex_val)
+        rgb_val = str(self.rgb_colors + [255])
+        result = insert_color(rgb_val, self.hex_val)
+
+        snackbar_data = {
+            'message': f'{rgb_val} added to saved colors' if result else f'{rgb_val} already exists in saved colors',
+            'status': 'success' if result else 'warning'
+        }
+
+        App.get_running_app().db_action_snackbar(message=snackbar_data['message'], status=snackbar_data['status'])
         self.saved_colors = select_all_colors()
 
 

@@ -118,8 +118,8 @@
                         TableView:
                             id: db_table_view
                             view_class: 'SavedColorRowItem'
-                            column_widths: [0, 0, 0, 0]
-                            column_names: ['Color', 'Rgb', 'Hex']
+                            column_widths: [0, 0, 0, dp(30)]
+                            column_names: ['Color', 'Rgb', 'Hex', '']
 
 <ColorCard>:
     canvas.before:
@@ -157,3 +157,9 @@
 
     TableViewText:
         text_val: root.hex
+
+    TableViewIconButton:
+        size_hint_x: None
+        icon: app.get_icon('delete-forever-outline')
+        btn_action: lambda i: root.delete_color_from_db()
+

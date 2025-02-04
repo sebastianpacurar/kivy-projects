@@ -181,9 +181,15 @@ class KivyProjectsApp(App):
         self.pm.disabled = False
 
     def copy_to_clipboard(self, text):
-        """ Copy text to clipboard"""
+        """ Copy text to clipboard """
         Clipboard.copy(text)
-        snackbar = SnackbarWidget(text=f'"{text}" copied to clipboard')
+        snackbar = SnackbarWidget(text=f'"{text}" copied to clipboard', status='success')
+        self.root.add_widget(snackbar)
+        snackbar.show()
+
+    def db_action_snackbar(self, message, status):
+        """ Display snackbar with status after sql query """
+        snackbar = SnackbarWidget(text=message, status=status)
         self.root.add_widget(snackbar)
         snackbar.show()
 

@@ -11,17 +11,10 @@ def create_db():
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS Colors (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            rgb TEXT,
-            hex TEXT
+            rgb TEXT UNIQUE,
+            hex TEXT UNIQUE
         )
         ''')
-        conn.commit()
-
-
-def insert_color(rgb, hex_val):
-    with sqlite3.connect(saved_colors_db_path) as conn:
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO Colors (rgb, hex) VALUES (?, ?)", (rgb, hex_val))
         conn.commit()
 
 
@@ -30,3 +23,22 @@ def select_all_colors():
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM Colors")
         return cursor.fetchall()
+
+
+def insert_color(rgb, hex_val):
+    with sqlite3.connect(saved_colors_db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1 FROM Colors WHERE rgb = ? OR hex = ?", (rgb, hex_val))
+        if cursor.fetchone():
+            return False
+
+        cursor.execute("INSERT INTO Colors (rgb, hex) VALUES (?, ?)", (rgb, hex_val))
+        conn.commit()
+        return True
+
+
+def delete_color(rgb):
+    with sqlite3.connect(saved_colors_db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Colors WHERE rgb = ?", (rgb,))
+        conn.commit()
